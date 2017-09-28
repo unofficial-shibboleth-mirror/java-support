@@ -77,6 +77,7 @@ public final class CookieManager extends AbstractInitializableComponent {
      */
     public void setCookiePath(@Nullable final String path) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         
         cookiePath = StringSupport.trimOrNull(path);
     }
@@ -88,6 +89,7 @@ public final class CookieManager extends AbstractInitializableComponent {
      */
     public void setCookieDomain(@Nullable final String domain) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         
         cookieDomain = StringSupport.trimOrNull(domain);
     }
@@ -99,6 +101,7 @@ public final class CookieManager extends AbstractInitializableComponent {
      */
     public void setHttpServletRequest(@Nonnull final HttpServletRequest request) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         
         httpRequest = Constraint.isNotNull(request, "HttpServletRequest cannot be null");
     }
@@ -110,6 +113,7 @@ public final class CookieManager extends AbstractInitializableComponent {
      */
     public void setHttpServletResponse(@Nonnull final HttpServletResponse response) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         
         httpResponse = Constraint.isNotNull(response, "HttpServletResponse cannot be null");
     }
@@ -120,6 +124,9 @@ public final class CookieManager extends AbstractInitializableComponent {
      * @param flag flag to set
      */
     public void setSecure(final boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+        
         secure = flag;
     }
 
@@ -130,6 +137,9 @@ public final class CookieManager extends AbstractInitializableComponent {
      * @param flag flag to set
      */
     public void setHttpOnly(final boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+
         httpOnly = flag;
     }
     
@@ -139,6 +149,9 @@ public final class CookieManager extends AbstractInitializableComponent {
      * @param age max age to set
      */
     public void setMaxAge(final int age) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+
         maxAge = age;
     }
 
@@ -158,6 +171,9 @@ public final class CookieManager extends AbstractInitializableComponent {
      * @param value value of cookie
      */
     @Nullable public void addCookie(@Nonnull @NotEmpty final String name, @Nonnull @NotEmpty final String value) {
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+        
         final Cookie cookie = new Cookie(name, value);
         cookie.setPath(cookiePath != null ? cookiePath : contextPathToCookiePath());
         if (cookieDomain != null) {
@@ -176,6 +192,9 @@ public final class CookieManager extends AbstractInitializableComponent {
      * @param name  name of cookie
      */
     @Nullable public void unsetCookie(@Nonnull @NotEmpty final String name) {
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+        
         final Cookie cookie = new Cookie(name, null);
         cookie.setPath(cookiePath != null ? cookiePath : contextPathToCookiePath());
         if (cookieDomain != null) {
@@ -215,6 +234,8 @@ public final class CookieManager extends AbstractInitializableComponent {
      * @return cookie value
      */
     @Nullable public String getCookieValue(@Nonnull @NotEmpty final String name, @Nullable final String defValue) {
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         
         final Cookie[] cookies = httpRequest.getCookies();
         if (cookies != null) {
