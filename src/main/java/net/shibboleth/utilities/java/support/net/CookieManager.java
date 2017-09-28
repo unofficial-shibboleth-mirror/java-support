@@ -23,6 +23,9 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
@@ -39,6 +42,9 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
  * common properties.</p>
  */
 public final class CookieManager extends AbstractInitializableComponent {
+
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(CookieManager.class);
 
     /** Path of cookie. */
     @Nullable private String cookiePath;
@@ -161,6 +167,8 @@ public final class CookieManager extends AbstractInitializableComponent {
         
         if (httpRequest == null || httpResponse == null) {
             throw new ComponentInitializationException("Servlet request and response must be set");
+        } else if (!secure || !httpOnly) {
+            log.warn("Use of secure and httpOnly properties are strongly advisable, currently one or both are false");
         }
     }
 
