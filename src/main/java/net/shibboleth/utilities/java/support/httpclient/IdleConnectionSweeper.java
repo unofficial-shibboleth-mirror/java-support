@@ -60,7 +60,8 @@ public class IdleConnectionSweeper implements DestructableComponent {
      */
     public IdleConnectionSweeper(@Nonnull final HttpClientConnectionManager manager, final long idleTimeout,
             final long sweepInterval) {
-        this(manager, idleTimeout, sweepInterval, new Timer(TimerSupport.getTimerName(IdleConnectionSweeper.class.getName(), null), true));
+        this(manager, idleTimeout, sweepInterval,
+                new Timer(TimerSupport.getTimerName(IdleConnectionSweeper.class.getName(), null), true));
         createdTimer = true;
     }
 
