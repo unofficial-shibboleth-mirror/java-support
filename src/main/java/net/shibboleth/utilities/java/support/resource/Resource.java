@@ -104,8 +104,6 @@ public interface Resource {
      * 
      * @return the input stream for the underlying resource (must not be {@code null})
      * @throws IOException if the stream could not be opened
-     * @see org.springframework.mail.javamail.MimeMessageHelper#addAttachment(String,
-     *      org.springframework.core.io.InputStreamSource)
      */
     @Nonnull InputStream getInputStream() throws IOException;
 

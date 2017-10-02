@@ -103,7 +103,7 @@ public class TLSSocketFactoryBuilder {
 
     /**
      * Get the JCA provider name used when obtaining an instance of {@link SSLContext}
-     * via {@link SSLContext#getInstance(String, String))}.
+     * via {@link SSLContext#getInstance(String, String)}.
      * 
      * @return the provider namer, or null
      */
@@ -300,7 +300,7 @@ public class TLSSocketFactoryBuilder {
     }
     
     /**
-     * Build a new instance of {@SSLContext} based on the properties specified on this builder instance.
+     * Build a new instance of {@link SSLContext} based on the properties specified on this builder instance.
      * 
      * @return a new SSLContext instance
      */
