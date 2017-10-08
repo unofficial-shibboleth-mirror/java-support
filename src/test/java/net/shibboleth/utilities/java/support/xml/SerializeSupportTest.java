@@ -185,16 +185,20 @@ public class SerializeSupportTest {
 
     @Test(dependsOnMethods = {"testNodeToString"}) public void testPrettyPrintXML() throws XMLParserException {
         //
-        // Serialize then parse and serialize again
+        // Pretty print then parse and compare.  Pretty print again and compare.
         //
         final String s = SerializeSupport.prettyPrintXML(parent);
 
         final Document dom = parserPool.parse(new StringReader(s));
 
-        Assert.assertEquals(SerializeSupport.nodeToString(dom.getFirstChild()), SerializeSupport.nodeToString(parent),
+        // JSPT-75:  Versions < 9 (i.e. until 1.8) would pass this bogus test.
+        Assert.assertTrue(!System.getProperty("java.version").startsWith("1.") ||
+                SerializeSupport.nodeToString(dom.getFirstChild()).equals(SerializeSupport.nodeToString(parent)),
                 "Should serialize to same output");
 
         assertEquals(dom.getFirstChild(), parent);
+
+        Assert.assertEquals(SerializeSupport.prettyPrintXML(dom.getFirstChild()) , s, "Pretty print should match");
     }
 
     @Test(dependsOnMethods = {"testNodeToString"}) public void testLSOps() throws XMLParserException {
