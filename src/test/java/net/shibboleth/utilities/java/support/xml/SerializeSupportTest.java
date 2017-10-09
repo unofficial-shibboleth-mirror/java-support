@@ -35,6 +35,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSOutput;
 import org.w3c.dom.ls.LSSerializer;
@@ -127,7 +128,12 @@ public class SerializeSupportTest {
                 final Node actualChild = actualChildren.item(i);
                 assertEquals(expectedChild, actualChild);
             }
-        } 
+        } else if (expected instanceof Text) {
+            final String expectedData = ((Text) expected).getData().trim();
+            final String actualData = ((Text) actual).getData().trim();
+
+            Assert.assertEquals(expectedData, actualData, "Text does not match: " + expectedData + " " + actualData);
+        }
     }
 
     @BeforeTest public void setup()
