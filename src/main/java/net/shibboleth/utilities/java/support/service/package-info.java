@@ -16,7 +16,7 @@
  */
 
 /**
- * Service support for Shibbleth projects.<br/>
+ * Service support for Shibboleth projects.<br/>
  * A service is something reloads instances of serviceable components.
  * 
  */
