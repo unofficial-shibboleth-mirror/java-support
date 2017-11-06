@@ -27,9 +27,6 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * Simple implementation of {@link InitializableComponent} and {@link IdentifiedComponent}.
- * 
- * Note, this class synchronizes the {@link #setId(String)} method and, if the component is already initialized this
- * method is treated as no-op.
  */
 public abstract class AbstractIdentifiedInitializableComponent extends AbstractInitializableComponent implements
         IdentifiedComponent {
