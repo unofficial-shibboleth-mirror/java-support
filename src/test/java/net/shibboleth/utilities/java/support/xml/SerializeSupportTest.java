@@ -42,6 +42,7 @@ import org.w3c.dom.ls.LSSerializer;
 import org.xml.sax.SAXException;
 
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.testing.TestSupport;
 
 /**
  * Tests for {@link NamespaceSupport}
@@ -192,9 +193,13 @@ public class SerializeSupportTest {
         final Document dom = parserPool.parse(new StringReader(s));
 
         // JSPT-75:  Versions < 9 (i.e. until 1.8) would pass this bogus test.
-        Assert.assertTrue(!System.getProperty("java.version").startsWith("1.") ||
-                SerializeSupport.nodeToString(dom.getFirstChild()).equals(SerializeSupport.nodeToString(parent)),
+        // TODO: working test for Java 9, or rework
+        if (TestSupport.isJavaV9OrLater()) {
+            // skip the test
+        } else {
+            Assert.assertTrue(SerializeSupport.nodeToString(dom.getFirstChild()).equals(SerializeSupport.nodeToString(parent)),
                 "Should serialize to same output");
+        }
 
         assertEquals(dom.getFirstChild(), parent);
 
