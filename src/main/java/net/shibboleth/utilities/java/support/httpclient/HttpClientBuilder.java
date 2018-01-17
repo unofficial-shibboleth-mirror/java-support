@@ -43,6 +43,7 @@ import org.apache.http.util.CharsetUtils;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 
+import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.collection.IterableSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -148,7 +149,7 @@ public class HttpClientBuilder {
     /**
      * Maximum period inactivity between two consecutive data packets in milliseconds. Default value: 60000 (60 seconds)
      */
-    private int socketTimeout;
+    @Duration private int socketTimeout;
 
     /** Socket buffer size in bytes. Default size is 8192 bytes. */
     private int socketBufferSize;
@@ -157,13 +158,13 @@ public class HttpClientBuilder {
      * Maximum length of time in milliseconds to wait for the connection to be established. Default value: 60000 (60
      * seconds)
      */
-    private int connectionTimeout;
+    @Duration private int connectionTimeout;
     
     /**
      * Maximum length of time in milliseconds to wait for a connection to be returned from the connection
      * manager. Default value: 60000 (60 seconds);
      */
-    private int connectionRequestTimeout;
+    @Duration private int connectionRequestTimeout;
     
     /**
      * Max total simultaneous connections allowed by the pooling connection manager.
@@ -361,7 +362,7 @@ public class HttpClientBuilder {
      * 
      * @return maximum period inactivity between two consecutive data packets in milliseconds
      */
-    public int getSocketTimeout() {
+    @Duration public int getSocketTimeout() {
         return socketTimeout;
     }
 
@@ -371,8 +372,11 @@ public class HttpClientBuilder {
      * 
      * @param timeout maximum period inactivity between two consecutive data packets in milliseconds
      */
-    public void setSocketTimeout(final int timeout) {
-        this.socketTimeout = timeout;
+    public void setSocketTimeout(@Duration final long timeout) {
+        if (timeout > Integer.MAX_VALUE) {
+            throw new IllegalArgumentException("Timeout was too large");
+        }
+        this.socketTimeout = (int) timeout;
     }
 
     /**
@@ -399,7 +403,7 @@ public class HttpClientBuilder {
      * 
      * @return maximum length of time in milliseconds to wait for the connection to be established
      */
-    public int getConnectionTimeout() {
+    @Duration public int getConnectionTimeout() {
         return connectionTimeout;
     }
 
@@ -409,17 +413,20 @@ public class HttpClientBuilder {
      * 
      * @param timeout maximum length of time in milliseconds to wait for the connection to be established
      */
-    public void setConnectionTimeout(final int timeout) {
-        connectionTimeout = timeout;
+    public void setConnectionTimeout(@Duration final long timeout) {
+        if (timeout > Integer.MAX_VALUE) {
+            throw new IllegalArgumentException("Timeout was too large");
+        }
+        connectionTimeout = (int) timeout;
     }
-    
+
     /**
      * Gets the maximum length of time in milliseconds to wait for a connection to be returned from the connection
      * manager. A value of less than 1 indicates no timeout.
      * 
      * @return maximum length of time in milliseconds to wait for the connection to be established
      */
-    public int getConnectionRequestTimeout() {
+    @Duration public int getConnectionRequestTimeout() {
         return connectionRequestTimeout;
     }
 
@@ -429,8 +436,11 @@ public class HttpClientBuilder {
      * 
      * @param timeout maximum length of time in milliseconds to wait for the connection to be established
      */
-    public void setConnectionRequestTimeout(final int timeout) {
-        connectionRequestTimeout = timeout;
+    public void setConnectionRequestTimeout(@Duration final long timeout) {
+        if (timeout > Integer.MAX_VALUE) {
+            throw new IllegalArgumentException("Timeout was too large");
+        }
+        connectionRequestTimeout = (int) timeout;
     }
 
     /**
