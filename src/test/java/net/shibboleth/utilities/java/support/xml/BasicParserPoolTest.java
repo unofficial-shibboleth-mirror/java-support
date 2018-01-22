@@ -63,6 +63,8 @@ public class BasicParserPoolTest {
     private static final String SCHEMA_FILE = TEST_DIR + "basicParserPoolTest.xsd";
 
     private static final String XML_FILE = TEST_DIR + "basicParserPoolTest.xml";
+    
+    private static final String DTD_FILE = TEST_DIR + "dtdParserPoolTest.xml";
 
     private BasicParserPool basicParserPool;
     /** Max size of the pool we're using. */
@@ -489,9 +491,18 @@ public class BasicParserPoolTest {
         
         // Get file name the same way that SchemaBuilderTest does
         checkParsedDocument(basicParserPool.parse(new FileReader("src/test/resources/" + XML_FILE)));
-
     }
 
+    @Test(expectedExceptions=XMLParserException.class)
+    public void testDTD() throws IOException, ComponentInitializationException, XMLParserException, FileNotFoundException {
+
+        basicParserPool.initialize();
+        
+        Resource r = new ClassPathResource(DTD_FILE);
+        
+        basicParserPool.parse(r.getInputStream());
+    }
+    
     @Test public void testNewDocument() throws ComponentInitializationException, XMLParserException {
         basicParserPool.initialize();
         Assert.assertNotNull(basicParserPool.newDocument(), "Create new document");
