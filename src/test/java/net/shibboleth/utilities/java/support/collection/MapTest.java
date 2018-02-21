@@ -43,7 +43,7 @@ public class MapTest {
     
     private final static Object VALUE_2 = "Value2";
     
-    private final static Integer INTEGER_3 = new Integer(2); 
+    private final static Integer INTEGER_3 = 2; 
 
     private final static Object VALUE_3 = INTEGER_3;
     

@@ -27,9 +27,9 @@ public class PairTest {
 
     private final static String STRING_2 = "StringTwo";
     
-    private final static Integer INTEGER_1 = new Integer(-6); 
+    private final static Integer INTEGER_1 = -6; 
 
-    private final static Integer INTEGER_2 = new Integer(0); 
+    private final static Integer INTEGER_2 = 0; 
     
     @Test
     public void testPair() {

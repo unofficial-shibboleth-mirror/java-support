@@ -47,7 +47,7 @@ public class SimpleURLCanonicalizerTest {
         Assert.assertEquals(SimpleURLCanonicalizer.canonicalize("http://www.example.org:8080/Foo/Bar/baz"), "http://www.example.org:8080/Foo/Bar/baz");
         
         SimpleURLCanonicalizer.registerSchemePortMapping("myscheme", 1967);
-        Assert.assertEquals(SimpleURLCanonicalizer.getRegisteredPort("MyScheme"), new Integer(1967));
+        Assert.assertEquals(SimpleURLCanonicalizer.getRegisteredPort("MyScheme"), Integer.valueOf(1967));
     }
 
 }

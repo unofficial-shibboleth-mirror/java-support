@@ -42,8 +42,8 @@ public class ObjectSupportTest {
     }
 
     @Test public void testHashCode() {
-        ComplexClass c1 = new ComplexClass(new Integer(1), new Double(3.4), "String!");
-        ComplexClass c2 = new ComplexClass("String3", new Integer(1243), new Boolean(false));
+        ComplexClass c1 = new ComplexClass(Integer.valueOf(1), Double.valueOf(3.4), "String!");
+        ComplexClass c2 = new ComplexClass("String3", Integer.valueOf(1243), Boolean.valueOf(false));
 
         Assert.assertEquals(ObjectSupport.hashCode(null), 0, "Hashcode of null is 0");
         Assert.assertEquals(ObjectSupport.hashCode(c1), c1.hashCode(),

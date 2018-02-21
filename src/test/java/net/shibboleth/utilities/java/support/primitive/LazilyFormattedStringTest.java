@@ -29,7 +29,7 @@ public class LazilyFormattedStringTest {
 
     @Test public void testFormat() {
         Formatter formatter = new Formatter();
-        Object value = new Integer(1234567);
+        Object value = Integer.valueOf(1234567);
         formatter.format(FORMAT, value, value, value);
         LazilyFormattedString testString = new LazilyFormattedString(FORMAT, value, value, value);
 
@@ -40,7 +40,7 @@ public class LazilyFormattedStringTest {
 
     @Test public void testNullFormat() {
         Formatter formatter = new Formatter();
-        Object value = new Integer(78654321);
+        Object value = Integer.valueOf(78654321);
         formatter.format(FORMAT, null, value, null, value);
         LazilyFormattedString testString = new LazilyFormattedString(FORMAT, null, value, null, value);
 
