@@ -55,16 +55,55 @@ public class TestSupport {
      * This is not part of the API of the class, but is available as
      * a protected method for self-testing.
      *
+     * The version string given by the <code>java.version</code>
+     * property has changed format multiple times in its history.
+     * This method acts as a parser for such strings. It is only
+     * required to handle versions of Java from the current platform
+     * baseline onwards (and thus their particular version string
+     * quirks) but in practice may support previous versions.
+     *
+     * For Java 6, 7 and 8, the version string has a format
+     * like "1.X.0_123" where X is the version of Java. This means
+     * that there will always be at least two components separated
+     * by periods, and that the first such component will always
+     * be "1".
+     *
+     * Examples of versions strings observed in practice:
+     *
+     * <ul>
+     * <li><code>1.6.0_65-b14-468</code>
+     * <li><code>1.7.0_51</code>
+     * <li><code>1.8.0_144</code>
+     * </ul>
+     *
+     * For Java 9, the version string format is described in
+     * <a href="http://openjdk.java.net/jeps/223">JEP 223</a>.
+     *
+     * For Java 10, the version string format is described in
+     * <a href="http://openjdk.java.net/jeps/322">JEP 322</a>
+     *
+     * Both JEP 223 and JEP 322 allow for an arbitrary number of numeric
+     * components separated by periods, but the possibility exists for this
+     * to be a <em>single</em> component. Following this a number of other
+     * components delimited by either <code>+</code> or <code>-</code> may
+     * appear. This means that version strings like "10+43" are possible, and
+     * have been observed.
+     *
      * @param versionStr version string to extract the version from
      * @return the major version number
+     *
+     * @see <a href="http://openjdk.java.net/jeps/223">JEP 223</a>
+     * @see <a href="http://openjdk.java.net/jeps/322">JEP 322</a>
      */
     protected static int getJavaVersion(@Nonnull final String versionStr) {
-        final String components[] = versionStr.split("\\.");
+        // Split into components delimited by '.', '+' and '-'.
+        // This covers both the historic, JEP 223 and JEP 332 schemes.
+        final String components[] = versionStr.split("\\.|\\+|-");
         if (components[0].equals("1")) {
             // Handle 1.6, 1.7, 1.8
             return Integer.parseInt(components[1]);
         } else {
-            // e.g., 9, 9.0.1
+            // e.g., 9, 9.0.1, 10+43
             return Integer.parseInt(components[0]);
         }
     }

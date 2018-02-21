@@ -32,6 +32,7 @@ public class TestSupportTest {
         Assert.assertEquals(TestSupport.getJavaVersion("1.8.0_144"), 8);
         Assert.assertEquals(TestSupport.getJavaVersion("9"), 9);
         Assert.assertEquals(TestSupport.getJavaVersion("9.0.1"), 9);
+        Assert.assertEquals(TestSupport.getJavaVersion("10+43"), 10); // Java 10 RC
     }
 
 }
