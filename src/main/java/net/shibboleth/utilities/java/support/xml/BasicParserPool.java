@@ -96,7 +96,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
     /** Whether the builders are coalescing. Default value: true */
     private boolean coalescing;
 
-    /** Whether the builders expand entity references. Default value: true */
+    /** Whether the builders expand entity references. Default value: false */
     private boolean expandEntityReferences;
 
     /** Builder features. */
