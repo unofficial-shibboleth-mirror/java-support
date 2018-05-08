@@ -19,14 +19,15 @@ package net.shibboleth.utilities.java.support.security;
 
 import javax.annotation.Nonnull;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class uses the {@link ReloadableService} concept to implement {@link AccessControlService}
@@ -46,7 +47,8 @@ public class DelegatingAccessControlService extends AbstractIdentifiableInitiali
      * 
      * @param acService the service which will manage the loading.
      */
-    public DelegatingAccessControlService(@Nonnull final ReloadableService<AccessControlService> acService) {
+    public DelegatingAccessControlService(
+            @Nonnull @ParameterName(name="acService") final ReloadableService<AccessControlService> acService) {
         service = Constraint.isNotNull(acService, "AccessControlService cannot be null");
     }
 
