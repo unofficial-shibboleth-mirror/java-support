@@ -23,6 +23,8 @@ import javax.annotation.Nonnull;
 
 import org.apache.commons.codec.BinaryEncoder;
 
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
+
 /**
  * A specialized subclass of {@link RandomIdentifierGenerationStrategy} which constrains the supplied
  * random number generator to be an instance of {@link SecureRandom}.
@@ -43,7 +45,7 @@ public class SecureRandomIdentifierGenerationStrategy extends RandomIdentifierGe
      * 
      * @param identifierSize number of random bytes in identifier
      */
-    public SecureRandomIdentifierGenerationStrategy(final int identifierSize) {
+    public SecureRandomIdentifierGenerationStrategy(@ParameterName(name="identifierSize") final int identifierSize) {
         super(identifierSize);
     }
 
@@ -54,8 +56,9 @@ public class SecureRandomIdentifierGenerationStrategy extends RandomIdentifierGe
      * @param identifierSize number of random bytes in the identifier
      * @param identifierEncoder encoder used to convert random bytes to string identifier
      */
-    public SecureRandomIdentifierGenerationStrategy(@Nonnull final SecureRandom source, final int identifierSize,
-            @Nonnull final BinaryEncoder identifierEncoder) {
+    public SecureRandomIdentifierGenerationStrategy(@ParameterName(name="source") @Nonnull final SecureRandom source, 
+            @ParameterName(name="identifierSize") final int identifierSize,
+            @ParameterName(name="identifierEncoder") @Nonnull final BinaryEncoder identifierEncoder) {
         super(source, identifierSize, identifierEncoder);
     }
 
