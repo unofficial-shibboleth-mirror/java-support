@@ -41,6 +41,8 @@ import com.google.common.base.Predicate;
  * A {@link Predicate} which calls out to a supplied script.
  * 
  * @param <T> input type
+ * 
+ * @since 7.4.0
  */
 public class ScriptedPredicate<T> extends AbstractScriptEvaluator implements Predicate<T> {
     
