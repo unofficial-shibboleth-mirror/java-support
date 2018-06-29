@@ -445,8 +445,8 @@ public class SelfSignedCertificateGenerator {
         @Nonnull @NotEmpty private String keyType = "RSA";
         
         /** Key size. */
-        @Parameter(names = KEY_SIZE, description = "Size of key to generate (default: 2048)")
-        @Positive private int keySize = 2048;
+        @Parameter(names = KEY_SIZE, description = "Size of key to generate (default: 3072)")
+        @Positive private int keySize = 3072;
 
         /** Certificate lifetime. */
         @Parameter(names = CERT_LIFETIME, description = "Certificate lifetime in years (default: 20)")
