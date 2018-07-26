@@ -148,10 +148,13 @@ public class BasicKeystoreKeyStrategy extends AbstractInitializableComponent imp
      * 
      * @param password the keystore password
      */
-    public void setKeystorePassword(@Nonnull @NotEmpty final String password) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
-        keystorePassword = Constraint.isNotNull(password, "Keystore password cannot be null");
+    public void setKeystorePassword(@Nullable final String password) {
+        synchronized(this) {
+            if (password != null && !password.isEmpty())
+                keystorePassword = password;
+            else
+                keystorePassword = null;
+        }
     }
 
     /**
@@ -171,10 +174,13 @@ public class BasicKeystoreKeyStrategy extends AbstractInitializableComponent imp
      * 
      * @param password the encryption key password
      */
-    public void setKeyPassword(@Nonnull @NotEmpty final String password) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
-        keyPassword = Constraint.isNotNull(password, "Key password cannot be null");
+    public void setKeyPassword(@Nullable final String password) {
+        synchronized(this) {
+            if (password != null && !password.isEmpty())
+                keyPassword = password;
+            else
+                keyPassword = null;
+        }
     }
 
     /**
@@ -213,13 +219,11 @@ public class BasicKeystoreKeyStrategy extends AbstractInitializableComponent imp
                 Constraint.isNotNull(keystoreType, "Keystore type cannot be null");
                 Constraint.isNotNull(keystoreResource, "Keystore resource cannot be null");
                 Constraint.isNotNull(keyVersionResource, "Key version resource cannot be null");
-                Constraint.isNotNull(keystorePassword, "Keystore password cannot be null");
                 Constraint.isNotNull(keyAlias, "Key alias base cannot be null");
-                Constraint.isNotNull(keyPassword, "Key password cannot be null");
             } catch (final ConstraintViolationException e) {
                 throw new ComponentInitializationException(e);
             }
-            
+
             updateDefaultKey();
     
         } catch (final KeyException e) {
@@ -267,20 +271,27 @@ public class BasicKeystoreKeyStrategy extends AbstractInitializableComponent imp
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
         synchronized(this) {
-            return new Pair<>(currentAlias, defaultKey);
+            if (defaultKey != null) {
+                return new Pair<>(currentAlias, defaultKey);
+            } else {
+                throw new KeyException("Passwords not supplied, keystore is locked");
+            }
         }
     }
     
     /** {@inheritDoc} */
     @Override
     @Nonnull public SecretKey getKey(@Nonnull @NotEmpty final String name) throws KeyException {
-        
         synchronized(this) {
             if (defaultKey != null && name.equals(currentAlias)) {
                 return defaultKey;
             }
+            
+            if (keystorePassword == null || keyPassword == null) {
+                throw new KeyException("Passwords not supplied, keystore is locked");
+            }
         }
-
+        
         try {
             final KeyStore ks = KeyStore.getInstance(keystoreType);
             ks.load(keystoreResource.getInputStream(), keystorePassword.toCharArray());
@@ -310,6 +321,12 @@ public class BasicKeystoreKeyStrategy extends AbstractInitializableComponent imp
     private void updateDefaultKey() throws KeyException {
         
         synchronized(this) {
+
+            if (keystorePassword == null || keyPassword == null) {
+                log.info("Passwords not supplied, keystore left locked");
+                return;
+            }
+            
             try (final InputStream is = keyVersionResource.getInputStream()) {
                 // Refresh the key version and compare to the current one.
                 final Properties props = new Properties();
@@ -340,6 +357,7 @@ public class BasicKeystoreKeyStrategy extends AbstractInitializableComponent imp
                 throw new KeyException(e);
             }
         }
+        
     }
     
 }

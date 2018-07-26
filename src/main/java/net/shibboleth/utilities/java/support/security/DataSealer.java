@@ -67,6 +67,9 @@ public class DataSealer extends AbstractInitializableComponent {
     /** Class logger. */
     @Nonnull private Logger log = LoggerFactory.getLogger(DataSealer.class);
 
+    /** Whether the key source is expected to be locked initially. */
+    private boolean lockedAtStartup;
+    
     /** Source of keys. */
     @NonnullAfterInit private DataSealerKeyStrategy keyStrategy;
 
@@ -79,7 +82,22 @@ public class DataSealer extends AbstractInitializableComponent {
     /** Decodes encrypted string to bytes. */
     @Nonnull private BinaryDecoder decoder = (Base64) encoder;
 
-
+    /**
+     * Set whether the key source is expected to be locked at startup, and unlocked
+     * later at runtime.
+     * 
+     * <p>Defaults to false.</p>
+     * 
+     * @param flag flag to set
+     * 
+     * @since 7.4.0
+     */
+    public void setLockedAtStartup(final boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        lockedAtStartup = flag;
+    }
+    
     /**
      * Set the key strategy.
      * 
@@ -122,6 +140,7 @@ public class DataSealer extends AbstractInitializableComponent {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void doInitialize() throws ComponentInitializationException {
         try {
             try {
@@ -134,10 +153,10 @@ public class DataSealer extends AbstractInitializableComponent {
                 random = new SecureRandom();
             }
 
-            final SecretKey initialKey = keyStrategy.getDefaultKey().getSecond();
-
-            // Before we finish initialization, make sure that things are working.
-            testEncryption(initialKey);
+            if (!lockedAtStartup) {
+                // Before we finish initialization, make sure that things are working.
+                testEncryption(keyStrategy.getDefaultKey().getSecond());
+            }
 
         } catch (final KeyException e) {
             log.error(e.getMessage());
