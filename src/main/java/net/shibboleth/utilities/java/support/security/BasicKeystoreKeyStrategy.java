@@ -150,10 +150,20 @@ public class BasicKeystoreKeyStrategy extends AbstractInitializableComponent imp
      */
     public void setKeystorePassword(@Nullable final String password) {
         synchronized(this) {
-            if (password != null && !password.isEmpty())
+            if (password != null && !password.isEmpty()) {
                 keystorePassword = password;
-            else
+                
+                if (isInitialized() && keyPassword != null) {
+                    try {
+                        updateDefaultKey();
+                    } catch (final KeyException e) {
+                        // Logged inside update method.
+                    }
+                }
+            }
+            else {
                 keystorePassword = null;
+            }
         }
     }
 
@@ -176,10 +186,20 @@ public class BasicKeystoreKeyStrategy extends AbstractInitializableComponent imp
      */
     public void setKeyPassword(@Nullable final String password) {
         synchronized(this) {
-            if (password != null && !password.isEmpty())
+            if (password != null && !password.isEmpty()) {
                 keyPassword = password;
-            else
+                
+                if (isInitialized() && keystorePassword != null) {
+                    try {
+                        updateDefaultKey();
+                    } catch (final KeyException e) {
+                        // Logged inside update method.
+                    }
+                }
+            }
+            else {
                 keyPassword = null;
+            }
         }
     }
 
