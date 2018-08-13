@@ -77,20 +77,19 @@ public final class StringSupport {
     }
 
     /**
-     * Converts a List of strings into a single string, with values separated by a specified delimiter.
+     * Converts a List of objects into a single string, with values separated by a specified delimiter.
      * 
-     * @param values list of strings
+     * @param values list of objects
      * @param delimiter the delimiter used between values
      * 
      * @return delimited string of values
      */
-    @Nonnull public static String
-            listToStringValue(@Nonnull final List<String> values, @Nonnull final String delimiter) {
+    @Nonnull public static String listToStringValue(@Nonnull final List<?> values, @Nonnull final String delimiter) {
         Constraint.isNotNull(values, "List of values can not be null");
         Constraint.isNotNull(delimiter, "String delimiter may not be null");
 
         final StringBuilder stringValue = new StringBuilder();
-        final Iterator<String> valueItr = values.iterator();
+        final Iterator<?> valueItr = values.iterator();
         while (valueItr.hasNext()) {
             stringValue.append(valueItr.next());
             if (valueItr.hasNext()) {
