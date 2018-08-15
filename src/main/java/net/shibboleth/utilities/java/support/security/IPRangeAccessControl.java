@@ -84,16 +84,20 @@ public class IPRangeAccessControl extends AbstractIdentifiableInitializableCompo
                 final byte[] resolvedAddress = InetAddresses.forString(addr).getAddress();
                 for (final IPRange range : allowedRanges) {
                     if (range.contains(resolvedAddress)) {
+                        log.debug("{} Granted access to client address '{}' (Operation: {}, Resource: {})",
+                                new Object[] {getLogPrefix(), addr, operation, resource});
                         return true;
                     }
                 }
             } catch (final IllegalArgumentException e) {
-                log.warn(getLogPrefix() + " Error translating client address", e);
+                log.warn("{} Error translating client address", getLogPrefix(), e);
             }
             
-            log.warn("{} Denied request from client address '{}'", getLogPrefix(), addr);
+            log.warn("{} Denied request from client address '{}' (Operation: {}, Resource: {})",
+                    new Object[] {getLogPrefix(), addr, operation, resource});
         } else {
-            log.warn("{} No client address, access denied", getLogPrefix());
+            log.warn("{} Denied request from client address 'unknown' (Operation: {}, Resource: {})",
+                    new Object[] {getLogPrefix(), operation, resource});
         }
         
         return false;
