@@ -492,7 +492,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
     /**
      * Gets the {@link ErrorHandler}.
      * 
-     * @return the configured entity resolver, may be null
+     * @return the configured error handler
      */
     @Nonnull public ErrorHandler getErrorHandler() {
         return errorHandler;
@@ -587,9 +587,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
             builder.setEntityResolver(entityResolver);
         }
         
-        if (errorHandler != null) {
-            builder.setErrorHandler(errorHandler);
-        }
+        builder.setErrorHandler(errorHandler);
     }
 
     /**

@@ -17,10 +17,14 @@
 
 package net.shibboleth.utilities.java.support.xml;
 
+import javax.annotation.Nonnull;
+
 import org.slf4j.Logger;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
+
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * A SAX error handler that logs errors to a {@link Logger} before rethrowing them.
@@ -28,32 +32,58 @@ import org.xml.sax.SAXParseException;
 public final class LoggingErrorHandler implements ErrorHandler {
 
     /** Error logger. */
-    private Logger log;
+    @Nonnull private Logger log;
+    
+    /** Whether to pass exception to logger. */
+    private boolean logException;
 
     /**
      * Constructor.
      * 
      * @param logger logger errors will be written to
      */
-    public LoggingErrorHandler(final Logger logger) {
-        log = logger;
+    public LoggingErrorHandler(@Nonnull final Logger logger) {
+        log = Constraint.isNotNull(logger, "Logger cannot be null");
+        logException = false;
     }
+    
+    /**
+     * Set whether to log the exception or just a message.
+     * 
+     * @param flag flag to set
+     */
+    public void setLogException(final boolean flag) {
+        logException = flag;
+    }
+    
 
     /** {@inheritDoc} */
     public void error(final SAXParseException exception) throws SAXException {
-        log.error("XML Parsing Error", exception);
+        if (logException) {
+            log.error("XML Parsing Error", exception);
+        } else {
+            log.error("XML Parsing Error");
+        }
         throw exception;
     }
 
     /** {@inheritDoc} */
     public void fatalError(final SAXParseException exception) throws SAXException {
-        log.error("XML Parsing Error", exception);
+        if (logException) {
+            log.error("XML Parsing Error", exception);
+        } else {
+            log.error("XML Parsing Error");
+        }
         throw exception;
     }
 
     /** {@inheritDoc} */
     public void warning(final SAXParseException exception) throws SAXException {
-        log.warn("XML Parsing Error", exception);
+        if (logException) {
+            log.warn("XML Parsing Error", exception);
+        } else {
+            log.warn("XML Parsing Error");
+        }
         throw exception;
     }
 }
