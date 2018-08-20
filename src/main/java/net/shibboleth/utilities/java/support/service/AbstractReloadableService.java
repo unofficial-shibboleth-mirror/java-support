@@ -186,7 +186,6 @@ public abstract class AbstractReloadableService<T> extends AbstractIdentifiableI
                 log.error("{} No further attempts will be made to reload", getLogPrefix());
             }
         } catch (final Exception e) {
-            log.error("{} Unexpected error during initial load", getLogPrefix(), e);
             throw new ComponentInitializationException(getLogPrefix() + " Unexpected error during initial load", e);
         }
 
