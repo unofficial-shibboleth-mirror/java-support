@@ -160,8 +160,7 @@ public class BasicKeystoreKeyStrategy extends AbstractInitializableComponent imp
                         // Logged inside update method.
                     }
                 }
-            }
-            else {
+            } else {
                 keystorePassword = null;
             }
         }
@@ -196,8 +195,7 @@ public class BasicKeystoreKeyStrategy extends AbstractInitializableComponent imp
                         // Logged inside update method.
                     }
                 }
-            }
-            else {
+            } else {
                 keyPassword = null;
             }
         }
