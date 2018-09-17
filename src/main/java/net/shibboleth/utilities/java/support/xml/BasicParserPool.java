@@ -37,12 +37,14 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.validation.Schema;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,19 +81,22 @@ import com.google.common.collect.Maps;
 public class BasicParserPool extends AbstractInitializableComponent implements ParserPool {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(BasicParserPool.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(BasicParserPool.class);
+    
+    /** Name of security manager attribute, if any. */
+    @Nullable private String securityManagerAttributeName;
 
     /** Factory used to create new builders. */
     private DocumentBuilderFactory builderFactory;
 
     /** Cache of document builders. */
-    private final Stack<SoftReference<DocumentBuilder>> builderPool;
+    @Nonnull @NotEmpty private final Stack<SoftReference<DocumentBuilder>> builderPool;
 
     /** Max number of builders allowed in the pool. Default value: 5 */
     private int maxPoolSize;
 
     /** Builder attributes. */
-    private Map<String, Object> builderAttributes;
+    @Nonnull private Map<String, Object> builderAttributes;
 
     /** Whether the builders are coalescing. Default value: true */
     private boolean coalescing;
@@ -100,7 +105,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
     private boolean expandEntityReferences;
 
     /** Builder features. */
-    private Map<String, Boolean> builderFeatures;
+    @Nonnull private Map<String, Boolean> builderFeatures;
 
     /** Whether the builders ignore comments. Default value: true */
     private boolean ignoreComments;
@@ -128,7 +133,6 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
 
     /** Constructor. */
     public BasicParserPool() {
-        super();
         maxPoolSize = 5;
         builderPool = new Stack<>();
         builderAttributes = Collections.emptyMap();
@@ -275,6 +279,20 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
         } finally {
             returnBuilder(builder);
         }
+    }
+    
+    /**
+     * Set the name of the builder attribute that controls the use of an XMLSecurityManager.
+     * 
+     * <p>If set, this allows the pool to interrogate the factory to determine whether a
+     * security manager is installed and log its class.<.p>
+     * 
+     * @param name name of attribute
+     */
+    public void setSecurityManagerAttributeName(@Nullable final String name) {
+        checkNotInitializedNotDestroyed();
+        
+        securityManagerAttributeName = StringSupport.trimOrNull(name);
     }
 
     /**
@@ -623,6 +641,16 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
             newFactory.setXIncludeAware(xincludeAware);
 
             builderFactory = newFactory;
+            
+            if (securityManagerAttributeName != null) {
+                final Object securityManager = builderFactory.getAttribute(securityManagerAttributeName);
+                if (securityManager != null) {
+                    log.info("XMLSecurityManager of type '{}' is installed", securityManager.getClass().getName());
+                } else {
+                    log.warn(
+                        "No XMLSecurityManager installed, system may be vulnerable to XML processing vulnerabilities");
+                }
+            }
 
         } catch (final ParserConfigurationException e) {
             throw new ComponentInitializationException("Unable to configure builder factory", e);
