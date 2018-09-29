@@ -102,18 +102,33 @@ public class ShowAutomaticModuleNames {
                 return name.endsWith(".jar");
             }
         });
+        final Map<String, File> seenNames = new HashMap<>();
         final List<File> noName = new ArrayList<>();
         final Map<File, String> withName = new HashMap<>();
+        final Map<File, String> problemNames = new HashMap<>();
         for (File file : files) {
             try (final JarFile jarFile = new JarFile(file)) {
                 final String automaticName = getAutomaticModuleName(jarFile);
                 if (automaticName == null) {
                     noName.add(file);
+                } else if (automaticName.isEmpty()) {
+                    problemNames.put(file,  "empty module name");
+                } else if (seenNames.containsKey(automaticName)) {
+                    problemNames.put(file, "duplicate module name " + automaticName +
+                            " with " + seenNames.get(automaticName).getName());
                 } else {
                     withName.put(file, automaticName);
+                    seenNames.put(automaticName, file);
                 }
             } catch (final IOException e) {
                 throw new TerminationException("could not process " + file.getName(), e);
+            }
+        }
+        if (!problemNames.isEmpty()) {
+            System.out.println("   *** with problematic names:");
+            final List<File> problemFiles = new ArrayList<>(problemNames.keySet());
+            for (File file : problemFiles) {
+                System.out.println("      " + file.getName() + ": " + problemNames.get(file));
             }
         }
         if (!withName.isEmpty()) {
