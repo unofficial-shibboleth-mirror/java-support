@@ -17,12 +17,17 @@
 
 package net.shibboleth.utilities.java.support.net;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import net.shibboleth.utilities.java.support.collection.Pair;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.Lists;
 
 /** Unit test for {@link URISupport}. */
 public class URISupportTest {
@@ -65,6 +70,33 @@ public class URISupportTest {
     
     @Test public void testTrimOrNullQuery(){
         
+    }
+    
+    @Test public void testBuildQueryMap() {
+        Map<String,String> map = null;
+        
+        map = URISupport.buildQueryMap(null);
+        Assert.assertNotNull(map);
+        Assert.assertTrue(map.isEmpty());
+        
+        map = URISupport.buildQueryMap(Collections.<Pair<String,String>>emptyList());
+        Assert.assertNotNull(map);
+        Assert.assertTrue(map.isEmpty());
+        
+        List<Pair<String,String>> params = new ArrayList<>();
+        params.add(new Pair<String,String>("one", "1"));
+        params.add(new Pair<String,String>("two", "2"));
+        params.add(new Pair<String,String>("three", "3"));
+        
+        map = URISupport.buildQueryMap(params);
+        Assert.assertNotNull(map);
+        Assert.assertEquals(map.size(), 3);
+        Assert.assertTrue(map.containsKey("one"));
+        Assert.assertEquals(map.get("one"), "1");
+        Assert.assertTrue(map.containsKey("two"));
+        Assert.assertEquals(map.get("two"), "2");
+        Assert.assertTrue(map.containsKey("three"));
+        Assert.assertEquals(map.get("three"), "3");
     }
     
     @Test public void testGetRawQueryStringParameter() {

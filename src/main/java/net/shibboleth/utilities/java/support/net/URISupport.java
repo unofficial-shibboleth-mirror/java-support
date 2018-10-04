@@ -23,8 +23,12 @@ import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.annotations.Beta;
@@ -228,6 +232,28 @@ public final class URISupport {
         }
 
         return builder.toString();
+    }
+    
+    /**
+     * Builds a map from a collection of parameters.
+     * 
+     * @param parameters collection of parameters from which to build the corresponding, may be null or empty
+     * 
+     * @return a non-null map of query parameter name-> value. Keys will be non-null. Values may be null.
+     */
+    @Nonnull public static Map<String,String> buildQueryMap(@Nullable final List<Pair<String, String>> parameters) {
+        if (parameters == null || parameters.size() == 0) {
+            return Collections.emptyMap();
+        }
+        
+        final HashMap<String,String> map = new HashMap<>();
+        for (final Pair<String,String> param : parameters) {
+            if (param.getFirst() != null) {
+                map.put(param.getFirst(), param.getSecond());
+            }
+        }
+        
+        return map;
     }
 
     /**
