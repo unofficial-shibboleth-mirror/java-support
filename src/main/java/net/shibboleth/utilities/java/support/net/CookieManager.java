@@ -167,8 +167,8 @@ public final class CookieManager extends AbstractInitializableComponent {
         
         if (httpRequest == null || httpResponse == null) {
             throw new ComponentInitializationException("Servlet request and response must be set");
-        } else if (!secure || !httpOnly) {
-            log.warn("Use of secure and httpOnly properties are strongly advisable, currently one or both are false");
+        } else if (!secure) {
+            log.warn("Use of secure property is strongly advised");
         }
     }
 
