@@ -32,8 +32,8 @@ public final class Constraint {
     }
 
     /**
-     * Checks that the given collection is empty. If the collection is not empty an {@link ConstraintViolationException}
-     * is thrown.
+     * Checks that the given collection is null or empty. If the collection is not empty a
+     * {@link ConstraintViolationException} is thrown.
      * 
      * @param <T> type of items in the collection
      * @param collection collection to check
@@ -41,7 +41,7 @@ public final class Constraint {
      * 
      * @return the checked input
      */
-    @Nonnull public static <T> Collection<T> isEmpty(@Nonnull final Collection<T> collection,
+    @Nullable public static <T> Collection<T> isEmpty(@Nullable final Collection<T> collection,
             @Nonnull final String message) {
         if (collection != null && !collection.isEmpty()) {
             throw new ConstraintViolationException(message);
@@ -51,7 +51,7 @@ public final class Constraint {
     }
     
     /**
-     * Checks that the given boolean is false. If not an {@link ConstraintViolationException} is thrown.
+     * Checks that the given boolean is false. If not a {@link ConstraintViolationException} is thrown.
      * 
      * @param b boolean to check
      * @param message message used in {@link ConstraintViolationException}
@@ -68,7 +68,7 @@ public final class Constraint {
 
     /**
      * Checks that the given number is greater than a given threshold. If the number is not greater than the threshold
-     * an {@link ConstraintViolationException} is thrown.
+     * a {@link ConstraintViolationException} is thrown.
      * 
      * @param threshold the threshold
      * @param number the number to be checked
@@ -86,7 +86,7 @@ public final class Constraint {
 
     /**
      * Checks that the given number is greater than, or equal to, a given threshold. If the number is not greater than,
-     * or equal to, the threshold an {@link ConstraintViolationException} is thrown.
+     * or equal to, the threshold a {@link ConstraintViolationException} is thrown.
      * 
      * @param threshold the threshold
      * @param number the number to be checked
@@ -103,7 +103,7 @@ public final class Constraint {
     }
 
     /**
-     * Checks that the given number is less than a given threshold. If the number is not less than the threshold an
+     * Checks that the given number is less than a given threshold. If the number is not less than the threshold a
      * {@link ConstraintViolationException} is thrown.
      * 
      * @param threshold the threshold
@@ -122,7 +122,7 @@ public final class Constraint {
 
     /**
      * Checks that the given number is less than, or equal to, a given threshold. If the number is not less than, or
-     * equal to, the threshold an {@link ConstraintViolationException} is thrown.
+     * equal to, the threshold a {@link ConstraintViolationException} is thrown.
      * 
      * @param threshold the threshold
      * @param number the number to be checked
@@ -139,8 +139,8 @@ public final class Constraint {
     }
 
     /**
-     * Checks that the given collection is not empty. If the collection is empty an {@link ConstraintViolationException}
-     * is thrown.
+     * Checks that the given collection is not empty. If the collection is null or empty a
+     * {@link ConstraintViolationException} is thrown.
      * 
      * @param <T> type of items in the collection
      * @param collection collection to check
@@ -148,7 +148,7 @@ public final class Constraint {
      * 
      * @return the checked input
      */
-    @Nonnull public static <T> Collection<T> isNotEmpty(@Nonnull final Collection<T> collection,
+    @Nonnull public static <T> Collection<T> isNotEmpty(@Nullable final Collection<T> collection,
             @Nonnull final String message) {
         if (collection == null || collection.isEmpty()) {
             throw new ConstraintViolationException(message);
@@ -158,7 +158,7 @@ public final class Constraint {
     }
 
     /**
-     * Checks that the given array is not empty. If the array is empty an {@link ConstraintViolationException}
+     * Checks that the given array is not empty. If the array is null or empty a {@link ConstraintViolationException}
      * is thrown.
      * 
      * @param <T> type of items in the array
@@ -167,7 +167,7 @@ public final class Constraint {
      * 
      * @return the checked input
      */
-    @Nonnull public static <T> T[] isNotEmpty(@Nonnull final T[] array,
+    @Nonnull public static <T> T[] isNotEmpty(@Nullable final T[] array,
             @Nonnull final String message) {
         if (array == null || array.length == 0) {
             throw new ConstraintViolationException(message);
@@ -177,15 +177,15 @@ public final class Constraint {
     }
 
     /**
-     * Checks that the given byte array is not empty. If the array is empty an {@link ConstraintViolationException}
-     * is thrown.
+     * Checks that the given byte array is not empty. If the array is null or empty a
+     * {@link ConstraintViolationException} is thrown.
      * 
      * @param array array to check
      * @param message message used in the {@link ConstraintViolationException}
      * 
      * @return the checked input
      */
-    @Nonnull public static byte[] isNotEmpty(@Nonnull final byte[] array,
+    @Nonnull public static byte[] isNotEmpty(@Nullable final byte[] array,
             @Nonnull final String message) {
         if (array == null || array.length == 0) {
             throw new ConstraintViolationException(message);
@@ -195,15 +195,15 @@ public final class Constraint {
     }    
     
     /**
-     * Checks that the given string is not empty. If the string is empty a {@link ConstraintViolationException}
-     * is thrown.
+     * Checks that the given string is not empty. If the string is null or empty a
+     * {@link ConstraintViolationException} is thrown.
      * 
      * @param string string to check
      * @param message message used in the {@link ConstraintViolationException}
      * 
      * @return the checked input
      */
-    @Nonnull public static String isNotEmpty(@Nonnull final String string,
+    @Nonnull public static String isNotEmpty(@Nullable final String string,
             @Nonnull final String message) {
         if (string == null || string.length() == 0) {
             throw new ConstraintViolationException(message);
@@ -213,7 +213,7 @@ public final class Constraint {
     }
 
     /**
-     * Checks that the given object is not null. If the object is null an {@link ConstraintViolationException} is
+     * Checks that the given object is not null. If the object is null a {@link ConstraintViolationException} is
      * thrown.
      * 
      * @param <T> object type
@@ -231,7 +231,7 @@ public final class Constraint {
     }
 
     /**
-     * Checks that the given object is null. If the object is not null an {@link ConstraintViolationException} is
+     * Checks that the given object is null. If the object is not null a {@link ConstraintViolationException} is
      * thrown.
      * 
      * @param <T> object type
@@ -250,7 +250,7 @@ public final class Constraint {
     }
 
     /**
-     * Checks that the given boolean is true. If not an {@link ConstraintViolationException} is thrown.
+     * Checks that the given boolean is true. If not a {@link ConstraintViolationException} is thrown.
      * 
      * @param b boolean to check
      * @param message message used in {@link ConstraintViolationException}
@@ -266,7 +266,7 @@ public final class Constraint {
     }
 
     /**
-     * Checks that the array does not contain any null elements.
+     * Checks that the array is non null and does not contain any null elements.
      * 
      * @param <T> type of elements in the array
      * @param array array to check
@@ -274,7 +274,7 @@ public final class Constraint {
      * 
      * @return the given array
      */
-    @Nonnull public static <T> T[] noNullItems(@Nonnull final T[] array, @Nonnull final String message) {
+    @Nonnull public static <T> T[] noNullItems(@Nullable final T[] array, @Nonnull final String message) {
         if (array == null) {
             throw new ConstraintViolationException(message);
         }
@@ -289,7 +289,7 @@ public final class Constraint {
     }
 
     /**
-     * Checks that the collection does not contain any null elements.
+     * Checks that the collection is non null and does not contain any null elements.
      *
      * @param <T> type of collection to inspect.
      * @param collection to check.
@@ -297,7 +297,7 @@ public final class Constraint {
      *
      * @return the given array
      */
-    @Nonnull public static <T extends Collection<?>> T noNullItems(@Nonnull final T collection,
+    @Nonnull public static <T extends Collection<?>> T noNullItems(@Nullable final T collection,
             @Nonnull final String message) {
         if (collection == null) {
             throw new ConstraintViolationException(message);
@@ -313,7 +313,7 @@ public final class Constraint {
     }
 
     /**
-     * Checks that the given number is in the exclusive range. If the number is not in the range an
+     * Checks that the given number is in the exclusive range. If the number is not in the range a
      * {@link ConstraintViolationException} is thrown.
      * 
      * @param lowerTheshold lower bound of the range
@@ -333,7 +333,7 @@ public final class Constraint {
     }
 
     /**
-     * Checks that the given number is in the inclusive range. If the number is not in the range an
+     * Checks that the given number is in the inclusive range. If the number is not in the range a
      * {@link ConstraintViolationException} is thrown.
      * 
      * @param lowerTheshold lower bound of the range
