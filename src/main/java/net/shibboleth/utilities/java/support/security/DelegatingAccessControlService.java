@@ -18,6 +18,8 @@
 package net.shibboleth.utilities.java.support.security;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.servlet.ServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +56,7 @@ public class DelegatingAccessControlService extends AbstractIdentifiableInitiali
 
     /** {@inheritDoc} */
     @Override
-    public AccessControl getInstance(@Nonnull final String name) {
+    @Nonnull public AccessControl getInstance(@Nonnull final String name) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ServiceableComponent<AccessControlService> component = null;
         try {
@@ -71,7 +73,13 @@ public class DelegatingAccessControlService extends AbstractIdentifiableInitiali
                 component.unpinComponent();
             }
         }
-        return null;
+
+        return new AccessControl() {
+            public boolean checkAccess(@Nonnull final ServletRequest request, @Nullable final String operation,
+                    @Nullable final String resource) {
+                return false;
+            }
+        };
     }
     
 }
