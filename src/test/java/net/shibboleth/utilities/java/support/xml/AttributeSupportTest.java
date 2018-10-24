@@ -22,9 +22,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
@@ -45,15 +47,15 @@ import org.xml.sax.SAXException;
 public class AttributeSupportTest {
 
     // Contants to test against
-    private static final String TEST_NS = "http://example.org/NameSpace";
+    @Nonnull @NotEmpty private static final String TEST_NS = "http://example.org/NameSpace";
 
-    private static final String TEST_PREFIX = "testns";
+    @Nonnull @NotEmpty private static final String TEST_PREFIX = "testns";
 
-    private static final String TEST_ID_ATTRIBUTE = "testAttributeName";
+    @Nonnull @NotEmpty private static final String TEST_ID_ATTRIBUTE = "testAttributeName";
 
-    private static final String TEST_ID_PREFIXEDATTRIBUTE = TEST_PREFIX + ":" + TEST_ID_ATTRIBUTE;
+    @Nonnull @NotEmpty private static final String TEST_ID_PREFIXEDATTRIBUTE = TEST_PREFIX + ":" + TEST_ID_ATTRIBUTE;
 
-    private static final String TEST_ID_ATTRIBUTE_VALUE = "IDAttrVALUE";
+    @Nonnull @NotEmpty private static final String TEST_ID_ATTRIBUTE_VALUE = "IDAttrVALUE";
 
     // Set up at start of all methods
     private QName idAttrQName;
@@ -175,7 +177,7 @@ public class AttributeSupportTest {
         // test Add now that we know that get works
         boolean thrown = false;
         try {
-            AttributeSupport.addXMLId(createdElement, null);
+            AttributeSupport.addXMLId(createdElement, nullValue());
         } catch (ConstraintViolationException e) {
             thrown = true;
         }
@@ -183,7 +185,7 @@ public class AttributeSupportTest {
 
         thrown = false;
         try {
-            AttributeSupport.addXMLId(null, "fr");
+            AttributeSupport.addXMLId(nullValue(), "fr");
         } catch (ConstraintViolationException e) {
             thrown = true;
         }
@@ -203,7 +205,7 @@ public class AttributeSupportTest {
         // test Add
         boolean thrown = false;
         try {
-            AttributeSupport.addXMLBase(createdElement, null);
+            AttributeSupport.addXMLBase(createdElement, nullValue());
         } catch (ConstraintViolationException e) {
             thrown = true;
         }
@@ -211,7 +213,7 @@ public class AttributeSupportTest {
 
         thrown = false;
         try {
-            AttributeSupport.addXMLBase(null, "foo");
+            AttributeSupport.addXMLBase(nullValue(), "foo");
         } catch (ConstraintViolationException e) {
             thrown = true;
         }
@@ -234,7 +236,7 @@ public class AttributeSupportTest {
         // test Add
         boolean thrown = false;
         try {
-            AttributeSupport.addXMLSpace(createdElement, null);
+            AttributeSupport.addXMLSpace(createdElement, nullValue());
         } catch (ConstraintViolationException e) {
             thrown = true;
         }
@@ -242,7 +244,7 @@ public class AttributeSupportTest {
 
         thrown = false;
         try {
-            AttributeSupport.addXMLSpace(null, XMLSpace.DEFAULT);
+            AttributeSupport.addXMLSpace(nullValue(), XMLSpace.DEFAULT);
         } catch (ConstraintViolationException e) {
             thrown = true;
         }
@@ -277,7 +279,7 @@ public class AttributeSupportTest {
         // test Add
         boolean thrown = false;
         try {
-            AttributeSupport.addXMLLang(createdElement, null);
+            AttributeSupport.addXMLLang(createdElement, nullValue());
         } catch (ConstraintViolationException e) {
             thrown = true;
         }
@@ -285,7 +287,7 @@ public class AttributeSupportTest {
 
         thrown = false;
         try {
-            AttributeSupport.addXMLLang(null, "fr");
+            AttributeSupport.addXMLLang(nullValue(), "fr");
         } catch (ConstraintViolationException e) {
             thrown = true;
         }
@@ -455,7 +457,7 @@ public class AttributeSupportTest {
         Assert.assertNull(AttributeSupport.getAttributeValue(createdElement, qName), "Test precondition");
         boolean thrown = false;
         try {
-            AttributeSupport.appendAttribute(null, qName, testResult);
+            AttributeSupport.appendAttribute(nullValue(), qName, testResult);
         } catch (ConstraintViolationException e) {
             thrown = true;
         }
@@ -463,7 +465,7 @@ public class AttributeSupportTest {
 
         thrown = false;
         try {
-            AttributeSupport.appendAttribute(createdElement, null, testResult);
+            AttributeSupport.appendAttribute(createdElement, nullValue(), testResult);
         } catch (ConstraintViolationException e) {
             thrown = true;
         }
@@ -471,7 +473,7 @@ public class AttributeSupportTest {
 
         thrown = false;
         try {
-            AttributeSupport.appendAttribute(createdElement, qName, null);
+            AttributeSupport.appendAttribute(createdElement, qName, nullValue());
         } catch (ConstraintViolationException e) {
             thrown = true;
         }
@@ -496,7 +498,7 @@ public class AttributeSupportTest {
 
         thrown = false;
         try {
-            AttributeSupport.appendAttribute(null, qName, testResult, false);
+            AttributeSupport.appendAttribute(nullValue(), qName, testResult, false);
         } catch (ConstraintViolationException e) {
             thrown = true;
         }
@@ -504,7 +506,7 @@ public class AttributeSupportTest {
 
         thrown = false;
         try {
-            AttributeSupport.appendAttribute(createdElement, null, testResult, false);
+            AttributeSupport.appendAttribute(createdElement, nullValue(), testResult, false);
         } catch (ConstraintViolationException e) {
             thrown = true;
         }
@@ -512,7 +514,7 @@ public class AttributeSupportTest {
 
         thrown = false;
         try {
-            AttributeSupport.appendAttribute(createdElement, qName, (String) null, false);
+            AttributeSupport.appendAttribute(createdElement, qName, (String) nullValue(), false);
         } catch (ConstraintViolationException e) {
             thrown = true;
         }
@@ -549,7 +551,7 @@ public class AttributeSupportTest {
 
         thrown = false;
         try {
-            AttributeSupport.appendAttribute(null, qName, data, false);
+            AttributeSupport.appendAttribute(nullValue(), qName, data, false);
         } catch (ConstraintViolationException e) {
             thrown = true;
         }
@@ -557,7 +559,7 @@ public class AttributeSupportTest {
 
         thrown = false;
         try {
-            AttributeSupport.appendAttribute(createdElement, null, data, false);
+            AttributeSupport.appendAttribute(createdElement, nullValue(), data, false);
         } catch (ConstraintViolationException e) {
             thrown = true;
         }
@@ -596,7 +598,7 @@ public class AttributeSupportTest {
         Assert.assertNull(AttributeSupport.getAttributeValue(createdElement, qName), "Test precondition");
         thrown = false;
         try {
-            AttributeSupport.appendDurationAttribute(null, qName, duration);
+            AttributeSupport.appendDurationAttribute(nullValue(), qName, duration);
         } catch (ConstraintViolationException e) {
             thrown = true;
         }
@@ -604,7 +606,7 @@ public class AttributeSupportTest {
 
         thrown = false;
         try {
-            AttributeSupport.appendDurationAttribute(createdElement, null, duration);
+            AttributeSupport.appendDurationAttribute(createdElement, nullValue(), duration);
         } catch (ConstraintViolationException e) {
             thrown = true;
         }
@@ -627,7 +629,7 @@ public class AttributeSupportTest {
         Assert.assertNull(AttributeSupport.getAttributeValue(createdElement, qName), "Test precondition");
         thrown = false;
         try {
-            AttributeSupport.appendDateTimeAttribute(null, qName, time);
+            AttributeSupport.appendDateTimeAttribute(nullValue(), qName, time);
         } catch (ConstraintViolationException e) {
             thrown = true;
         }
@@ -635,7 +637,7 @@ public class AttributeSupportTest {
 
         thrown = false;
         try {
-            AttributeSupport.appendDateTimeAttribute(createdElement, null, time);
+            AttributeSupport.appendDateTimeAttribute(createdElement, nullValue(), time);
         } catch (ConstraintViolationException e) {
             thrown = true;
         }
@@ -652,6 +654,10 @@ public class AttributeSupportTest {
                 AttributeSupport.getDateTimeAttributeAsLong(AttributeSupport.getAttribute(createdElement, qName))
                         .intValue(), time, "getDurationAttributeValueAsLong failed");
 
+    }
+
+    private <T> T nullValue() {
+        return null;
     }
 
 }

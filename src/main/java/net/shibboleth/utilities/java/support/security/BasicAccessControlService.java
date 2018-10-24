@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.servlet.ServletRequest;
 
 import org.slf4j.Logger;
@@ -80,7 +81,8 @@ public class BasicAccessControlService extends AbstractIdentifiableInitializable
                 getId(), name);
         
         return new AccessControl() {
-            public boolean checkAccess(final ServletRequest request, final String operation, final String resource) {
+            public boolean checkAccess(@Nonnull final ServletRequest request, @Nullable final String operation,
+                    @Nullable final String resource) {
                 return false;
             }
         };

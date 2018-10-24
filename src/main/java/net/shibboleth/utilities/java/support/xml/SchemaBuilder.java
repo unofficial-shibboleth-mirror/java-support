@@ -202,7 +202,7 @@ public class SchemaBuilder {
      * 
      * @param schemaSources schema sources
      */
-    @Nonnull public void setSchemas(@Nonnull @NullableElements final Collection<Source> schemaSources) {
+    public void setSchemas(@Nonnull @NullableElements final Collection<Source> schemaSources) {
         Constraint.isNotNull(schemaSources, "Schema source file paths cannot be null");
 
         resetSchemas();
@@ -222,7 +222,7 @@ public class SchemaBuilder {
      * 
      * @param schemaResources schema resources
      */
-    @Nonnull public void setSchemaResources(@Nonnull @NullableElements final Collection<Resource> schemaResources) {
+    public void setSchemaResources(@Nonnull @NullableElements final Collection<Resource> schemaResources) {
         Constraint.isNotNull(schemaResources, "Schema resources cannot be null");
 
         resetSchemas();

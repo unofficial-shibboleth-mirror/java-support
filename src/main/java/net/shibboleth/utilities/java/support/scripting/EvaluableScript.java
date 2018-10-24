@@ -42,16 +42,16 @@ import com.google.common.io.Files;
 public class EvaluableScript {
 
     /** The scripting language. */
-    private final String scriptLanguage;
+    @Nonnull @NotEmpty private final String scriptLanguage;
 
     /** The script to execute. */
-    private final String script;
+    @Nonnull @NotEmpty private final String script;
 
     /** The script engine to execute the script. */
-    private ScriptEngine scriptEngine;
+    @Nullable private ScriptEngine scriptEngine;
 
     /** The compiled form of the script, if the script engine supports compiling. */
-    private CompiledScript compiledScript;
+    @Nullable private CompiledScript compiledScript;
 
     /**
      * Constructor.
@@ -137,8 +137,8 @@ public class EvaluableScript {
         try {
             script =
                     Constraint.isNotNull(
-                            StringSupport.trimOrNull(Files.toString(scriptSource, Charset.defaultCharset())),
-                            "Script source can not be empty");
+                            StringSupport.trimOrNull(Files.asCharSource(scriptSource, Charset.defaultCharset()).read()),
+                            "Script source cannot be empty");
         } catch (final IOException e) {
             throw new ScriptException("Unable to read data from source file " + scriptSource.getAbsolutePath());
         }
@@ -151,7 +151,7 @@ public class EvaluableScript {
      * 
      * @return the script source
      */
-    @Nonnull public String getScript() {
+    @Nonnull @NotEmpty public String getScript() {
         return script;
     }
 
@@ -160,7 +160,7 @@ public class EvaluableScript {
      * 
      * @return the script source
      */
-    @Nonnull public String getScriptLanguage() {
+    @Nonnull @NotEmpty public String getScriptLanguage() {
         return scriptLanguage;
     }
 
@@ -173,7 +173,7 @@ public class EvaluableScript {
      * 
      * @throws ScriptException thrown if there was a problem evaluating the script
      */
-    @Nullable public Object eval(final Bindings scriptBindings) throws ScriptException {
+    @Nullable public Object eval(@Nonnull final Bindings scriptBindings) throws ScriptException {
         if (compiledScript != null) {
             return compiledScript.eval(scriptBindings);
         } else {
@@ -190,7 +190,7 @@ public class EvaluableScript {
      * 
      * @throws ScriptException thrown if there was a problem evaluating the script
      */
-    @Nullable public Object eval(final ScriptContext scriptContext) throws ScriptException {
+    @Nullable public Object eval(@Nonnull final ScriptContext scriptContext) throws ScriptException {
         if (compiledScript != null) {
             return compiledScript.eval(scriptContext);
         } else {

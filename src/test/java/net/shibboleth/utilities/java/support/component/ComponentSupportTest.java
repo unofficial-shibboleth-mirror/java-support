@@ -67,7 +67,7 @@ public class ComponentSupportTest {
         }
 
         try {
-            ComponentSupport.ifDestroyedThrowDestroyedComponentException(null);
+            ComponentSupport.ifDestroyedThrowDestroyedComponentException(nullValue());
             Assert.fail();
         } catch (ConstraintViolationException e) {
             // expected this
@@ -92,7 +92,7 @@ public class ComponentSupportTest {
         }
 
         try {
-            ComponentSupport.ifNotInitializedThrowUninitializedComponentException(null);
+            ComponentSupport.ifNotInitializedThrowUninitializedComponentException(nullValue());
             Assert.fail();
         } catch (ConstraintViolationException e) {
             // expected this
@@ -117,11 +117,15 @@ public class ComponentSupportTest {
         }
 
         try {
-            ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(null);
+            ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(nullValue());
             Assert.fail();
         } catch (ConstraintViolationException e) {
             // expected this
         }
+    }
+    
+    private <T> T nullValue() {
+        return null;
     }
 
     private class MockDestructableComponent implements DestructableComponent {

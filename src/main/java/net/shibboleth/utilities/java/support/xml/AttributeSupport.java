@@ -231,7 +231,7 @@ public final class AttributeSupport {
      * @return the attribute or null if the given element or attribute was null or the given attribute did not contain
      *         an attribute with the given name
      */
-    @Nonnull public static Attr getAttribute(@Nullable final Element element, @Nullable final QName attributeName) {
+    @Nullable public static Attr getAttribute(@Nullable final Element element, @Nullable final QName attributeName) {
         if (element == null || attributeName == null) {
             return null;
         }

@@ -20,6 +20,7 @@ package net.shibboleth.utilities.java.support.collection;
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -92,13 +93,13 @@ public class ClassToInstanceMultiMap<B> {
     }
 
     /**
-     * Returns true if the map contains a mapping to the given value.
+     * Returns true iff the map contains a mapping to the given value, false if value is null.
      * 
      * @param value value to check for in this map
      * 
-     * @return true if the map contains a mapping to the specified value
+     * @return true iff the map contains a mapping to the specified value
      */
-    public boolean containsValue(@Nonnull final B value) {
+    public boolean containsValue(@Nullable final B value) {
         if (value == null) {
             return false;
         }
@@ -156,9 +157,7 @@ public class ClassToInstanceMultiMap<B> {
      * @param value value to be stored in the map
      */
     public void put(@Nonnull final B value) {
-        if (value == null) {
-            return;
-        }
+        Constraint.isNotNull(value, "Value cannot be null");
 
         if (!values.contains(value)) {
             values.add(value);
@@ -223,18 +222,16 @@ public class ClassToInstanceMultiMap<B> {
      * 
      * @param value the value to remove
      */
-    public void remove(@Nonnull final B value) {
-        if (value == null) {
-            return;
-        }
+    public void remove(@Nullable final B value) {
+        final B checked = Constraint.isNotNull(value, "Value cannot be null");
 
-        values.remove(value);
+        values.remove(checked);
 
         List<B> indexValues;
-        for (final Class<?> indexKey : getIndexTypes(value)) {
+        for (final Class<?> indexKey : getIndexTypes(checked)) {
             indexValues = backingMap.get(indexKey);
             if (indexValues != null) {
-                indexValues.remove(value);
+                indexValues.remove(checked);
                 if (indexValues.isEmpty()) {
                     backingMap.remove(indexKey);
                 }

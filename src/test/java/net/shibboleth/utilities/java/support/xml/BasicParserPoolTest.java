@@ -30,9 +30,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.validation.Schema;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
@@ -58,13 +60,13 @@ import org.xml.sax.SAXParseException;
  */
 public class BasicParserPoolTest {
 
-    private static final String TEST_DIR = "/net/shibboleth/utilities/java/support/xml/";
+    @Nonnull @NotEmpty private static final String TEST_DIR = "/net/shibboleth/utilities/java/support/xml/";
 
-    private static final String SCHEMA_FILE = TEST_DIR + "basicParserPoolTest.xsd";
+    @Nonnull @NotEmpty private static final String SCHEMA_FILE = TEST_DIR + "basicParserPoolTest.xsd";
 
-    private static final String XML_FILE = TEST_DIR + "basicParserPoolTest.xml";
+    @Nonnull @NotEmpty private static final String XML_FILE = TEST_DIR + "basicParserPoolTest.xml";
     
-    private static final String DTD_FILE = TEST_DIR + "dtdParserPoolTest.xml";
+    @Nonnull @NotEmpty private static final String DTD_FILE = TEST_DIR + "dtdParserPoolTest.xml";
 
     private BasicParserPool basicParserPool;
     /** Max size of the pool we're using. */
@@ -159,7 +161,7 @@ public class BasicParserPoolTest {
         basicParserPool.setXincludeAware(false);
         basicParserPool.setEntityResolver(null);
         try {
-            basicParserPool.setErrorHandler(null);
+            basicParserPool.setErrorHandler(nullValue());
             Assert.fail("Null ErrorHandler should have been rejected");
         } catch (ConstraintViolationException e) {
             //Expected
@@ -761,8 +763,10 @@ pool.initialize();
         Assert.assertEquals(maxPoolSize, basicParserPool.getPoolSize());
     }
     
-    
-    
+    private <T> T nullValue() {
+        return null;
+    }
+        
     // Helpers
     
     public static class MockEntityResolver implements EntityResolver {

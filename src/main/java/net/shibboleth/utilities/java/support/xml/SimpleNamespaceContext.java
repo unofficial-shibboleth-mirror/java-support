@@ -79,7 +79,7 @@ public class SimpleNamespaceContext implements NamespaceContext {
     }
 
     /** {@inheritDoc} */
-    @Nullable public String getNamespaceURI(@Nonnull final String prefix) {
+    @Nullable public String getNamespaceURI(final String prefix) {
         if (prefix == null) {
             throw new IllegalArgumentException("Prefix can not be null");
         }
@@ -93,7 +93,7 @@ public class SimpleNamespaceContext implements NamespaceContext {
     }
 
     /** {@inheritDoc} */
-    @Nullable public String getPrefix(@Nonnull final String namespaceURI) {
+    @Nullable public String getPrefix(final String namespaceURI) {
         if (namespaceURI == null) {
             throw new IllegalArgumentException("Namespace URI can not be null");
         }

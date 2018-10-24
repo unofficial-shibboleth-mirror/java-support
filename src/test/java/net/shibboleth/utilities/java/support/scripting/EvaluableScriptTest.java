@@ -23,8 +23,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.annotation.Nonnull;
 import javax.script.ScriptException;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.testng.Assert;
@@ -35,10 +37,10 @@ import org.testng.annotations.Test;
 public class EvaluableScriptTest {
 
     
-    private static final String SCRIPT_LANGUAGE = "JavaScript";
+    @Nonnull @NotEmpty private static final String SCRIPT_LANGUAGE = "JavaScript";
 
     /** A simple script to set a constant value. */
-    private static final String TEST_SIMPLE_SCRIPT = "importPackage(Packages.net.shibboleth.idp.attribute);\n"
+    @Nonnull @NotEmpty private static final String TEST_SIMPLE_SCRIPT = "importPackage(Packages.net.shibboleth.idp.attribute);\n"
             + "foo = res = new Attribute(\"bar\");\n foo.addValue(\"value\");\n";
     
     private File theFile;
@@ -68,14 +70,14 @@ public class EvaluableScriptTest {
         }
 
         try {
-            new EvaluableScript(null, TEST_SIMPLE_SCRIPT);
+            new EvaluableScript(nullValue(), TEST_SIMPLE_SCRIPT);
             Assert.fail();
         } catch (final ConstraintViolationException e) {
             // OK
         }
         
         try {
-            new EvaluableScript(SCRIPT_LANGUAGE, (String) null);
+            new EvaluableScript(SCRIPT_LANGUAGE, (String) nullValue());
             Assert.fail();
         } catch (final ConstraintViolationException e) {
             // OK
@@ -94,18 +96,23 @@ public class EvaluableScriptTest {
         }
 
         try {
-            new EvaluableScript(null, theFile);
+            new EvaluableScript(nullValue(), theFile);
             Assert.fail();
         } catch (final ConstraintViolationException e) {
             // OK
         }
         
         try {
-            new EvaluableScript(SCRIPT_LANGUAGE, (File) null);
+            new EvaluableScript(SCRIPT_LANGUAGE, (File) nullValue());
             Assert.fail();
         } catch (final ConstraintViolationException e) {
             // OK
         }
 
     }
+
+    private <T> T nullValue() {
+        return null;
+    }
+
 }

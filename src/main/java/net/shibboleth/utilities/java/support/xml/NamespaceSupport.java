@@ -87,13 +87,17 @@ public final class NamespaceSupport {
      * @param startingElement the starting element
      * @param stoppingElement the ancestor of the starting element that serves as the upper-bound, inclusive, for the
      *            search
-     * @param prefix the prefix to look up. If null then the default namespace is returned.
+     * @param prefix the prefix to look up. If null then the default namespace is sought and returned.
      * 
-     * @return the namespace URI for the given prefer or null
+     * @return the namespace URI for the given prefix or null
      */
-    @Nullable public static String lookupNamespaceURI(@Nonnull final Element startingElement,
-            @Nullable final Element stoppingElement, @Nonnull final String prefix) {
-        Constraint.isNotNull(startingElement, "Starting element may not be null");
+// Checkstyle: CyclomaticComplexity OFF    
+    @Nullable public static String lookupNamespaceURI(@Nullable final Element startingElement,
+            @Nullable final Element stoppingElement, @Nullable final String prefix) {
+        
+        if (startingElement == null) {
+            return null;
+        }
 
         // This code is a modified version of the lookup code within Xerces
         if (startingElement.hasAttributes()) {
@@ -127,7 +131,8 @@ public final class NamespaceSupport {
 
         return null;
     }
-
+// Checkstyle: CyclomaticComplexity ON
+    
     /**
      * Looks up the namespace prefix associated with the given URI starting at the given element. This method differs
      * from {@link Node#lookupPrefix(java.lang.String)} in that only those namespaces declared by an xmlns attribute
@@ -139,14 +144,14 @@ public final class NamespaceSupport {
      * (if, for instance the prefix is associated with different namespaces at different points of the hierarchy.
      * 
      * @param startingElement the starting element
-     * @param stopingElement the ancestor of the starting element that serves as the upper-bound, inclusive, for the
+     * @param stoppingElement the ancestor of the starting element that serves as the upper-bound, inclusive, for the
      *            search
      * @param namespaceURI the uri to look up
      * 
      * @return the prefix for the given namespace URI or null if non exists or the the URI is for the default namespace.
      */
     @Nullable public static String lookupPrefix(@Nonnull final Element startingElement,
-            @Nullable final Element stopingElement, @Nullable final String namespaceURI) {
+            @Nullable final Element stoppingElement, @Nullable final String namespaceURI) {
         Constraint.isNotNull(startingElement, "Starting element may not be null");
 
         if (null == namespaceURI) {
@@ -178,10 +183,10 @@ public final class NamespaceSupport {
             }
         }
 
-        if (startingElement != stopingElement) {
+        if (startingElement != stoppingElement) {
             final Element ancestor = ElementSupport.getElementAncestor(startingElement);
             if (ancestor != null) {
-                return lookupPrefix(ancestor, stopingElement, namespaceURI);
+                return lookupPrefix(ancestor, stoppingElement, namespaceURI);
             }
         }
 

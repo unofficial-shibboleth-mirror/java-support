@@ -22,17 +22,19 @@ import java.util.UUID;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+
 /** Generates a type 4 UUID as an identifier. */
 @ThreadSafe
 public class Type4UUIDIdentifierGenerationStrategy implements IdentifierGenerationStrategy {
 
     /** {@inheritDoc} */
-    @Nonnull public String generateIdentifier() {
+    @Nonnull @NotEmpty public String generateIdentifier() {
         return generateIdentifier(true);
     }
 
     /** {@inheritDoc} */
-    public String generateIdentifier(final boolean xmlSafe) {
+    @Nonnull @NotEmpty public String generateIdentifier(final boolean xmlSafe) {
         if (xmlSafe) {
             return "_" + UUID.randomUUID().toString();
         } else {

@@ -19,6 +19,7 @@ package net.shibboleth.utilities.java.support.security;
 
 import javax.annotation.Nonnull;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
@@ -30,24 +31,24 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 public class FixedStringIdentifierGenerationStrategy implements IdentifierGenerationStrategy {
 
     /** Fixed identifier to use for all invocations. */
-    private final String identifier;
+    @Nonnull @NotEmpty private final String identifier;
 
     /**
      * Constructor.
      *
      * @param id fixed identifier to use for all invocations.
      */
-    public FixedStringIdentifierGenerationStrategy(@Nonnull final String id) {
-        identifier = Constraint.isNotNull(id, "identifier may not be null");
+    public FixedStringIdentifierGenerationStrategy(@Nonnull @NotEmpty final String id) {
+        identifier = Constraint.isNotEmpty(id, "identifier cannot be null or empty");
     }
 
-    @Override
-    public String generateIdentifier() {
+    /** {@inheritDoc} */
+    @Nonnull @NotEmpty public String generateIdentifier() {
         return identifier;
     }
 
-    @Override
-    public String generateIdentifier(final boolean xmlSafe) {
+    /** {@inheritDoc} */
+    @Nonnull @NotEmpty public String generateIdentifier(final boolean xmlSafe) {
         return identifier;
     }
 

@@ -121,7 +121,7 @@ public class LockableClassToInstanceMultiMap<B> extends ClassToInstanceMultiMap<
      * 
      * @return true if the map contains a mapping to the specified value
      */
-    public boolean containsValueWithLock(@Nonnull final B value) {
+    public boolean containsValueWithLock(@Nullable final B value) {
         final Lock readLock = getReadWriteLock().readLock();
         try {
             readLock.lock();

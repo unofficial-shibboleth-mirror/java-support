@@ -31,7 +31,7 @@ public class AbstractIdentifiedInitializableComponentTest {
         Assert.assertNull(component.getId());
 
         try {
-            component.setId(null);
+            component.setId(nullValue());
             Assert.fail();
         } catch (ConstraintViolationException e) {
             // expected this
@@ -81,7 +81,12 @@ public class AbstractIdentifiedInitializableComponentTest {
         component.initialize();
     }
 
+    private String nullValue() {
+        return null;
+    }
+    
     /** Mock component. */
     private class MockComponent extends AbstractIdentifiedInitializableComponent {
     }
+    
 }

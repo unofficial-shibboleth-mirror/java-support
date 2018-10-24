@@ -34,6 +34,7 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.apache.http.HttpHost;
@@ -68,41 +69,42 @@ public class TLSSocketFactory implements LayeredConnectionSocketFactory {
     
     /** HttpContext key for a a list of TLS protocols to enable on the socket.  
      * Must be an instance of {@link List}&lt;{@link String}&gt;. */
-    public static final String CONTEXT_KEY_TLS_PROTOCOLS = "javasupport.TLSProtocols";
+    @Nonnull @NotEmpty public static final String CONTEXT_KEY_TLS_PROTOCOLS = "javasupport.TLSProtocols";
     
     /** HttpContext key for a a list of TLS cipher suites to enable on the socket.  
      * Must be an instance of {@link List}&lt;{@link String}&gt;. */
-    public static final String CONTEXT_KEY_TLS_CIPHER_SUITES = "javasupport.TLSCipherSuites";
+    @Nonnull @NotEmpty public static final String CONTEXT_KEY_TLS_CIPHER_SUITES = "javasupport.TLSCipherSuites";
     
     /** HttpContext key for an instance of {@link X509HostnameVerifier}. */
-    public static final String CONTEXT_KEY_HOSTNAME_VERIFIER = "javasupport.HostnameVerifier";
+    @Nonnull @NotEmpty public static final String CONTEXT_KEY_HOSTNAME_VERIFIER = "javasupport.HostnameVerifier";
 
     /** Protocol: TLS. */
-    public static final String TLS = "TLS";
+    @Nonnull @NotEmpty public static final String TLS = "TLS";
     
     /** Protocol: SSL. */
-    public static final String SSL = "SSL";
+    @Nonnull @NotEmpty public static final String SSL = "SSL";
     
     /** Protocol: SSLv2. */
-    public static final String SSLV2 = "SSLv2";
+    @Nonnull @NotEmpty public static final String SSLV2 = "SSLv2";
 
     /** Hostname verifier which passes all hostnames. */
-    public static final X509HostnameVerifier ALLOW_ALL_HOSTNAME_VERIFIER = new AllowAllHostnameVerifier();
+    @Nonnull public static final X509HostnameVerifier ALLOW_ALL_HOSTNAME_VERIFIER = new AllowAllHostnameVerifier();
 
     /** Hostname verifier which implements a policy similar to most browsers. */
-    public static final X509HostnameVerifier BROWSER_COMPATIBLE_HOSTNAME_VERIFIER = new BrowserCompatHostnameVerifier();
+    @Nonnull public static final X509HostnameVerifier BROWSER_COMPATIBLE_HOSTNAME_VERIFIER =
+            new BrowserCompatHostnameVerifier();
 
     /** Hostname verifier which implements a strict policy. */
-    public static final X509HostnameVerifier STRICT_HOSTNAME_VERIFIER = new StrictHostnameVerifier();
+    @Nonnull public static final X509HostnameVerifier STRICT_HOSTNAME_VERIFIER = new StrictHostnameVerifier();
     
     /** Logger. */
-    private final Logger log = LoggerFactory.getLogger(TLSSocketFactory.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(TLSSocketFactory.class);
 
     /** Socket factory. */
-    private final SSLSocketFactory socketfactory;
+    @Nonnull private final SSLSocketFactory socketfactory;
     
     /** Hostname verifier. */
-    private final X509HostnameVerifier hostnameVerifier;
+    @Nonnull private final X509HostnameVerifier hostnameVerifier;
     
     /** Factory-wide supported protocols. */
     private final String[] supportedProtocols;
@@ -129,7 +131,7 @@ public class TLSSocketFactory implements LayeredConnectionSocketFactory {
     public TLSSocketFactory(
             @Nonnull final SSLContext sslContext, 
             @Nullable final X509HostnameVerifier verifier) {
-        this(Args.notNull(sslContext, "SSL context").getSocketFactory(), null, null, verifier);
+        this(Constraint.isNotNull(sslContext, "SSL context cannot be null").getSocketFactory(), null, null, verifier);
     }
 
     /**
@@ -145,7 +147,8 @@ public class TLSSocketFactory implements LayeredConnectionSocketFactory {
             @Nullable final String[] protocols,
             @Nullable final String[] cipherSuites,
             @Nullable final X509HostnameVerifier verifier) {
-        this(Args.notNull(sslContext, "SSL context").getSocketFactory(), protocols, cipherSuites, verifier);
+        this(Constraint.isNotNull(sslContext, "SSL context cannot be null").getSocketFactory(),
+                protocols, cipherSuites, verifier);
     }
 
     /**
@@ -173,7 +176,7 @@ public class TLSSocketFactory implements LayeredConnectionSocketFactory {
             @Nullable final String[] protocols,
             @Nullable final String[] cipherSuites,
             @Nullable final X509HostnameVerifier verifier) {
-        socketfactory = Args.notNull(factory, "SSL socket factory");
+        socketfactory = Constraint.isNotNull(factory, "SSL socket factory cannot be null");
         supportedProtocols = protocols;
         supportedCipherSuites = cipherSuites;
         hostnameVerifier = verifier != null ? verifier : STRICT_HOSTNAME_VERIFIER;
@@ -242,11 +245,11 @@ public class TLSSocketFactory implements LayeredConnectionSocketFactory {
     /** {@inheritDoc} */
     public Socket connectSocket(
             final int connectTimeout,
-            @Nullable final Socket socket,
-            @Nonnull final HttpHost host,
-            @Nonnull final InetSocketAddress remoteAddress,
-            @Nullable final InetSocketAddress localAddress,
-            @Nullable final HttpContext context) throws IOException {
+            final Socket socket,
+            final HttpHost host,
+            final InetSocketAddress remoteAddress,
+            final InetSocketAddress localAddress,
+            final HttpContext context) throws IOException {
         
         log.trace("In connectSocket");
         
@@ -283,10 +286,10 @@ public class TLSSocketFactory implements LayeredConnectionSocketFactory {
 
     /** {@inheritDoc} */
     public Socket createLayeredSocket(
-            @Nonnull final Socket socket,
-            @Nonnull @NotEmpty final String target,
+            final Socket socket,
+            final String target,
             final int port,
-            @Nullable final HttpContext context) throws IOException {
+            final HttpContext context) throws IOException {
         
         log.trace("In createLayeredSocket");
         

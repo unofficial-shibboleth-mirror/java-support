@@ -44,8 +44,6 @@ import javax.annotation.Nullable;
  * An HTML encoder derived from the OWASP ESAPI project. The encoded output will be safe for an HTML interpreter as
  * unsafe characters are translated into their safe equivalent.
  * 
- * 
- * 
  * @see <a href="https://issues.shibboleth.net/jira/browse/OSJ-69">OSJ-69</a>
  * 
  * @see <code>org.owasp.esapi.Encoder</code>
@@ -61,7 +59,7 @@ public final class HTMLEncoder {
     @Nonnull public static final char[] IMMUNE_HTMLATTR = {',', '.', '-', '_'};
 
     /** Character to replace illegal characters. */
-    @Nonnull public static final char REPLACEMENT_CHAR = '\ufffd';
+    public static final char REPLACEMENT_CHAR = '\ufffd';
 
     /** Hex to replace illegal characters. */
     @Nonnull public static final String REPLACEMENT_HEX = "fffd";
@@ -149,9 +147,9 @@ public final class HTMLEncoder {
      * @param toEncode the character to encode
      * @return the encoded character
      */
-    @Nonnull private static String encodeCharacter(@Nonnull final char[] immune, @Nonnull final Character toEncode) {
+    @Nonnull private static String encodeCharacter(@Nonnull final char[] immune, final char toEncode) {
 
-        Character c = toEncode;
+        char c = toEncode;
 
         // check for immune characters
         if (containsCharacter(c, immune)) {
@@ -187,7 +185,7 @@ public final class HTMLEncoder {
      * @param c the character to lookup.
      * @return null if alphanumeric or the character code in hex.
      */
-    @Nonnull private static String getHexForNonAlphanumeric(@Nonnull final char c) {
+    @Nullable private static String getHexForNonAlphanumeric(final char c) {
         if (c < 0xFF) {
             return HEX[c];
         }
@@ -201,7 +199,7 @@ public final class HTMLEncoder {
      * @param array the array
      * @return whether or not the array contains the char
      */
-    private static boolean containsCharacter(@Nonnull final char c, @Nonnull final char[] array) {
+    private static boolean containsCharacter(final char c, @Nonnull final char[] array) {
         for (final char ch : array) {
             if (c == ch) {
                 return true;

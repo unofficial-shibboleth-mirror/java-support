@@ -73,7 +73,7 @@ public class LangBearingString extends Pair<String,String> {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return getValue();
+        return super.toString();
     }
     
 }

@@ -37,7 +37,7 @@ public class TransformAndCheckFunctionTest {
         Function<String, Optional<? extends String>> f = null;
         boolean thrown = false;
         try {
-            f = new TransformAndCheckFunction<>(null, new MyPredicate(), true);
+            f = new TransformAndCheckFunction<>(nullValue(), new MyPredicate(), true);
         } catch (ConstraintViolationException e) {
             thrown = true;
         }
@@ -45,7 +45,7 @@ public class TransformAndCheckFunctionTest {
 
         thrown = false;
         try {
-            f = new TransformAndCheckFunction<>(TrimOrNullStringFunction.INSTANCE, null, true);
+            f = new TransformAndCheckFunction<>(TrimOrNullStringFunction.INSTANCE, nullValue(), true);
         } catch (ConstraintViolationException e) {
             thrown = true;
         }
@@ -71,7 +71,11 @@ public class TransformAndCheckFunctionTest {
         org.testng.Assert.assertTrue(thrown, "mismatch should throw");
     }
 
-    public class MyPredicate implements Predicate<String> {
+    private <T> T nullValue() {
+        return null;
+    }
+    
+    private class MyPredicate implements Predicate<String> {
         /** {@inheritDoc} */
         public boolean apply(String input) {
             for (String s : excludes) {
@@ -81,6 +85,5 @@ public class TransformAndCheckFunctionTest {
             }
             return false;
         }
-
     }
 }

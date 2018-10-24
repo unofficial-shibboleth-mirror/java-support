@@ -23,6 +23,7 @@ import java.util.Random;
 
 import javax.annotation.Nonnull;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.apache.commons.codec.BinaryEncoder;
@@ -94,12 +95,12 @@ public class RandomIdentifierGenerationStrategy implements IdentifierGenerationS
     }
 
     /** {@inheritDoc} */
-    @Nonnull public String generateIdentifier() {
+    @Nonnull @NotEmpty public String generateIdentifier() {
         return generateIdentifier(true);
     }
 
     /** {@inheritDoc} */
-    public String generateIdentifier(final boolean xmlSafe) {
+    @Nonnull @NotEmpty public String generateIdentifier(final boolean xmlSafe) {
         final byte[] buf = new byte[sizeOfIdentifier];
         random.nextBytes(buf);
         try {

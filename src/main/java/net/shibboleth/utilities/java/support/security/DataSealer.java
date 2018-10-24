@@ -373,8 +373,12 @@ public class DataSealer extends AbstractInitializableComponent {
      * 
      * @throws DataSealerException if the test fails
      */
-    private void testEncryption(@Nonnull final SecretKey key) throws DataSealerException {
+    private void testEncryption(@Nullable final SecretKey key) throws DataSealerException {
 
+        if (key == null) {
+            throw new DataSealerException("Secret key was null");
+        }
+        
         final String decrypted;
         try {
             final GCMBlockCipher cipher = new GCMBlockCipher(new AESEngine());

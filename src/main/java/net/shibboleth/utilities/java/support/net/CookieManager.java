@@ -23,9 +23,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
@@ -38,13 +35,10 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
  * A helper class for managing one or more cookies on behalf of a component.
  * 
  * <p>This bean centralizes settings related to cookie creation and access,
- * and is parametrized by name so that multiple cookies may be managed with
+ * and is parameterized by name so that multiple cookies may be managed with
  * common properties.</p>
  */
 public final class CookieManager extends AbstractInitializableComponent {
-
-    /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(CookieManager.class);
 
     /** Path of cookie. */
     @Nullable private String cookiePath;
@@ -167,8 +161,6 @@ public final class CookieManager extends AbstractInitializableComponent {
         
         if (httpRequest == null || httpResponse == null) {
             throw new ComponentInitializationException("Servlet request and response must be set");
-        } else if (!secure) {
-            log.warn("Use of secure property is strongly advised");
         }
     }
 
@@ -178,7 +170,7 @@ public final class CookieManager extends AbstractInitializableComponent {
      * @param name  name of cookie
      * @param value value of cookie
      */
-    @Nullable public void addCookie(@Nonnull @NotEmpty final String name, @Nonnull @NotEmpty final String value) {
+    public void addCookie(@Nonnull @NotEmpty final String name, @Nonnull @NotEmpty final String value) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         
@@ -199,7 +191,7 @@ public final class CookieManager extends AbstractInitializableComponent {
      * 
      * @param name  name of cookie
      */
-    @Nullable public void unsetCookie(@Nonnull @NotEmpty final String name) {
+    public void unsetCookie(@Nonnull @NotEmpty final String name) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         

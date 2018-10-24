@@ -17,6 +17,7 @@
 
 package net.shibboleth.utilities.java.support.logic;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
@@ -31,7 +32,7 @@ import com.google.common.base.MoreObjects;
 public class TrimOrNullStringFunction implements Function<String, String> {
 
     /** A singleton instance of this function. */
-    public static final TrimOrNullStringFunction INSTANCE = new TrimOrNullStringFunction();
+    @Nonnull @NotEmpty public static final TrimOrNullStringFunction INSTANCE = new TrimOrNullStringFunction();
 
     /** {@inheritDoc} */
     @Nullable @NotEmpty public String apply(@Nullable final String input) {
@@ -39,6 +40,7 @@ public class TrimOrNullStringFunction implements Function<String, String> {
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
@@ -52,11 +54,13 @@ public class TrimOrNullStringFunction implements Function<String, String> {
     }
 
     /** {@inheritDoc} */
+    @Override
     public int hashCode() {
         return 31;
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         return MoreObjects.toStringHelper(this).toString();
     }

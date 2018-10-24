@@ -24,6 +24,9 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.springframework.core.io.ClassPathResource;
@@ -36,15 +39,15 @@ import org.testng.annotations.Test;
  */
 public class StringSupportTest {
 
-    private static final String TRIM_TEST1 = " AARDVARK incorporated";
+    @Nonnull @NotEmpty private static final String TRIM_TEST1 = " AARDVARK incorporated";
 
-    private static final String EMPTY_TRIM_TEST2 = " \t ";
+    @Nonnull @NotEmpty private static final String EMPTY_TRIM_TEST2 = " \t ";
 
-    private static final String SEPARATOR = "+";
+    @Nonnull @NotEmpty private static final String SEPARATOR = "+";
 
-    private static final String TEST_LIST = "1+x2+y3+z4+5+6+";
+    @Nonnull @NotEmpty private static final String TEST_LIST = "1+x2+y3+z4+5+6+";
 
-    private static final List<String> TEST_LIST_AS_LIST = Arrays.asList("1", "x2", "y3", "z4", "5", "6", "");
+    @Nonnull private static final List<String> TEST_LIST_AS_LIST = Arrays.asList("1", "x2", "y3", "z4", "5", "6", "");
 
     @Test public void testInputStreamToString() throws IOException {
         String str = null;
@@ -64,7 +67,7 @@ public class StringSupportTest {
                 "toList<String> fails");
         boolean thrown = false;
         try {
-            StringSupport.listToStringValue(TEST_LIST_AS_LIST, null);
+            StringSupport.listToStringValue(TEST_LIST_AS_LIST, nullValue());
         } catch (ConstraintViolationException e) {
             thrown = true;
         }
@@ -72,7 +75,7 @@ public class StringSupportTest {
 
         thrown = false;
         try {
-            StringSupport.listToStringValue(null, SEPARATOR);
+            StringSupport.listToStringValue(nullValue(), SEPARATOR);
         } catch (ConstraintViolationException e) {
             thrown = true;
         }
@@ -86,7 +89,7 @@ public class StringSupportTest {
 
         boolean thrown = false;
         try {
-            StringSupport.stringToList(null, SEPARATOR);
+            StringSupport.stringToList(nullValue(), SEPARATOR);
         } catch (ConstraintViolationException e) {
             thrown = true;
         }
@@ -94,7 +97,7 @@ public class StringSupportTest {
 
         thrown = false;
         try {
-            StringSupport.stringToList(TEST_LIST, null);
+            StringSupport.stringToList(TEST_LIST, nullValue());
         } catch (ConstraintViolationException e) {
             thrown = true;
         }
@@ -144,6 +147,10 @@ public class StringSupportTest {
         
         output = StringSupport.normalizeStringCollection(null);
         Assert.assertEquals(output.size(), 0);
+    }
+
+    private <T> T nullValue() {
+        return null;
     }
 
 }

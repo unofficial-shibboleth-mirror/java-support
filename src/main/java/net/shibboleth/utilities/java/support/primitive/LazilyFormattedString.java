@@ -47,7 +47,9 @@ public class LazilyFormattedString {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         return String.format(template, arguments);
     }
+    
 }

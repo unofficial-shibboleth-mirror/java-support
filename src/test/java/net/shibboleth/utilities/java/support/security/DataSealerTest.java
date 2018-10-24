@@ -17,9 +17,12 @@
 
 package net.shibboleth.utilities.java.support.security;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.resource.Resource;
 import net.shibboleth.utilities.java.support.resource.TestResourceConverter;
+
+import javax.annotation.Nonnull;
 
 import org.bouncycastle.util.Arrays;
 import org.springframework.core.io.ClassPathResource;
@@ -36,7 +39,8 @@ public class DataSealerTest {
     private Resource versionResource;
     private Resource version2Resource;
 
-    final private String THE_DATA = "THIS IS SOME TEST DATA THIS IS SOME TEST DATA THIS IS SOME TEST DATA THIS IS SOME TEST DATA THIS IS SOME TEST DATA"
+    @Nonnull @NotEmpty final private String THE_DATA =
+            "THIS IS SOME TEST DATA THIS IS SOME TEST DATA THIS IS SOME TEST DATA THIS IS SOME TEST DATA THIS IS SOME TEST DATA"
             + "THIS IS SOME TEST DATA THIS IS SOME TEST DATA THIS IS SOME TEST DATA THIS IS SOME TEST DATA THIS IS SOME TEST DATA THIS IS SOME TEST DATA"
             + "THIS IS SOME TEST DATA THIS IS SOME TEST DATA THIS IS SOME TEST DATA THIS IS SOME TEST DATA THIS IS SOME TEST DATA THIS IS SOME TEST DATA"
             + "THIS IS SOME TEST DATA THIS IS SOME TEST DATA THIS IS SOME TEST DATA THIS IS SOME TEST DATA THIS IS SOME TEST DATA THIS IS SOME TEST DATA";
@@ -182,11 +186,15 @@ public class DataSealerTest {
         }
 
         try {
-            sealer.wrap(null, 10);
+            sealer.wrap(nullValue(), 10);
             Assert.fail("no data");
         } catch (IllegalArgumentException e) {
             // OK
         }
+    }
+
+    private <T> T nullValue() {
+        return null;
     }
 
 }

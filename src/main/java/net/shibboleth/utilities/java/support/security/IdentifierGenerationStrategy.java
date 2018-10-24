@@ -19,6 +19,8 @@ package net.shibboleth.utilities.java.support.security;
 
 import javax.annotation.Nonnull;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+
 /**
  * Interface for identifier generators. This identifier can be used for things like digital signature identifiers,
  * opaque principal identifiers, etc.
@@ -30,7 +32,7 @@ public interface IdentifierGenerationStrategy {
      * 
      * @return the identifier
      */
-    @Nonnull public String generateIdentifier();
+    @Nonnull @NotEmpty public String generateIdentifier();
 
     /**
      * Generates an identifier.
@@ -38,5 +40,5 @@ public interface IdentifierGenerationStrategy {
      * @param xmlSafe true iff the result must be XML ID safe
      * @return the identifier
      */
-    @Nonnull public String generateIdentifier(boolean xmlSafe);
+    @Nonnull @NotEmpty public String generateIdentifier(boolean xmlSafe);
 }

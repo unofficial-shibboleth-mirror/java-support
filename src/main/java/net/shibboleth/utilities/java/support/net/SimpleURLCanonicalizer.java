@@ -100,7 +100,7 @@ public final class SimpleURLCanonicalizer {
         Constraint.isFalse(Strings.isNullOrEmpty(url), "URL was null or empty");
         final URLBuilder urlBuilder = new URLBuilder(url);
         canonicalize(urlBuilder);
-        return urlBuilder.buildURL();
+        return Constraint.isNotEmpty(urlBuilder.buildURL(), "Canonical URL was null");
     }
     
     /**
@@ -109,10 +109,14 @@ public final class SimpleURLCanonicalizer {
      * @param url the URLBuilder to canonicalize
      */
     private static void canonicalize(@Nonnull final URLBuilder url) {
+        
+        // Lower case the scheme.
         if (url.getScheme() != null) {
             url.setScheme(url.getScheme().toLowerCase());
-            
-            final String scheme = url.getScheme();
+        }
+        
+        final String scheme = url.getScheme();
+        if (scheme != null) {
             final Integer port = getRegisteredPort(scheme);
             if (port != null && port.equals(url.getPort())) {
                 url.setPort(null);

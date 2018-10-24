@@ -103,6 +103,7 @@ public class Pair<T1, T2> {
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean equals(@Nullable final Object o) {
         if (o == this) {
             return true;
@@ -118,12 +119,14 @@ public class Pair<T1, T2> {
     }
 
     /** {@inheritDoc} */
+    @Override
     public int hashCode() {
         return Objects.hashCode(first, second);
     }
 
     /** {@inheritDoc} */
-    @Nonnull public String toString() {
+    @Override
+    public String toString() {
         return MoreObjects.toStringHelper(this).add("first", first).add("second", second).toString();
     }
 }

@@ -20,6 +20,7 @@ package net.shibboleth.utilities.java.support.httpclient;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -44,6 +45,9 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 
 import net.shibboleth.utilities.java.support.annotation.Duration;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.collection.IterableSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -240,16 +244,16 @@ public class HttpClientBuilder {
     private boolean useSystemProperties;
 
     /** List of request interceptors to add first. */
-    private List<HttpRequestInterceptor> requestInterceptorsFirst;
+    @Nonnull @NonnullElements private List<HttpRequestInterceptor> requestInterceptorsFirst;
 
     /** List of request interceptors to add last. */
-    private List<HttpRequestInterceptor> requestInterceptorsLast;
+    @Nonnull @NonnullElements private List<HttpRequestInterceptor> requestInterceptorsLast;
 
     /** List of response interceptors to add first. */
-    private List<HttpResponseInterceptor> responseInterceptorsFirst;
+    @Nonnull @NonnullElements private List<HttpResponseInterceptor> responseInterceptorsFirst;
 
     /** List of response interceptors to add last. */
-    private List<HttpResponseInterceptor> responseInterceptorsLast;
+    @Nonnull @NonnullElements private List<HttpResponseInterceptor> responseInterceptorsLast;
 
     /** The Apache HttpClientBuilder 4.3+ instance over which to layer this builder. */
     private org.apache.http.impl.client.HttpClientBuilder apacheBuilder;
@@ -265,9 +269,12 @@ public class HttpClientBuilder {
      * @param builder the Apache HttpClientBuilder 4.3+ instance over which to layer this builder
      */
     public HttpClientBuilder(@Nonnull final org.apache.http.impl.client.HttpClientBuilder builder) {
-        Constraint.isNotNull(builder, "Apache HttpClientBuilder may not be null");
-        apacheBuilder = builder;
+        apacheBuilder = Constraint.isNotNull(builder, "Apache HttpClientBuilder may not be null");
         resetDefaults();
+        requestInterceptorsFirst = Collections.emptyList();
+        requestInterceptorsLast = Collections.emptyList();
+        responseInterceptorsFirst = Collections.emptyList();
+        responseInterceptorsLast = Collections.emptyList();
     }
 
     /** Resets all builder parameters to their defaults. */
@@ -851,7 +858,7 @@ public class HttpClientBuilder {
      * 
      * @return the list of interceptors, may be null
      */
-    @Nullable public List<HttpRequestInterceptor> getFirstRequestInterceptors() {
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<HttpRequestInterceptor> getFirstRequestInterceptors() {
         return requestInterceptorsFirst;
     }
     
@@ -869,7 +876,7 @@ public class HttpClientBuilder {
      * 
      * @return the list of interceptors, may be null
      */
-    @Nullable public List<HttpRequestInterceptor> getLastRequestInterceptors() {
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<HttpRequestInterceptor> getLastRequestInterceptors() {
         return requestInterceptorsLast;
     }
 
@@ -878,7 +885,7 @@ public class HttpClientBuilder {
      * 
      * @param interceptors the list of interceptors, may be null
      */
-    public void setLastRequestInterceptors(final List<HttpRequestInterceptor> interceptors) {
+    public void setLastRequestInterceptors(@Nullable final List<HttpRequestInterceptor> interceptors) {
         requestInterceptorsLast = normalizeInterceptors(interceptors);
     }
 
@@ -887,7 +894,8 @@ public class HttpClientBuilder {
      * 
      * @return the list of interceptors, may be null
      */
-    @Nullable public List<HttpResponseInterceptor> getFirstResponseInterceptors() {
+    @Nonnull @NonnullElements @NotLive @Unmodifiable
+    public List<HttpResponseInterceptor> getFirstResponseInterceptors() {
         return responseInterceptorsFirst;
     }
 
@@ -896,7 +904,7 @@ public class HttpClientBuilder {
      * 
      * @param interceptors the list of interceptors, may be null
      */
-    public void setFirstResponseInterceptors(final List<HttpResponseInterceptor> interceptors) {
+    public void setFirstResponseInterceptors(@Nullable final List<HttpResponseInterceptor> interceptors) {
         responseInterceptorsFirst = normalizeInterceptors(interceptors);
     }
 
@@ -905,7 +913,8 @@ public class HttpClientBuilder {
      * 
      * @return the list of interceptors, may be null
      */
-    @Nullable public List<HttpResponseInterceptor> getLastResponseInterceptors() {
+    @Nonnull @NonnullElements @NotLive @Unmodifiable
+    public List<HttpResponseInterceptor> getLastResponseInterceptors() {
         return responseInterceptorsLast;
     }
 
@@ -914,7 +923,7 @@ public class HttpClientBuilder {
      * 
      * @param interceptors the list of interceptors, may be null
      */
-    public void setLastResponseInterceptors(final List<HttpResponseInterceptor> interceptors) {
+    public void setLastResponseInterceptors(@Nullable final List<HttpResponseInterceptor> interceptors) {
         responseInterceptorsLast = normalizeInterceptors(interceptors);
     }
 
@@ -926,9 +935,9 @@ public class HttpClientBuilder {
      * @param interceptors the list of interceptors to normalize
      * @return copy of input list without nulls, may be null
      */
-    @Nullable private <T> List<T> normalizeInterceptors(@Nullable final List<T> interceptors) {
+    @Nonnull @NonnullElements private <T> List<T> normalizeInterceptors(@Nullable final List<T> interceptors) {
         if (interceptors == null) {
-            return null;
+            return Collections.emptyList();
         } else {
             return new ArrayList<>(Collections2.filter(interceptors, Predicates.notNull()));
         }
@@ -965,11 +974,8 @@ public class HttpClientBuilder {
         }
 
         if (connectionCloseAfterResponse) {
-            if ((getFirstRequestInterceptors() == null 
-                    || !IterableSupport.containsInstance(getFirstRequestInterceptors(), RequestConnectionClose.class)) 
-                    &&
-                (getLastRequestInterceptors() == null 
-                    || !IterableSupport.containsInstance(getLastRequestInterceptors(), RequestConnectionClose.class))) {
+            if (!IterableSupport.containsInstance(getFirstRequestInterceptors(), RequestConnectionClose.class)
+                    && !IterableSupport.containsInstance(getLastRequestInterceptors(), RequestConnectionClose.class)) {
                 
                 builder.addInterceptorLast(new RequestConnectionClose());
             }
@@ -1022,30 +1028,21 @@ public class HttpClientBuilder {
             builder.useSystemProperties();
         }
 
-        if (getFirstRequestInterceptors() != null) {
-            for (final HttpRequestInterceptor interceptor : getFirstRequestInterceptors()) {
-                builder.addInterceptorFirst(interceptor);
-            }
+        for (final HttpRequestInterceptor interceptor : getFirstRequestInterceptors()) {
+            builder.addInterceptorFirst(interceptor);
         }
 
-        if (getLastRequestInterceptors() != null) {
-            for (final HttpRequestInterceptor interceptor : getLastRequestInterceptors()) {
-                builder.addInterceptorLast(interceptor);
-            }
+        for (final HttpRequestInterceptor interceptor : getLastRequestInterceptors()) {
+            builder.addInterceptorLast(interceptor);
         }
 
-        if (getFirstResponseInterceptors() != null) {
-            for (final HttpResponseInterceptor interceptor : getFirstResponseInterceptors()) {
-                builder.addInterceptorFirst(interceptor);
-            }
+        for (final HttpResponseInterceptor interceptor : getFirstResponseInterceptors()) {
+            builder.addInterceptorFirst(interceptor);
         }
 
-        if (getLastResponseInterceptors() != null) {
-            for (final HttpResponseInterceptor interceptor : getLastResponseInterceptors()) {
-                builder.addInterceptorLast(interceptor);
-            }
+        for (final HttpResponseInterceptor interceptor : getLastResponseInterceptors()) {
+            builder.addInterceptorLast(interceptor);
         }
-
 
         // RequestConfig params
         final RequestConfig.Builder requestConfigBuilder = RequestConfig.custom();

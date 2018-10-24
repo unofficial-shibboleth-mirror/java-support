@@ -42,10 +42,10 @@ public final class Base32Support {
     public static final boolean UNCHUNKED = false;
 
     /** Encoder used to produce chunked output. */
-    private static final Base32 CHUNKED_ENCODER = new Base32(76, new byte[] { '\n' });
+    @Nonnull private static final Base32 CHUNKED_ENCODER = new Base32(76, new byte[] { '\n' });
 
     /** Encoder used to produce unchunked output. */
-    private static final Base32 UNCHUNKED_ENCODER = new Base32(0, new byte[] { '\n' });
+    @Nonnull private static final Base32 UNCHUNKED_ENCODER = new Base32(0, new byte[] { '\n' });
 
     /** Constructor. */
     private Base32Support() {
@@ -63,9 +63,11 @@ public final class Base32Support {
     @Nonnull public static String encode(@Nonnull final byte[] data, final boolean chunked) {
         Constraint.isNotNull(data, "Binary data to be encoded can not be null");
         if (chunked) {
-            return StringSupport.trim(CHUNKED_ENCODER.encodeToString(data));
+            return Constraint.isNotNull(StringSupport.trim(CHUNKED_ENCODER.encodeToString(data)),
+                    "Encoded data was null");
         } else {
-            return StringSupport.trim(UNCHUNKED_ENCODER.encodeToString(data));
+            return Constraint.isNotNull(StringSupport.trim(UNCHUNKED_ENCODER.encodeToString(data)),
+                    "Encoded data was null");
         }
     }
 
@@ -78,6 +80,6 @@ public final class Base32Support {
      */
     @Nonnull public static byte[] decode(@Nonnull final String data) {
         Constraint.isNotNull(data, "Base32 encoded data cannot be null");
-        return CHUNKED_ENCODER.decode(data);
+        return Constraint.isNotNull(CHUNKED_ENCODER.decode(data), "Decoded data was null");
     }
 }

@@ -126,7 +126,8 @@ public class ScriptedRunnable extends AbstractIdentifiableInitializableComponent
         }
 
         /** {@inheritDoc} */
-        @Override protected void prepareContext(final ScriptContext scriptContext, final Object... input) {
+        @Override
+        protected void prepareContext(@Nonnull final ScriptContext scriptContext, @Nullable final Object... input) {
             // Nothing to do
         }
 

@@ -458,7 +458,7 @@ public class SelfSignedCertificateGenerator {
 
         /** Hostname. */
         @Parameter(names = HOSTNAME, required = true, description = "Hostname for certificate subject")
-        @Nonnull @NotEmpty private String hostname;
+        @Nullable @NotEmpty private String hostname;
         
         /** DNS subjectAltNames. */
         @Parameter(names = DNS_ALTNAMES, description = "DNS subjectAltNames for certificate")

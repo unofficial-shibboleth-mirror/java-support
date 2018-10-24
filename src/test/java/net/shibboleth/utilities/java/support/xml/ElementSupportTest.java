@@ -22,9 +22,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -44,17 +46,17 @@ import org.xml.sax.SAXException;
  */
 public class ElementSupportTest {
 
-    private static final String TEST_NS = "http://example.org/NameSpace";
+    @Nonnull @NotEmpty private static final String TEST_NS = "http://example.org/NameSpace";
 
-    private static final String OTHER_NS = "http://example.org/OtherSpace";
+    @Nonnull @NotEmpty private static final String OTHER_NS = "http://example.org/OtherSpace";
 
-    private static final String TEST_PREFIX = "testns";
+    @Nonnull @NotEmpty private static final String TEST_PREFIX = "testns";
 
-    private static final String TEST_ELEMENT_NAME = "Element1";
+    @Nonnull @NotEmpty private static final String TEST_ELEMENT_NAME = "Element1";
 
-    private static final String ROOT_ELEMENT = "Container";
+    @Nonnull @NotEmpty private static final String ROOT_ELEMENT = "Container";
 
-    private static final QName TEST_ELEMENT_QNAME = new QName(TEST_NS, TEST_ELEMENT_NAME, TEST_PREFIX);
+    @Nonnull private static final QName TEST_ELEMENT_QNAME = new QName(TEST_NS, TEST_ELEMENT_NAME, TEST_PREFIX);
 
     private BasicParserPool parserPool;
 
@@ -291,7 +293,7 @@ public class ElementSupportTest {
             //
             boolean thrown = false;
             try {
-                ElementSupport.adoptElement(null, element);
+                ElementSupport.adoptElement(nullValue(), element);
             } catch (ConstraintViolationException e) {
                 thrown = true;
             }
@@ -299,7 +301,7 @@ public class ElementSupportTest {
 
             thrown = false;
             try {
-                ElementSupport.adoptElement(testerDocument, null);
+                ElementSupport.adoptElement(testerDocument, nullValue());
             } catch (ConstraintViolationException e) {
                 thrown = true;
             }
@@ -332,7 +334,7 @@ public class ElementSupportTest {
             Element testElement = ElementSupport.constructElement(testerDocument, TEST_ELEMENT_QNAME);
             boolean thrown = false;
             try {
-                ElementSupport.appendChildElement(null, testElement);
+                ElementSupport.appendChildElement(nullValue(), testElement);
             } catch (ConstraintViolationException e) {
                 thrown = true;
             }
@@ -369,7 +371,7 @@ public class ElementSupportTest {
                 "appendTextContent: initially element has no text");
         boolean thrown = false;
         try {
-            ElementSupport.appendTextContent(null, "test");
+            ElementSupport.appendTextContent(nullValue(), "test");
         } catch (ConstraintViolationException e) {
             thrown = true;
         }
@@ -401,7 +403,7 @@ public class ElementSupportTest {
     @Test public void testConstructElementBadParms() throws XMLParserException {
         boolean thrown = false;
         try {
-            ElementSupport.constructElement(null, TEST_ELEMENT_QNAME);
+            ElementSupport.constructElement(nullValue(), TEST_ELEMENT_QNAME);
         } catch (ConstraintViolationException e) {
             thrown = true;
         }
@@ -409,7 +411,7 @@ public class ElementSupportTest {
 
         thrown = false;
         try {
-            ElementSupport.constructElement(testerDocument, null);
+            ElementSupport.constructElement(testerDocument, nullValue());
         } catch (ConstraintViolationException e) {
             thrown = true;
         }
@@ -417,7 +419,7 @@ public class ElementSupportTest {
 
         thrown = false;
         try {
-            ElementSupport.constructElement(testerDocument, TEST_NS, null, TEST_PREFIX);
+            ElementSupport.constructElement(testerDocument, TEST_NS, nullValue(), TEST_PREFIX);
         } catch (ConstraintViolationException e) {
             thrown = true;
         }
@@ -425,7 +427,7 @@ public class ElementSupportTest {
 
         thrown = false;
         try {
-            ElementSupport.constructElement(null, TEST_NS, TEST_ELEMENT_NAME, TEST_PREFIX);
+            ElementSupport.constructElement(nullValue(), TEST_NS, TEST_ELEMENT_NAME, TEST_PREFIX);
         } catch (ConstraintViolationException e) {
             thrown = true;
         }
@@ -442,7 +444,7 @@ public class ElementSupportTest {
                     ElementSupport.constructElement(testerDocument, new QName(TEST_NS, ROOT_ELEMENT, TEST_PREFIX));
             boolean thrown = false;
             try {
-                ElementSupport.setDocumentElement(myDocument, null);
+                ElementSupport.setDocumentElement(myDocument, nullValue());
             } catch (ConstraintViolationException e) {
                 thrown = true;
             }
@@ -450,7 +452,7 @@ public class ElementSupportTest {
 
             thrown = false;
             try {
-                ElementSupport.setDocumentElement(null, myRoot);
+                ElementSupport.setDocumentElement(nullValue(), myRoot);
             } catch (ConstraintViolationException e) {
                 thrown = true;
             }
@@ -479,4 +481,9 @@ public class ElementSupportTest {
             parserPool.returnBuilder(builder);
         }
     }
+
+    private <T> T nullValue() {
+        return null;
+    }
+
 }

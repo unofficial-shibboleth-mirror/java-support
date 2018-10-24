@@ -81,7 +81,7 @@ public final class TimerSupport {
             baseName = obj.getClass().getName();
         }
         
-        return getTimerName(baseName, additionalData);
+        return uncheckedGetTimerName(Constraint.isNotNull(baseName, "Base name for Timer was null"), additionalData);
     }
         
     /**
@@ -94,11 +94,23 @@ public final class TimerSupport {
     @Nonnull @NotEmpty public static String getTimerName(@Nonnull final String baseName,
             @Nullable final String additionalData) {
         Constraint.isNotNull(baseName, "Base name for Timer was null");
+        return uncheckedGetTimerName(baseName, additionalData);
+    }
+
+    /**
+     * Unchecked version of {@link #getTimerName(String, String)} that assumes base name is non-null.
+     * 
+     * @param baseName the base name of Timer
+     * @param additionalData additional qualifying data to include in the name
+     * @return an appropriate name for a Timer based on the specified base name
+     */
+    @Nonnull @NotEmpty private static String uncheckedGetTimerName(@Nonnull final String baseName,
+            @Nullable final String additionalData) {
+        
         if (additionalData != null) {
             return String.format("Timer for %s (%s)", baseName, additionalData);
         } else {
             return String.format("Timer for %s", baseName);
         }
     }
-
 }

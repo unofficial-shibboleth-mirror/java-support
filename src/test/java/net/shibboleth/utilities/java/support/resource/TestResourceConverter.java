@@ -63,7 +63,7 @@ public final class TestResourceConverter implements net.shibboleth.utilities.jav
     }
 
     /** {@inheritDoc} */
-    @Override public InputStream getInputStream() throws IOException {
+    @Override @Nonnull public InputStream getInputStream() throws IOException {
         return springResource.getInputStream();
     }
 

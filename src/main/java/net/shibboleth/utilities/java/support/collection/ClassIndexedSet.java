@@ -52,7 +52,7 @@ public class ClassIndexedSet<T> extends AbstractSet<T> implements Set<T> {
     }
 
     /** {@inheritDoc} */
-    public boolean add(@Nonnull final T o) {
+    public boolean add(final T o) {
         return add(o, false);
     }
 

@@ -19,9 +19,11 @@ package net.shibboleth.utilities.java.support.xml;
 
 import java.io.IOException;
 
+import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
@@ -39,21 +41,21 @@ import org.xml.sax.SAXException;
  */
 public class QNameSupportTest {
 
-    private static final String NAME_1 = "name1";
+    @Nonnull @NotEmpty private static final String NAME_1 = "name1";
 
-    private static final String NAME_2 = "name2";
+    @Nonnull @NotEmpty private static final String NAME_2 = "name2";
 
-    private static final String NAME_3 = "name3";
+    @Nonnull @NotEmpty private static final String NAME_3 = "name3";
 
-    private static final String NAMESPACE_1 = "http://example.org/NameSpace1";
+    @Nonnull @NotEmpty private static final String NAMESPACE_1 = "http://example.org/NameSpace1";
 
-    private static final String NAMESPACE_2 = "http://example.org/NameSpace2";
+    @Nonnull @NotEmpty private static final String NAMESPACE_2 = "http://example.org/NameSpace2";
 
-    private static final String DEFAULT_NAMESPACE = "http://example.org/DefaultSpace";
+    @Nonnull @NotEmpty private static final String DEFAULT_NAMESPACE = "http://example.org/DefaultSpace";
 
-    private static final String PREFIX_1 = "myns1";
+    @Nonnull @NotEmpty private static final String PREFIX_1 = "myns1";
 
-    private static final String PREFIX_2 = "myns2";
+    @Nonnull @NotEmpty private static final String PREFIX_2 = "myns2";
 
     private ParserPool parserPool;
 
@@ -123,7 +125,7 @@ public class QNameSupportTest {
 
         thrown = false;
         try {
-            QNameSupport.constructQName(child, null);
+            QNameSupport.constructQName(child, nullValue());
         } catch (ConstraintViolationException e) {
             thrown = true;
         }
@@ -131,7 +133,7 @@ public class QNameSupportTest {
 
         thrown = false;
         try {
-            QNameSupport.constructQName(null, PREFIX_2 + ":" + NAME_3);
+            QNameSupport.constructQName(nullValue(), PREFIX_2 + ":" + NAME_3);
         } catch (ConstraintViolationException e) {
             thrown = true;
         }
@@ -156,6 +158,10 @@ public class QNameSupportTest {
         Assert.assertEquals(QNameSupport.qnameToContentString(new QName(NAMESPACE_1, NAME_1, PREFIX_1)), PREFIX_1 + ":"
                 + NAME_1);
         Assert.assertEquals(QNameSupport.qnameToContentString(new QName(NAME_2)), NAME_2);
+    }
+
+    private <T> T nullValue() {
+        return null;
     }
 
 }
