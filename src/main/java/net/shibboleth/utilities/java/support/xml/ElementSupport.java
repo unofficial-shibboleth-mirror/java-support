@@ -292,15 +292,9 @@ public final class ElementSupport {
         final StringBuilder builder = new StringBuilder();
 
         Node node = element.getFirstChild();
-        boolean first = true;
         while (node != null) {
             if (node.getNodeType() == Node.TEXT_NODE || node.getNodeType() == Node.CDATA_SECTION_NODE) {
-                if (first) {
-                    first = false;
-                } else {
-                    builder.append(XMLConstants.LIST_DELIMITERS.charAt(0));
-                }
-                builder.append(((Text) node).getWholeText());
+                builder.append(((Text) node).getNodeValue());
             }
             node = node.getNextSibling();
         }

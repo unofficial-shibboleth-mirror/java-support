@@ -69,6 +69,8 @@ public class ElementSupportTest {
     @BeforeTest public void setUp() throws XMLParserException, ComponentInitializationException, SAXException,
             IOException {
         parserPool = new BasicParserPool();
+        parserPool.setCoalescing(false);
+        
         parserPool.initialize();
 
         DocumentBuilder builder = parserPool.getBuilder();
@@ -174,7 +176,7 @@ public class ElementSupportTest {
                 ElementSupport.getChildElementsByTagName(
                         ElementSupport.getChildElementsByTagName(rootElement, "Element4").get(0), "Element1").get(0);
 
-        Assert.assertEquals(ElementSupport.getElementContentAsString(interesting), "Some Random" + "\n" + "test");
+        Assert.assertEquals(ElementSupport.getElementContentAsString(interesting), "Some Random foo" + "\n" + "test");
     }
 
     @Test(dependsOnMethods = {"testGetChildElementsByTagName"}) public void testGetElementContentAsList() {
@@ -189,7 +191,7 @@ public class ElementSupportTest {
                         ElementSupport.getChildElementsByTagName(rootElement, "Element4").get(0), "Element1").get(0);
 
         Assert.assertEquals(ElementSupport.getElementContentAsList(interesting),
-                Arrays.asList("Some", "Random", "test"));
+                Arrays.asList("Some", "Random", "foo", "test"));
 
     }
 
@@ -204,7 +206,7 @@ public class ElementSupportTest {
 
         Assert.assertEquals(ElementSupport.getElementContentAsQName(children.get(0)), new QName(OTHER_NS, "localname"));
         Assert.assertNull(ElementSupport.getElementContentAsQName(children.get(1)),
-                "getElementContentAsQName: invalid qname shuld return null");
+                "getElementContentAsQName: invalid qname should return null");
     }
 
     @Test(dependsOnMethods = {"testIsElementNamed"}) public void testGetChildAndNext() {

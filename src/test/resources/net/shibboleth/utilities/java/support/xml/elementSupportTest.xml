@@ -15,7 +15,7 @@
         />
     <myns:Element4
     >
-        <myns:Element1>Some Random
+        <myns:Element1>Some Random <![CDATA[foo]]>
 test</myns:Element1>
         <myns:QName>otherns:localname</myns:QName>
         <myns:QName>myns:text:text</myns:QName>
