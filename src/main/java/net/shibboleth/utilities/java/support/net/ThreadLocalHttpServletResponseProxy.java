@@ -217,6 +217,11 @@ public class ThreadLocalHttpServletResponseProxy implements HttpServletResponse 
         return getCurrent().getHeaderNames();
     }
 
+    /** {@inheritDoc} */
+    public void setContentLengthLong(final long len) {
+        getCurrent().setContentLengthLong(len);
+    }
+
     /**
      * Get the current HttpServletResponse from ThreadLocal storage.
      * 
