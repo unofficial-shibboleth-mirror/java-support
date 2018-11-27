@@ -285,7 +285,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
      * Set the name of the builder attribute that controls the use of an XMLSecurityManager.
      * 
      * <p>If set, this allows the pool to interrogate the factory to determine whether a
-     * security manager is installed and log its class.<.p>
+     * security manager is installed and log its class.</p>
      * 
      * @param name name of attribute
      */

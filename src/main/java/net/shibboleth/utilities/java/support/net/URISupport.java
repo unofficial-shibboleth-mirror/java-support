@@ -239,7 +239,7 @@ public final class URISupport {
      * 
      * @param parameters collection of parameters from which to build the corresponding, may be null or empty
      * 
-     * @return a non-null map of query parameter name-> value. Keys will be non-null. Values may be null.
+     * @return a non-null map of query parameter name-&gt; value. Keys will be non-null. Values may be null.
      */
     @Nonnull public static Map<String,String> buildQueryMap(@Nullable final List<Pair<String, String>> parameters) {
         if (parameters == null || parameters.size() == 0) {
@@ -258,7 +258,7 @@ public final class URISupport {
 
     /**
      * Get the first raw (i.e.RFC-3968 encoded) query string component with the specified parameter name. This method
-     * assumes the common query string format of one or more 'paramName=paramValue' pairs separate by '&'.
+     * assumes the common query string format of one or more 'paramName=paramValue' pairs separated by '&amp;'.
      * 
      * The component will be returned as a string in the form 'paramName=paramValue' (minus the quotes).
      * 
@@ -288,9 +288,9 @@ public final class URISupport {
 
     /**
      * Parses a RFC-3968 encoded query string in to a set of name/value pairs. This method assumes the common query
-     * string format of one or more 'paramName=paramValue' pairs separate by '&'. Both parameter names and values will
-     * be URL decoded. Parameters without values will be represented in the returned map as a key associated with the
-     * value <code>null</code>.
+     * string format of one or more 'paramName=paramValue' pairs separate by '&amp;'. Both parameter names and values
+     * will be URL decoded. Parameters without values will be represented in the returned map as a key associated with
+     * the value <code>null</code>.
      * 
      * @param queryString URL encoded query string
      * 

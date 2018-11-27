@@ -39,7 +39,7 @@ public class ClassIndexedSet<T> extends AbstractSet<T> implements Set<T> {
     /** Storage for set members. */
     private final HashSet<T> set;
 
-    /** Storage for index of class -> member. */
+    /** Storage for index of class -&gt; member. */
     private final HashMap<Class<? extends T>, T> index;
 
     /**

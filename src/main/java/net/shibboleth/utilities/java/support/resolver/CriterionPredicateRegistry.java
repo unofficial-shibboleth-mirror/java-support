@@ -148,7 +148,7 @@ public class CriterionPredicateRegistry<T> {
 
 //CheckStyle: ReturnCount OFF
     /**
-     * Load criterion -> predicate mappings from a classpath resource.
+     * Load criterion -&gt; predicate mappings from a classpath resource.
      * 
      * @param classpathResource the classpath resource path from which to load mapping properites
      */
@@ -171,7 +171,7 @@ public class CriterionPredicateRegistry<T> {
   //CheckStyle: ReturnCount ON
 
     /**
-     * Load a set of criterion -> predicate mappings from the supplied properties set.
+     * Load a set of criterion -&gt; predicate mappings from the supplied properties set.
      * 
      * @param mappings properties set where the key is the criterion class name, the value is the predicate class name
      */

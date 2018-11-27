@@ -38,7 +38,7 @@ public class ValueTypeIndexedMap<KeyType, ValueType> implements Map<KeyType, Val
     /** Class to represent null values. */
     private static class NullValue {}
 
-    /** Storage for index of class -> members. */
+    /** Storage for index of class -&gt; members. */
     private Map<Class<?>, Map<KeyType, ValueType>> index;
 
     /** Storage for map members. */
