@@ -38,9 +38,9 @@ public class ScriptedTest {
 
         Assert.assertTrue(test.apply(Boolean.TRUE));
         Assert.assertFalse(test.apply(Boolean.FALSE));
-        Assert.assertFalse(test.apply(new Integer(1)));
+        Assert.assertFalse(test.apply(Integer.valueOf(1)));
         test.setReturnOnError(true);
-        Assert.assertTrue(test.apply(new Integer(1)));
+        Assert.assertTrue(test.apply(Integer.valueOf(1)));
     }
 
     @Test public void testPredicateCustom() throws ScriptException {
@@ -51,7 +51,7 @@ public class ScriptedTest {
         Assert.assertTrue(test.apply(Boolean.FALSE));
         test.setCustomObject(Boolean.FALSE);
         Assert.assertFalse(test.apply(Boolean.TRUE));
-        test.setCustomObject(new Integer(1));
+        test.setCustomObject(Integer.valueOf(1));
         Assert.assertFalse(test.apply("true"));
         test.setReturnOnError(true);
         Assert.assertTrue(test.apply("false"));
@@ -83,13 +83,13 @@ public class ScriptedTest {
 
         Assert.assertEquals(test.apply(Boolean.FALSE), Boolean.FALSE);
         Assert.assertEquals(test.apply(Boolean.TRUE), Boolean.TRUE);
-        Assert.assertEquals(test.apply(new Integer(1)), new Integer(1));
+        Assert.assertEquals(test.apply(Integer.valueOf(1)), Integer.valueOf(1));
         test.setOutputType(Boolean.class);
         Assert.assertEquals(test.apply(Boolean.FALSE), Boolean.FALSE);
         Assert.assertEquals(test.apply(Boolean.TRUE), Boolean.TRUE);
-        Assert.assertNotEquals(test.apply(new Integer(1)), new Integer(1));
+        Assert.assertNotEquals(test.apply(Integer.valueOf(1)), Integer.valueOf(1));
         test.setReturnOnError(Boolean.TRUE);
-        Assert.assertEquals(test.apply(new Integer(1)), Boolean.TRUE);
+        Assert.assertEquals(test.apply(Integer.valueOf(1)), Boolean.TRUE);
 
         test.setReturnOnError(Boolean.TRUE);
         test.setOutputType(Integer.class);
@@ -101,7 +101,7 @@ public class ScriptedTest {
 
         ScriptedFunction test = ScriptedFunction.inlineScript(returnCustom);
 
-        test.setReturnOnError(new Integer(99));
+        test.setReturnOnError(Integer.valueOf(99));
         test.setOutputType(Integer.class);
         test.setInputType(Integer.class);
         test.setCustomObject(12);
