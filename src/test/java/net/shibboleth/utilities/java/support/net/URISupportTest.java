@@ -27,8 +27,6 @@ import net.shibboleth.utilities.java.support.collection.Pair;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.Lists;
-
 /** Unit test for {@link URISupport}. */
 public class URISupportTest {
     
