@@ -24,6 +24,7 @@ import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
 import java.security.KeyException;
 import java.security.SecureRandom;
 import java.util.zip.GZIPInputStream;
@@ -31,7 +32,9 @@ import java.util.zip.GZIPOutputStream;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.GCMParameterSpec;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -46,12 +49,6 @@ import org.apache.commons.codec.BinaryDecoder;
 import org.apache.commons.codec.BinaryEncoder;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
-import org.bouncycastle.crypto.InvalidCipherTextException;
-import org.bouncycastle.crypto.engines.AESEngine;
-import org.bouncycastle.crypto.modes.GCMBlockCipher;
-import org.bouncycastle.crypto.params.AEADParameters;
-import org.bouncycastle.crypto.params.KeyParameter;
-import org.bouncycastle.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,10 +74,16 @@ public class DataSealer extends AbstractInitializableComponent {
     @NonnullAfterInit private SecureRandom random;
 
     /** Encodes encrypted bytes to string. */
-    @Nonnull private BinaryEncoder encoder = new Base64(0, new byte[] { '\n' });
+    @Nonnull private BinaryEncoder encoder;
 
     /** Decodes encrypted string to bytes. */
-    @Nonnull private BinaryDecoder decoder = (Base64) encoder;
+    @Nonnull private BinaryDecoder decoder;
+    
+    /** Constructor. */
+    public DataSealer() {
+        encoder = new Base64(0, new byte[] { '\n' });
+        decoder = (Base64) encoder;
+    }
 
     /**
      * Set whether the key source is expected to be locked at startup, and unlocked
@@ -127,6 +130,8 @@ public class DataSealer extends AbstractInitializableComponent {
      * @param e Byte-to-string encoder.
      */
     public void setEncoder(@Nonnull final BinaryEncoder e) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         encoder = Constraint.isNotNull(e, "Encoder cannot be null");
     }
 
@@ -136,6 +141,8 @@ public class DataSealer extends AbstractInitializableComponent {
      * @param d String-to-byte decoder.
      */
     public void setDecoder(@Nonnull final BinaryDecoder d) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         decoder = Constraint.isNotNull(d, "Decoder cannot be null");
     }
 
@@ -207,31 +214,28 @@ public class DataSealer extends AbstractInitializableComponent {
             }
             final SecretKey key = keyStrategy.getKey(keyAlias);
             
-            final GCMBlockCipher cipher = new GCMBlockCipher(new AESEngine());
+            final Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
             
             // Load the IV.
-            final int ivSize = cipher.getUnderlyingCipher().getBlockSize();
+            final int ivSize = cipher.getBlockSize();
             final byte[] iv = new byte[ivSize];
             inputDataStream.readFully(iv);
-
-            final AEADParameters aeadParams =
-                    new AEADParameters(new KeyParameter(key.getEncoded()), 128, iv, keyAlias.getBytes());
-            cipher.init(false, aeadParams);
-
+            
+            final GCMParameterSpec params = new GCMParameterSpec(128, iv);
+            cipher.init(Cipher.DECRYPT_MODE, key, params);
+            cipher.updateAAD(keyAlias.getBytes());
+            
             // Data can't be any bigger than the original minus IV.
             final byte[] data = new byte[in.length - ivSize];
             final int dataSize = inputDataStream.read(data);
             
             final byte[] plaintext = new byte[cipher.getOutputSize(dataSize)];
-            final int outputLen = cipher.processBytes(data, 0, dataSize, plaintext, 0);
+            final int outputLen = cipher.update(data, 0, dataSize, plaintext, 0);
             cipher.doFinal(plaintext, outputLen);
             
             // Pass the plaintext into the subroutine for processing.
             return extractAndCheckDecryptedData(plaintext);
 
-        } catch (final IllegalStateException | InvalidCipherTextException| IOException | DecoderException e) {
-            log.error("Exception unwrapping data", e);
-            throw new DataSealerException("Exception unwrapping data", e);
         } catch (final KeyNotFoundException e) {
             if (keyUsed != null) {
                 log.info("Data was wrapped with a key ({}) no longer available", keyUsed.toString());
@@ -242,6 +246,9 @@ public class DataSealer extends AbstractInitializableComponent {
         } catch (final KeyException e) {
             log.error(e.getMessage());
             throw new DataSealerException("Exception loading key", e);
+        } catch (final GeneralSecurityException | IOException | DecoderException e) {
+            log.error("Exception unwrapping data", e);
+            throw new DataSealerException("Exception unwrapping data", e);
         }
     }
 
@@ -312,16 +319,16 @@ public class DataSealer extends AbstractInitializableComponent {
         }
 
         try {
-            final GCMBlockCipher cipher = new GCMBlockCipher(new AESEngine());
-            final byte[] iv = new byte[cipher.getUnderlyingCipher().getBlockSize()];
+            final Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+            
+            final byte[] iv = new byte[cipher.getBlockSize()];
             random.nextBytes(iv);
+            final GCMParameterSpec params = new GCMParameterSpec(128, iv);
             
             final Pair<String,SecretKey> defaultKey = keyStrategy.getDefaultKey();
             
-            final AEADParameters aeadParams =
-                    new AEADParameters(new KeyParameter(defaultKey.getSecond().getEncoded()), 128, iv,
-                            defaultKey.getFirst().getBytes());
-            cipher.init(true, aeadParams);
+            cipher.init(Cipher.ENCRYPT_MODE, defaultKey.getSecond(), params);
+            cipher.updateAAD(defaultKey.getFirst().getBytes());
 
             final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
             final GZIPOutputStream compressedStream = new GZIPOutputStream(byteStream);
@@ -346,7 +353,7 @@ public class DataSealer extends AbstractInitializableComponent {
             final byte[] plaintext = byteStream.toByteArray();
             
             final byte[] encryptedData = new byte[cipher.getOutputSize(plaintext.length)];
-            int outputLen = cipher.processBytes(plaintext, 0, plaintext.length, encryptedData, 0);
+            int outputLen = cipher.update(plaintext, 0, plaintext.length, encryptedData, 0);
             outputLen += cipher.doFinal(encryptedData, outputLen);
 
             final ByteArrayOutputStream finalByteStream = new ByteArrayOutputStream();
@@ -381,25 +388,31 @@ public class DataSealer extends AbstractInitializableComponent {
         
         final String decrypted;
         try {
-            final GCMBlockCipher cipher = new GCMBlockCipher(new AESEngine());
-            final byte[] iv = new byte[cipher.getUnderlyingCipher().getBlockSize()];
-            random.nextBytes(iv);
-            final AEADParameters aeadParams = new AEADParameters(
-                    new KeyParameter(key.getEncoded()), 128, iv, "aad".getBytes(StandardCharsets.UTF_8));
+            final Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
             
-            cipher.init(true, aeadParams);
+            final byte[] iv = new byte[cipher.getBlockSize()];
+            random.nextBytes(iv);
+            final GCMParameterSpec params = new GCMParameterSpec(128, iv);
+            
+            cipher.init(Cipher.ENCRYPT_MODE, key, params);
+            cipher.updateAAD("aad".getBytes(StandardCharsets.UTF_8));
+            
             byte[] plaintext = "test".getBytes(StandardCharsets.UTF_8);
+            
             final byte[] encryptedData = new byte[cipher.getOutputSize(plaintext.length)];
-            int outputLen = cipher.processBytes(plaintext, 0, plaintext.length, encryptedData, 0);
+            int outputLen = cipher.update(plaintext, 0, plaintext.length, encryptedData, 0);
             cipher.doFinal(encryptedData, outputLen);
 
-            cipher.init(false, aeadParams);
-            plaintext = new byte[cipher.getOutputSize(encryptedData.length)];
-            outputLen = cipher.processBytes(encryptedData, 0, encryptedData.length, plaintext, 0);
-            cipher.doFinal(plaintext, outputLen);
-            decrypted = Strings.fromUTF8ByteArray(plaintext);
+            cipher.init(Cipher.DECRYPT_MODE, key, params);
+            cipher.updateAAD("aad".getBytes(StandardCharsets.UTF_8));
             
-        } catch (final IllegalStateException | InvalidCipherTextException e) {
+            plaintext = new byte[cipher.getOutputSize(encryptedData.length)];
+            outputLen = cipher.update(encryptedData, 0, encryptedData.length, plaintext, 0);
+            cipher.doFinal(plaintext, outputLen);
+            
+            decrypted = new String(plaintext, StandardCharsets.UTF_8);
+            
+        } catch (final IllegalStateException | GeneralSecurityException e) {
             log.error("Round trip encryption/decryption test unsuccessful", e);
             throw new DataSealerException("Round trip encryption/decryption test unsuccessful", e);
         }

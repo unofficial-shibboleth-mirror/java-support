@@ -22,9 +22,10 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.resource.Resource;
 import net.shibboleth.utilities.java.support.resource.TestResourceConverter;
 
+import java.util.Arrays;
+
 import javax.annotation.Nonnull;
 
-import org.bouncycastle.util.Arrays;
 import org.springframework.core.io.ClassPathResource;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
