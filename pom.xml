@@ -104,7 +104,7 @@
         <dependency>
             <!-- Required if you're using classes from the velocity package -->
             <groupId>org.apache.velocity</groupId>
-            <artifactId>velocity</artifactId>
+            <artifactId>velocity-engine-core</artifactId>
             <optional>true</optional>
         </dependency>
         <dependency>
