@@ -25,6 +25,12 @@ public class TestSupportTest {
     }
 
     @Test
+    public void isJavaV11OrLater() {
+        // answer for current runtime can be true or false, just not an exception
+        TestSupport.isJavaV11OrLater();
+    }
+
+    @Test
     public void getJavaVersion() {
         // test against some real versions
         Assert.assertEquals(TestSupport.getJavaVersion("1.6.0_65-b14-468"), 6);
@@ -33,6 +39,7 @@ public class TestSupportTest {
         Assert.assertEquals(TestSupport.getJavaVersion("9"), 9);
         Assert.assertEquals(TestSupport.getJavaVersion("9.0.1"), 9);
         Assert.assertEquals(TestSupport.getJavaVersion("10+43"), 10); // Java 10 RC
+        Assert.assertEquals(TestSupport.getJavaVersion("11.0.2"), 11);
     }
 
 }

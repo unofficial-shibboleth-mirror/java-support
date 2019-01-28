@@ -129,13 +129,23 @@ public class TestSupport {
     }
 
     /**
-     * Indicates whether the tests are running under Java 8 or a later
+     * Indicates whether the tests are running under Java 9 or a later
      * version.
      *
-     * @return <code>true</code> if the runtime environment is Java 8 or later
+     * @return <code>true</code> if the runtime environment is Java 9 or later
      */
     public static boolean isJavaV9OrLater() {
         return getJavaVersion(System.getProperty("java.version")) >= 9;
+    }
+
+    /**
+     * Indicates whether the tests are running under Java 11 or a later
+     * version.
+     *
+     * @return <code>true</code> if the runtime environment is Java 11 or later
+     */
+    public static boolean isJavaV11OrLater() {
+        return getJavaVersion(System.getProperty("java.version")) >= 11;
     }
 
 }
