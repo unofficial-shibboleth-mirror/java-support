@@ -20,9 +20,6 @@ package net.shibboleth.utilities.java.support.logic;
 import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.google.common.base.Predicate;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
@@ -35,7 +32,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 public class RegexPredicate implements Predicate<CharSequence> {
 
     /** Regular expression. */
-    @Nullable private Pattern pattern;
+    @Nonnull  private Pattern pattern;
 
     /**
      * Pattern constructor.
@@ -56,7 +53,7 @@ public class RegexPredicate implements Predicate<CharSequence> {
     }
 
     /** {@inheritDoc} */
-    public boolean apply(final CharSequence input) {
+    public boolean test(final CharSequence input) {
         if (input == null) {
             return false;
         }

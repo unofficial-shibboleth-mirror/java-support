@@ -35,8 +35,6 @@ import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Predicate;
-
 /**
  * A {@link Predicate} which calls out to a supplied script.
  * 
@@ -85,7 +83,7 @@ public class ScriptedPredicate<T> extends AbstractScriptEvaluator implements Pre
     }
     
     /** {@inheritDoc} */
-    public boolean apply(@Nullable final T input) {
+    public boolean test(@Nullable final T input) {
         
         final Object result = evaluate(input);
         return (boolean) (result != null ? result : getReturnOnError());

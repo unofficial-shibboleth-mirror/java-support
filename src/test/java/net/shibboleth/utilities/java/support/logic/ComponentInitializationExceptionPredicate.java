@@ -20,8 +20,6 @@ package net.shibboleth.utilities.java.support.logic;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.InitializableComponent;
 
-import com.google.common.base.Predicate;
-
 /**
  * A {@link Predicate} that always throws a {@link ComponentInitializationException} when {@link #initialize()} is
  * called.
@@ -29,7 +27,7 @@ import com.google.common.base.Predicate;
 public class ComponentInitializationExceptionPredicate implements InitializableComponent, Predicate {
 
     /** {@inheritDoc} */
-    public boolean apply(Object arg0) {
+    public boolean test(Object arg0) {
         return false;
     }
 

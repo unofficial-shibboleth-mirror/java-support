@@ -17,27 +17,33 @@
 
 package net.shibboleth.utilities.java.support.logic;
 
-import java.util.function.Function;
+import javax.annotation.Nullable;
 
-import javax.annotation.Nonnull;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
-/** A {@link Function} that always throws a {@link RuntimeException} of some sort. */
-public class ExceptionFunction implements Function {
-
-    /** Exception that will be thrown when this function is executed. */
-    private RuntimeException thrownException;
+/**
+ * A convenience interface to allow our own classes to implement the Java
+ * {@link java.util.function.Predicate} and log any calls to the
+ * {@link #apply(T)} method as deprecated.
+ * 
+ * @param <T> type of object upon which this predicate operates
+ */
+public interface Predicate<T> extends java.util.function.Predicate<T> {
 
     /**
-     * Constructor.
+     * Default method to log deprecated use of Guava's apply() signature.
      * 
-     * @param e exception that will be thrown when this function is executed
+     * @param input input to predicate
+     * 
+     * @return the result of the {@link #test(T)} method
+     * @deprecated
      */
-    public ExceptionFunction(@Nonnull final RuntimeException e) {
-        thrownException = Constraint.isNotNull(e, "Exception can not be null");
+    @Deprecated
+    default boolean apply(@Nullable final T input) {
+        DeprecationSupport.warn(ObjectType.METHOD, "apply", "on Predicate objects", "test");
+        
+        return test(input);
     }
-
-    /** {@inheritDoc} */
-    public Object apply(Object arg0) {
-        throw thrownException;
-    }
+    
 }

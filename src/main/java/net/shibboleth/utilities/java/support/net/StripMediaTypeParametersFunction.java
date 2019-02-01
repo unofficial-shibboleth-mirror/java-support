@@ -17,7 +17,10 @@
 
 package net.shibboleth.utilities.java.support.net;
 
-import com.google.common.base.Function;
+import java.util.function.Function;
+
+import javax.annotation.Nullable;
+
 import com.google.common.net.MediaType;
 
 /**
@@ -26,7 +29,7 @@ import com.google.common.net.MediaType;
 public class StripMediaTypeParametersFunction implements Function<MediaType, MediaType> {
 
     /** {@inheritDoc} */
-    public MediaType apply(final MediaType input) {
+    @Nullable public MediaType apply(@Nullable final MediaType input) {
         if (input == null) {
             return null;
         } else {

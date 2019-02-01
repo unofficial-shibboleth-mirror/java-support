@@ -19,12 +19,11 @@ package net.shibboleth.utilities.java.support.logic;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 
 import org.testng.annotations.Test;
 
-import com.google.common.base.Function;
 import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
 
 /**
  * Test for {@link TransformAndCheckFunction}.
@@ -38,7 +37,7 @@ public class TransformAndCheckFunctionTest {
         boolean thrown = false;
         try {
             f = new TransformAndCheckFunction<>(nullValue(), new MyPredicate(), true);
-        } catch (ConstraintViolationException e) {
+        } catch (final ConstraintViolationException e) {
             thrown = true;
         }
         org.testng.Assert.assertTrue(thrown, "Null function should throw");
@@ -46,14 +45,14 @@ public class TransformAndCheckFunctionTest {
         thrown = false;
         try {
             f = new TransformAndCheckFunction<>(TrimOrNullStringFunction.INSTANCE, nullValue(), true);
-        } catch (ConstraintViolationException e) {
+        } catch (final ConstraintViolationException e) {
             thrown = true;
         }
         org.testng.Assert.assertTrue(thrown, "Null predicate should throw");
         org.testng.Assert.assertNull(f, "silence compiler warning");
     }
 
-    @Test public void testApply() {
+    @Test(expectedExceptions=IllegalArgumentException.class) public void testApply() {
         Function<String, Optional<? extends String>> f =
                 new TransformAndCheckFunction<>(TrimOrNullStringFunction.INSTANCE, new MyPredicate(), false);
 
@@ -62,13 +61,7 @@ public class TransformAndCheckFunctionTest {
 
         f = new TransformAndCheckFunction<>(TrimOrNullStringFunction.INSTANCE, new MyPredicate(), true);
         org.testng.Assert.assertEquals(f.apply(" iii ").get(), "iii", "present and trimmed");
-        boolean thrown = false;
-        try {
-            f.apply(" two");
-        } catch (IllegalArgumentException e) {
-            thrown = true;
-        }
-        org.testng.Assert.assertTrue(thrown, "mismatch should throw");
+        f.apply(" two");
     }
 
     private <T> T nullValue() {
@@ -77,7 +70,7 @@ public class TransformAndCheckFunctionTest {
     
     private class MyPredicate implements Predicate<String> {
         /** {@inheritDoc} */
-        public boolean apply(String input) {
+        public boolean test(String input) {
             for (String s : excludes) {
                 if (s.equals(input)) {
                     return true;

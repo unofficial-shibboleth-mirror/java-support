@@ -17,7 +17,7 @@
 
 package net.shibboleth.utilities.java.support.resolver;
 
-import com.google.common.base.Predicate;
+import java.util.function.Predicate;
 
 /**
  *
@@ -28,7 +28,7 @@ public class FooPredicate implements Predicate<Foo> {
         // just a mock class
     }
 
-    public boolean apply(Foo input) {
+    public boolean test(Foo input) {
         return true;
     }
 

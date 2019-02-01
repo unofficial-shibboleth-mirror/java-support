@@ -18,12 +18,11 @@
 package net.shibboleth.utilities.java.support.logic;
 
 import java.util.Collection;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
 /**
@@ -39,7 +38,7 @@ public class StrategyIndirectedPredicate<T1,T2> implements Predicate<T1> {
     @Nonnull private final Function<T1,T2> objectLookupStrategy;
     
     /** Predicate to apply to indirected object. */
-    @Nonnull private final Predicate<T2> predicate;
+    @Nonnull private final java.util.function.Predicate<T2> predicate;
     
     /**
      * Constructor.
@@ -48,7 +47,7 @@ public class StrategyIndirectedPredicate<T1,T2> implements Predicate<T1> {
      * @param pred the predicate to apply
      */
     public StrategyIndirectedPredicate(@Nonnull final Function<T1,T2> objectStrategy,
-            @Nonnull final Predicate<T2> pred) {
+            @Nonnull final java.util.function.Predicate<T2> pred) {
         objectLookupStrategy = Constraint.isNotNull(objectStrategy, "Object lookup strategy cannot be null");
         predicate = Constraint.isNotNull(pred, "Predicate cannot be null");
     }
@@ -67,9 +66,8 @@ public class StrategyIndirectedPredicate<T1,T2> implements Predicate<T1> {
     }
     
     /** {@inheritDoc} */
-    @Override
-    public boolean apply(@Nullable final T1 input) {
-        return predicate.apply(objectLookupStrategy.apply(input));
+    public boolean test(@Nullable final T1 input) {
+        return predicate.test(objectLookupStrategy.apply(input));
     }
     
     /**
@@ -86,7 +84,7 @@ public class StrategyIndirectedPredicate<T1,T2> implements Predicate<T1> {
      * @since 7.3.0
      */
     @Nonnull public static <T1,T2> StrategyIndirectedPredicate<T1,T2> forPredicate(
-            @Nonnull final Function<T1,T2> objectStrategy, @Nonnull final Predicate<T2> pred) {
+            @Nonnull final Function<T1,T2> objectStrategy, @Nonnull final java.util.function.Predicate<T2> pred) {
         return new StrategyIndirectedPredicate<>(objectStrategy, pred);
     }
 

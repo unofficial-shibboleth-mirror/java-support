@@ -18,11 +18,11 @@
 package net.shibboleth.utilities.java.support.resolver;
 
 import java.util.Set;
+import java.util.function.Predicate;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
 
 public class ResolverSupportTest {

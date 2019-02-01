@@ -36,11 +36,11 @@ public class ScriptedTest {
 
         ScriptedPredicate test = ScriptedPredicate.inlineScript(returnSelf);
 
-        Assert.assertTrue(test.apply(Boolean.TRUE));
-        Assert.assertFalse(test.apply(Boolean.FALSE));
-        Assert.assertFalse(test.apply(Integer.valueOf(1)));
+        Assert.assertTrue(test.test(Boolean.TRUE));
+        Assert.assertFalse(test.test(Boolean.FALSE));
+        Assert.assertFalse(test.test(Integer.valueOf(1)));
         test.setReturnOnError(true);
-        Assert.assertTrue(test.apply(Integer.valueOf(1)));
+        Assert.assertTrue(test.test(Integer.valueOf(1)));
     }
 
     @Test public void testPredicateCustom() throws ScriptException {
@@ -48,13 +48,13 @@ public class ScriptedTest {
         ScriptedPredicate test = ScriptedPredicate.inlineScript(returnCustom);
 
         test.setCustomObject(Boolean.TRUE);
-        Assert.assertTrue(test.apply(Boolean.FALSE));
+        Assert.assertTrue(test.test(Boolean.FALSE));
         test.setCustomObject(Boolean.FALSE);
-        Assert.assertFalse(test.apply(Boolean.TRUE));
+        Assert.assertFalse(test.test(Boolean.TRUE));
         test.setCustomObject(Integer.valueOf(1));
-        Assert.assertFalse(test.apply("true"));
+        Assert.assertFalse(test.test("true"));
         test.setReturnOnError(true);
-        Assert.assertTrue(test.apply("false"));
+        Assert.assertTrue(test.test("false"));
     }
 
     @Test public void testBadScriptPredicate() throws ScriptException {
@@ -63,13 +63,13 @@ public class ScriptedTest {
 
         test.setHideExceptions(true);
         test.setReturnOnError(true);
-        Assert.assertTrue(test.apply(null));
+        Assert.assertTrue(test.test(null));
         test.setReturnOnError(false);
-        Assert.assertFalse(test.apply(null));
+        Assert.assertFalse(test.test(null));
 
         test.setHideExceptions(false);
         try {
-            Assert.assertFalse(test.apply(null));
+            Assert.assertFalse(test.test(null));
             Assert.fail();
         } catch (final RuntimeException e) {
             Assert.assertEquals(e.getCause().getClass(), ScriptException.class);

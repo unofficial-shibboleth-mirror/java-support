@@ -31,27 +31,27 @@ public class AnyMatchPredicateTest {
     @Test public void testApply(){
         AnyMatchPredicate<String> predicate = new AnyMatchPredicate<>(Predicates.equalTo("foo"));
         
-        if (predicate.apply(null)) {
+        if (predicate.test(null)) {
             Assert.fail();
         }
 
-        if (predicate.apply(Collections.EMPTY_LIST)) {
+        if (predicate.test(Collections.EMPTY_LIST)) {
             Assert.fail();
         }
 
-        if (!predicate.apply(Collections.singletonList("foo"))) {
+        if (!predicate.test(Collections.singletonList("foo"))) {
             Assert.fail();
         }
 
-        if (!predicate.apply(Arrays.asList("foo", "foo"))) {
+        if (!predicate.test(Arrays.asList("foo", "foo"))) {
             Assert.fail();
         }
 
-        if (!predicate.apply(Arrays.asList("foo", "bar", "foo"))) {
+        if (!predicate.test(Arrays.asList("foo", "bar", "foo"))) {
             Assert.fail();
         }
         
-        if (predicate.apply(Arrays.asList("bar", "baz"))) {
+        if (predicate.test(Arrays.asList("bar", "baz"))) {
             Assert.fail();
         }
     }

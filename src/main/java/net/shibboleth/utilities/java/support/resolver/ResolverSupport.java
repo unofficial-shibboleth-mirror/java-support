@@ -20,13 +20,14 @@ package net.shibboleth.utilities.java.support.resolver;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
+
+import net.shibboleth.utilities.java.support.logic.PredicateSupport;
 
 /**
  * Support class for resolver implementations.
@@ -108,13 +109,12 @@ public final class ResolverSupport {
         
         final Predicate<T> predicate;
         if (satisfyAny) {
-            predicate = Predicates.or(predicates);
+            predicate = PredicateSupport.or(predicates);
         } else {
-            predicate = Predicates.and(predicates);
+            predicate = PredicateSupport.and(predicates);
         }
         
-        return Iterables.filter(candidates, predicate);
+        return Iterables.filter(candidates, predicate::test);
     }
     
-
 }

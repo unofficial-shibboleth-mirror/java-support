@@ -24,6 +24,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -33,8 +34,6 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Predicate;
 
 /**
  * A registry which manages mappings from types of {@link Criterion} to types of {@link Predicate}
@@ -51,10 +50,10 @@ import com.google.common.base.Predicate;
 public class CriterionPredicateRegistry<T> {
 
     /** Logger. */
-    private Logger log = LoggerFactory.getLogger(CriterionPredicateRegistry.class);
+    @Nonnull private Logger log = LoggerFactory.getLogger(CriterionPredicateRegistry.class);
 
     /** Storage for the registry mappings. */
-    private Map<Class<? extends Criterion>, Class<? extends Predicate<T>>> registry;
+    @Nonnull private Map<Class<? extends Criterion>, Class<? extends Predicate<T>>> registry;
     
     /** Constructor. */
     public CriterionPredicateRegistry() {

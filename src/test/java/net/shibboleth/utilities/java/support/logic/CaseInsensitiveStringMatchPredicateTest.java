@@ -26,27 +26,27 @@ public class CaseInsensitiveStringMatchPredicateTest {
     @Test public void testApply(){
         CaseInsensitiveStringMatchPredicate predicate = new CaseInsensitiveStringMatchPredicate("FoO");
         
-        if(predicate.apply(null)){
+        if(predicate.test(null)){
             Assert.fail();
         }
         
-        if(predicate.apply("")){
+        if(predicate.test("")){
             Assert.fail();
         }
         
-        if(predicate.apply("  ")){
+        if(predicate.test("  ")){
             Assert.fail();
         }
         
-        if(!predicate.apply("foo")){
+        if(!predicate.test("foo")){
             Assert.fail();
         }
         
-        if(!predicate.apply("FOO")){
+        if(!predicate.test("FOO")){
             Assert.fail();
         }
         
-        if(predicate.apply("bar")){
+        if(predicate.test("bar")){
             Assert.fail();
         }
     }

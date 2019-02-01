@@ -17,6 +17,8 @@
 
 package net.shibboleth.utilities.java.support.logic;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
@@ -24,7 +26,6 @@ import javax.annotation.concurrent.ThreadSafe;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
 
 /** A {@link Function} that applies {@link StringSupport#trimOrNull(String)} to a given input string. */

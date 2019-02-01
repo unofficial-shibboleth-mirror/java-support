@@ -19,8 +19,6 @@ package net.shibboleth.utilities.java.support.logic;
 
 import javax.annotation.Nonnull;
 
-import com.google.common.base.Predicate;
-
 /** A {@link Predicate} that always throws a {@link RuntimeException} of some sort. */
 public class ExceptionPredicate implements Predicate<Object> {
 
@@ -37,7 +35,7 @@ public class ExceptionPredicate implements Predicate<Object> {
     }
 
     /** {@inheritDoc} */
-    public boolean apply(Object arg0) {
+    public boolean test(Object arg0) {
         throw thrownException;
     }
 }

@@ -20,6 +20,7 @@ package net.shibboleth.utilities.java.support.velocity;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
+import java.util.Objects;
 import java.util.UUID;
 
 import javax.annotation.Nonnull;
@@ -37,7 +38,6 @@ import org.apache.velocity.runtime.resource.util.StringResourceRepository;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
 
 /**
  * This is a helper class that wraps a velocity engine and template information into a single object. It provides
@@ -55,13 +55,13 @@ import com.google.common.base.Objects;
 public final class Template {
 
     /** The {@link VelocityEngine} used when evaluating the template. */
-    private final VelocityEngine engine;
+    @Nonnull private final VelocityEngine engine;
 
     /** The name of the template to be evaluated. */
-    private final String templateName;
+    @Nonnull @NotEmpty private final String templateName;
 
     /** The character encoding of the template. */
-    private final String templateEncoding;
+    @Nonnull @NotEmpty private final String templateEncoding;
 
     /**
      * Constructor.
@@ -259,7 +259,7 @@ public final class Template {
 
     /** {@inheritDoc} */
     @Override public int hashCode() {
-        return Objects.hashCode(engine, templateName);
+        return Objects.hash(engine, templateName);
     }
 
     /** {@inheritDoc} */

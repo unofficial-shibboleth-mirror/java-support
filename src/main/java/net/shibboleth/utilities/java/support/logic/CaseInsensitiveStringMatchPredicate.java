@@ -19,8 +19,6 @@ package net.shibboleth.utilities.java.support.logic;
 
 import javax.annotation.Nonnull;
 
-import com.google.common.base.Predicate;
-
 /**
  * A {@link Predicate} that checks that a given input string matches a target string while ignoring case. If a given
  * input is <code>null</code> this predicate returns <code>false</code>.
@@ -28,7 +26,7 @@ import com.google.common.base.Predicate;
 public class CaseInsensitiveStringMatchPredicate implements Predicate<CharSequence> {
 
     /** The target string. */
-    private final String target;
+    @Nonnull private final String target;
 
     /**
      * Constructor.
@@ -36,15 +34,16 @@ public class CaseInsensitiveStringMatchPredicate implements Predicate<CharSequen
      * @param matchString that string against which predicate inputs will be checked
      */
     public CaseInsensitiveStringMatchPredicate(@Nonnull final String matchString) {
-        target = Constraint.isNotNull(matchString, "Target string can not be null");
+        target = Constraint.isNotNull(matchString, "Target string cannot be null");
     }
 
     /** {@inheritDoc} */
-    public boolean apply(final CharSequence input) {
+    public boolean test(final CharSequence input) {
         if (input == null) {
             return false;
         }
 
         return target.equalsIgnoreCase(input.toString());
     }
+    
 }

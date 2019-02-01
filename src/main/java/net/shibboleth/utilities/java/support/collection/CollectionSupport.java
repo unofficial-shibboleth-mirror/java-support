@@ -18,15 +18,13 @@
 package net.shibboleth.utilities.java.support.collection;
 
 import java.util.Collection;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.utilities.java.support.logic.Constraint;
-
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
-import com.google.common.base.Predicate;
 
 /** Helper methods for working with collections of objects. */
 public final class CollectionSupport {
@@ -48,7 +46,7 @@ public final class CollectionSupport {
      */
     public static <T> boolean addIf(@Nonnull final Collection<? super T> target, @Nullable final T element,
             @Nonnull final Predicate<? super T> predicate) {
-        return addIf(target, element, predicate, Functions.<T> identity());
+        return addIf(target, element, predicate, t -> t);
     }
 
     /**
@@ -73,7 +71,7 @@ public final class CollectionSupport {
         }
 
         final T processedElement = elementPreprocessor.apply(element);
-        if (predicate.apply(processedElement)) {
+        if (predicate.test(processedElement)) {
             return target.add(processedElement);
         }
 
@@ -92,7 +90,7 @@ public final class CollectionSupport {
      */
     public static <T> boolean addIf(@Nonnull final Collection<? super T> target, @Nullable final Collection<T> elements,
             @Nonnull final Predicate<? super T> predicate) {
-        return addIf(target, elements, predicate, Functions.<T> identity());
+        return addIf(target, elements, predicate, t -> t);
     }
 
     /**
@@ -135,7 +133,7 @@ public final class CollectionSupport {
      */
     public static <T> boolean removeIf(@Nonnull final Collection<T> target, @Nullable final T element,
             @Nonnull final Predicate<? super T> predicate) {
-        return removeIf(target, element, predicate, Functions.<T> identity());
+        return removeIf(target, element, predicate, t -> t);
     }
 
     /**
@@ -160,7 +158,7 @@ public final class CollectionSupport {
         }
 
         final T processedElement = elementPreprocessor.apply(element);
-        if (predicate.apply(processedElement)) {
+        if (predicate.test(processedElement)) {
             return target.remove(processedElement);
         }
 
@@ -180,7 +178,7 @@ public final class CollectionSupport {
      */
     public static <T> boolean removeIf(@Nonnull final Collection<T> target, @Nullable final Collection<T> elements,
             @Nonnull final Predicate<? super T> predicate) {
-        return removeIf(target, elements, predicate, Functions.<T> identity());
+        return removeIf(target, elements, predicate, t -> t);
     }
 
     /**

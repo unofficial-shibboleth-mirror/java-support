@@ -29,7 +29,7 @@ public class EvaluableTestFooCriterion implements EvaluableFooCriterion {
         result = flag;
     }
 
-    public boolean apply(Foo input) {
+    public boolean test(Foo input) {
         return result;
     }
 

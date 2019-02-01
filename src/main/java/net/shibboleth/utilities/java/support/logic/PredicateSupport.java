@@ -17,11 +17,13 @@
 
 package net.shibboleth.utilities.java.support.logic;
 
+import java.util.ArrayList;
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 
 /**
  * Helper class for constructing predicates. Especially useful for creating internal DSLs via Java's static method
@@ -41,7 +43,7 @@ public final class PredicateSupport {
      * 
      * @return the constructed predicate
      */
-    @Nonnull public static <T> Predicate<Iterable<T>> allMatch(@Nonnull final Predicate<T> target) {
+    @Nonnull public static <T> Predicate<Iterable<T>> allMatch(@Nonnull final java.util.function.Predicate<T> target) {
         return new AllMatchPredicate<>(target);
     }
 
@@ -53,7 +55,7 @@ public final class PredicateSupport {
      * 
      * @return the constructed predicate
      */
-    @Nonnull public static <T> Predicate<Iterable<T>> anyMatch(@Nonnull final Predicate<T> target) {
+    @Nonnull public static <T> Predicate<Iterable<T>> anyMatch(@Nonnull final java.util.function.Predicate<T> target) {
         return new AnyMatchPredicate<>(target);
     }
 
@@ -82,13 +84,157 @@ public final class PredicateSupport {
      *  @since 7.4.0
      */
     @Nonnull public static <T> Predicate<T> fromFunction(@Nonnull final Function<T,Boolean> function,
-            @Nonnull final Predicate<T> defValue) {
+            @Nonnull final java.util.function.Predicate<T> defValue) {
         return new Predicate<T>() {
-            public boolean apply(@Nullable final T input) {
+            public boolean test(@Nullable final T input) {
                 final Boolean result = function.apply(input);
-                return result != null ? result : defValue.apply(input);
+                return result != null ? result : defValue.test(input);
             }
         };
+    }
+    
+    /**
+     * Returns a predicate that evaluates to {@code true} if the given predicate evaluates to {@code
+     * false}.
+     * 
+     * @param <T> predicate input type
+     * @param predicate the predicate to negate
+     * 
+     * @return the negated predicate
+     */
+    @Nonnull public static <T> Predicate<T> not(@Nonnull final java.util.function.Predicate<T> predicate) {
+        return predicate.negate()::test;
+    }
+
+    /**
+     * Returns a predicate that evaluates to {@code true} if each of its components evaluates to
+     * {@code true}. The components are evaluated in order, and evaluation will be "short-circuited"
+     * as soon as a false predicate is found. It defensively copies the iterable passed in, so future
+     * changes to it won't alter the behavior of this predicate. If {@code components} is empty, the
+     * returned predicate will always evaluate to {@code true}.
+     * 
+     * @param <T> predicate input type
+     * @param components the predicates to combine
+     * 
+     * @return the composite predicate
+     */
+    @Nonnull public static <T> Predicate<T> and(
+            @Nonnull final Iterable<? extends java.util.function.Predicate<? super T>> components) {
+        
+        final ArrayList<com.google.common.base.Predicate<T>> copy = new ArrayList<>();
+        for (final java.util.function.Predicate<? super T> p : components) {
+            copy.add(p::test);
+        }
+        
+        return Predicates.and(copy)::test;
+    }
+
+    /**
+     * Returns a predicate that evaluates to {@code true} if each of its components evaluates to
+     * {@code true}. The components are evaluated in order, and evaluation will be "short-circuited"
+     * as soon as a false predicate is found. It defensively copies the iterable passed in, so future
+     * changes to it won't alter the behavior of this predicate. If {@code components} is empty, the
+     * returned predicate will always evaluate to {@code true}.
+     * 
+     * @param <T> predicate input type
+     * @param components the predicates to combine
+     * 
+     * @return the composite predicate
+     */
+    @SafeVarargs
+    @Nonnull public static <T> Predicate<T> and(
+            @Nonnull final java.util.function.Predicate<? super T>... components) {
+        final ArrayList<com.google.common.base.Predicate<T>> copy = new ArrayList<>();
+        for (final java.util.function.Predicate<? super T> p : components) {
+            copy.add(p::test);
+        }
+        
+        return Predicates.and(copy)::test;
+    }
+
+    /**
+     * Returns a predicate that evaluates to {@code true} if each of its components evaluates to
+     * {@code true}. The components are evaluated in order, and evaluation will be "short-circuited"
+     * as soon as a false predicate is found. It defensively copies the iterable passed in, so future
+     * changes to it won't alter the behavior of this predicate. If {@code components} is empty, the
+     * returned predicate will always evaluate to {@code true}.
+     * 
+     * @param <T> predicate input type
+     * @param first the first predicate
+     * @param second the second predicate
+     * 
+     * @return the composite predicate
+     */
+    @Nonnull public static <T> Predicate<T> and(@Nonnull final java.util.function.Predicate<? super T> first,
+            @Nonnull final java.util.function.Predicate<? super T> second) {
+        
+        return t -> first.test(t) && second.test(t);
+    }
+    
+    /**
+     * Returns a predicate that evaluates to {@code true} if any one of its components evaluates to
+     * {@code true}. The components are evaluated in order, and evaluation will be "short-circuited"
+     * as soon as a true predicate is found. It defensively copies the iterable passed in, so future
+     * changes to it won't alter the behavior of this predicate. If {@code components} is empty, the
+     * returned predicate will always evaluate to {@code false}.
+     * 
+     * @param <T> predicate input type
+     * @param components the predicates to combine
+     * 
+     * @return the composite predicate
+     */
+    @Nonnull public static <T> Predicate<T> or(
+            @Nonnull final Iterable<? extends java.util.function.Predicate<? super T>> components) {
+        
+        final ArrayList<com.google.common.base.Predicate<T>> copy = new ArrayList<>();
+        for (final java.util.function.Predicate<? super T> p : components) {
+            copy.add(p::test);
+        }
+        
+        return Predicates.or(copy)::test;
+    }
+
+    /**
+     * Returns a predicate that evaluates to {@code true} if any one of its components evaluates to
+     * {@code true}. The components are evaluated in order, and evaluation will be "short-circuited"
+     * as soon as a true predicate is found. It defensively copies the iterable passed in, so future
+     * changes to it won't alter the behavior of this predicate. If {@code components} is empty, the
+     * returned predicate will always evaluate to {@code false}.
+     * 
+     * @param <T> predicate input type
+     * @param components the predicates to combine
+     * 
+     * @return the composite predicate
+     */
+    @SafeVarargs
+    @Nonnull public static <T> Predicate<T> or(
+            @Nonnull final java.util.function.Predicate<? super T>... components) {
+        
+        final ArrayList<com.google.common.base.Predicate<T>> copy = new ArrayList<>();
+        for (final java.util.function.Predicate<? super T> p : components) {
+            copy.add(p::test);
+        }
+        
+        return Predicates.or(copy)::test;
+    }
+
+    /**
+     * Returns a predicate that evaluates to {@code true} if any one of its components evaluates to
+     * {@code true}. The components are evaluated in order, and evaluation will be "short-circuited"
+     * as soon as a true predicate is found. It defensively copies the iterable passed in, so future
+     * changes to it won't alter the behavior of this predicate. If {@code components} is empty, the
+     * returned predicate will always evaluate to {@code false}.
+     * 
+     * @param <T> predicate input type
+     * @param first the first predicate
+     * @param second the second predicate
+     * 
+     * @return the composite predicate
+     */
+    @Nonnull public static <T> Predicate<T> or(@Nonnull final java.util.function.Predicate<? super T> first,
+            @Nonnull final java.util.function.Predicate<? super T> second) {
+        
+        return t -> first.test(t) || second.test(t);
     }
     
 }

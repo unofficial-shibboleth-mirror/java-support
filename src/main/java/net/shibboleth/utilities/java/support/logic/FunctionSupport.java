@@ -17,10 +17,13 @@
 
 package net.shibboleth.utilities.java.support.logic;
 
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 
-import com.google.common.base.Function;
 import com.google.common.base.Functions;
+
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 
 /**
  * Helper class for constructing functions that are fully generic, in contrast to the broken,
@@ -43,8 +46,26 @@ public final class FunctionSupport {
      * 
      * @return the constructed function
      */
-    @Nonnull public static <T1,T2> Function<T1,T2> constant(@Nonnull final T2 target) {
+    @Nonnull public static <T1,T2> Function<T1,T2> constant(@Nonnull @ParameterName(name="target") final T2 target) {
         return (Function<T1, T2>) Functions.constant(target);
+    }
+
+    /**
+     * Returns the composition of two functions. For {@code f: A->B} and {@code g: B->C}, composition
+     * is defined as the function h such that {@code h(a) == g(f(a))} for each {@code a}.
+     *
+     * @param <A> input to composed function
+     * @param <B> output of inner function
+     * @param <C> output of composed function
+     *
+     * @param g the second function to apply
+     * @param f the first function to apply
+     * @return the composition of {@code f} and {@code g}
+     * @see <a href="//en.wikipedia.org/wiki/Function_composition">function composition</a>
+     */
+    @Nonnull public static <A,B,C> Function<A,C> compose(@Nonnull @ParameterName(name="g") final Function<B,C> g,
+            @Nonnull @ParameterName(name="f") final Function<A,? extends B> f) {
+        return g.compose(f);
     }
 
 }

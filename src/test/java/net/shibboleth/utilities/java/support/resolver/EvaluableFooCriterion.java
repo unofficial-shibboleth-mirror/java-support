@@ -17,7 +17,7 @@
 
 package net.shibboleth.utilities.java.support.resolver;
 
-import com.google.common.base.Predicate;
+import java.util.function.Predicate;
 
 /**
  *

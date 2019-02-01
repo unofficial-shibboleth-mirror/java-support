@@ -17,14 +17,14 @@
 
 package net.shibboleth.utilities.java.support.logic;
 
+import java.util.Objects;
+import java.util.function.Function;
+
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 
-import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
 import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
 
 /**
  * A {@link Function} that receives an input, runs it through a pre-processor and checks the result against a
@@ -41,7 +41,7 @@ public class TransformAndCheckFunction<T> implements Function<T, Optional<? exte
     private final Function<T, ? extends T> preprocessor;
 
     /** A constraint which must be met in order for an input to be valid. */
-    private final Predicate<T> constraint;
+    private final java.util.function.Predicate<T> constraint;
 
     /** Whether input that does not meet the constraint should cause an error or just be silently dropped. */
     private final boolean failOnConstraintViolation;
@@ -55,7 +55,8 @@ public class TransformAndCheckFunction<T> implements Function<T, Optional<? exte
      *            just be ignored
      */
     public TransformAndCheckFunction(@Nonnull final Function<T, ? extends T> inputPreprocessor,
-            @Nonnull final Predicate<T> inputConstraint, final boolean failOnInputConstraintViolation) {
+            @Nonnull final java.util.function.Predicate<T> inputConstraint,
+            final boolean failOnInputConstraintViolation) {
         preprocessor = Constraint.isNotNull(inputPreprocessor, "Input preprocessor can not be null");
         constraint = Constraint.isNotNull(inputConstraint, "Input constraint can not be null");
         failOnConstraintViolation = failOnInputConstraintViolation;
@@ -65,7 +66,7 @@ public class TransformAndCheckFunction<T> implements Function<T, Optional<? exte
     public Optional<? extends T> apply(final T input) {
         final T processedValue = preprocessor.apply(input);
 
-        final boolean meetsCriteria = constraint.apply(processedValue);
+        final boolean meetsCriteria = constraint.test(processedValue);
 
         if (meetsCriteria) {
             return Optional.of(processedValue);
@@ -100,7 +101,7 @@ public class TransformAndCheckFunction<T> implements Function<T, Optional<? exte
 
     /** {@inheritDoc} */
     public int hashCode() {
-        return Objects.hashCode(preprocessor, constraint, failOnConstraintViolation);
+        return Objects.hash(preprocessor, constraint, failOnConstraintViolation);
     }
 
     /** {@inheritDoc} */

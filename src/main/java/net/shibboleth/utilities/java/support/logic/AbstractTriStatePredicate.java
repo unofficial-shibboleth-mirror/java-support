@@ -17,8 +17,6 @@
 
 package net.shibboleth.utilities.java.support.logic;
 
-import com.google.common.base.Predicate;
-
 /**
  * A base {@link Predicate} implementation which provides support for cases where the
  * predicate can not meaningfully evaluate the input.  The flags on this class

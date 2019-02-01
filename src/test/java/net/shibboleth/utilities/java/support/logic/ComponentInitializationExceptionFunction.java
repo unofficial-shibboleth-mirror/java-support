@@ -17,10 +17,10 @@
 
 package net.shibboleth.utilities.java.support.logic;
 
+import java.util.function.Function;
+
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.InitializableComponent;
-
-import com.google.common.base.Function;
 
 /**
  * A {@link Function} that always throws a {@link ComponentInitializationException} when {@link #initialize()} is

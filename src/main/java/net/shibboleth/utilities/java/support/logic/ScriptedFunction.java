@@ -20,6 +20,7 @@ package net.shibboleth.utilities.java.support.logic;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,8 +35,6 @@ import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
 
 /**
  * A {@link Function} which calls out to a supplied script.

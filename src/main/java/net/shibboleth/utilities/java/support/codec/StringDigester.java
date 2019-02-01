@@ -20,6 +20,7 @@ package net.shibboleth.utilities.java.support.codec;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,14 +35,12 @@ import org.apache.commons.codec.binary.Hex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
-
 /**
  * A function impl which accepts a String input, digests it according to a specified {@link MessageDigest} algorithm,
  * and then returns the output in a specified format: Base64-encoded or hexadecimal with with lower or upper 
  * case characters.
  */
-public class StringDigester implements Function<String, String> {
+public class StringDigester implements Function<String,String> {
     
     /** The output format determining how the the digested byte[] is converted to the output String. */
     public enum OutputFormat {

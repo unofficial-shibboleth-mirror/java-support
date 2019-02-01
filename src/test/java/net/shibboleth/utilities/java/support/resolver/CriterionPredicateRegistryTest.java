@@ -20,12 +20,11 @@ package net.shibboleth.utilities.java.support.resolver;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.function.Predicate;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import com.google.common.base.Predicate;
 
 public class CriterionPredicateRegistryTest {
     

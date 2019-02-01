@@ -178,7 +178,7 @@ public final class StringSupport {
             return Collections.emptySet();
         }
         
-        return Collections2.filter(Collections2.transform(values, TrimOrNullStringFunction.INSTANCE),
+        return Collections2.filter(Collections2.transform(values, TrimOrNullStringFunction.INSTANCE::apply),
                 Predicates.notNull());
     }
 }

@@ -20,8 +20,6 @@ package net.shibboleth.utilities.java.support.logic;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.google.common.base.Predicate;
-
 /**
  * A {@link Predicate} that checks that all items in an {@link Iterable} match a given target predicate. If the given
  * {@link Iterable} is null or contains no items this method will return <code>false</code>, otherwise it passes each
@@ -34,26 +32,26 @@ import com.google.common.base.Predicate;
 public class AllMatchPredicate<T> implements Predicate<Iterable<T>> {
 
     /** The predicate applied to each value of the {@link Iterable}. */
-    private final Predicate<T> predicate;
+    @Nonnull private final java.util.function.Predicate<T> predicate;
 
     /**
      * Constructor.
      * 
      * @param target the target predicate against which all {@link Iterable} elements are evaluated
      */
-    public AllMatchPredicate(@Nonnull final Predicate<T> target) {
-        predicate = Constraint.isNotNull(target, "Target predicate can not be null");
+    public AllMatchPredicate(@Nonnull final java.util.function.Predicate<T> target) {
+        predicate = Constraint.isNotNull(target, "Target predicate cannot be null");
     }
 
     /** {@inheritDoc} */
-    public boolean apply(@Nullable final Iterable<T> inputs) {
+    public boolean test(@Nullable final Iterable<T> inputs) {
         if (inputs == null) {
             return false;
         }
 
         boolean matchedAll = false;
         for (final T input : inputs) {
-            if (!predicate.apply(input)) {
+            if (!predicate.test(input)) {
                 return false;
             } else {
                 matchedAll = true;
@@ -62,4 +60,5 @@ public class AllMatchPredicate<T> implements Predicate<Iterable<T>> {
 
         return matchedAll;
     }
+    
 }

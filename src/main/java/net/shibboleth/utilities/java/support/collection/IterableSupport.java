@@ -17,12 +17,13 @@
 
 package net.shibboleth.utilities.java.support.collection;
 
+import java.util.function.Predicate;
+
 import javax.annotation.Nonnull;
 
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 
@@ -45,7 +46,7 @@ public final class IterableSupport {
         Constraint.isNotNull(clazz, "Class can not be null");
         
         final Predicate<Object> instanceOf = Predicates.instanceOf(clazz);
-        final Optional<?> result = Iterables.tryFind(target, instanceOf);
+        final Optional<?> result = Iterables.tryFind(target, instanceOf::test);
         return result.isPresent();
     }
 
