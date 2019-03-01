@@ -18,17 +18,15 @@
 package net.shibboleth.utilities.java.support.collection;
 
 import java.io.Serializable;
+import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.time.chrono.ChronoZonedDateTime;
+import java.time.chrono.Chronology;
+import java.time.temporal.Temporal;
+import java.time.temporal.TemporalAdjuster;
 import java.util.Arrays;
 import java.util.List;
 
-import org.joda.time.Chronology;
-import org.joda.time.DateTime;
-import org.joda.time.Instant;
-import org.joda.time.ReadableDateTime;
-import org.joda.time.ReadableInstant;
-import org.joda.time.base.AbstractDateTime;
-import org.joda.time.base.AbstractInstant;
-import org.joda.time.base.BaseDateTime;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -49,74 +47,70 @@ public class LockableClassToInstanceMultiMapTest {
     }
 
     @Test public void testKeysAndContainsKey() {
-        LockableClassToInstanceMultiMap<AbstractInstant> map = new LockableClassToInstanceMultiMap<>();
+        LockableClassToInstanceMultiMap<Temporal> map = new LockableClassToInstanceMultiMap<>();
         populate(map);
         Assert.assertEquals(map.keysWithLock().size(), 2);
         Assert.assertFalse(map.containsKeyWithLock(null));
         Assert.assertFalse(map.containsKeyWithLock(Chronology.class));
-        Assert.assertFalse(map.containsKeyWithLock(AbstractInstant.class));
-        Assert.assertFalse(map.containsKeyWithLock(AbstractDateTime.class));
-        Assert.assertFalse(map.containsKeyWithLock(BaseDateTime.class));
-        Assert.assertTrue(map.containsKeyWithLock(DateTime.class));
+        Assert.assertFalse(map.containsKeyWithLock(Temporal.class));
+        Assert.assertFalse(map.containsKeyWithLock(TemporalAdjuster.class));
+        Assert.assertTrue(map.containsKeyWithLock(ZonedDateTime.class));
+        Assert.assertFalse(map.containsKeyWithLock(ChronoZonedDateTime.class));
         Assert.assertFalse(map.containsKeyWithLock(Comparable.class));
-        Assert.assertFalse(map.containsKeyWithLock(ReadableDateTime.class));
-        Assert.assertFalse(map.containsKeyWithLock(ReadableInstant.class));
         Assert.assertFalse(map.containsKeyWithLock(Serializable.class));
         Assert.assertTrue(map.containsKeyWithLock(Instant.class));
 
         map = new LockableClassToInstanceMultiMap<>(true);
         populate(map);
-        Assert.assertEquals(map.keysWithLock().size(), 9);
+        Assert.assertEquals(map.keysWithLock().size(), 8);
         Assert.assertFalse(map.containsKeyWithLock(null));
         Assert.assertFalse(map.containsKeyWithLock(Chronology.class));
-        Assert.assertTrue(map.containsKeyWithLock(AbstractInstant.class));
-        Assert.assertTrue(map.containsKeyWithLock(AbstractDateTime.class));
-        Assert.assertTrue(map.containsKeyWithLock(BaseDateTime.class));
-        Assert.assertTrue(map.containsKeyWithLock(DateTime.class));
+        Assert.assertTrue(map.containsKeyWithLock(Temporal.class));
+        Assert.assertTrue(map.containsKeyWithLock(TemporalAdjuster.class));
+        Assert.assertTrue(map.containsKeyWithLock(ZonedDateTime.class));
+        Assert.assertTrue(map.containsKeyWithLock(ChronoZonedDateTime.class));
         Assert.assertTrue(map.containsKeyWithLock(Comparable.class));
-        Assert.assertTrue(map.containsKeyWithLock(ReadableDateTime.class));
-        Assert.assertTrue(map.containsKeyWithLock(ReadableInstant.class));
         Assert.assertTrue(map.containsKeyWithLock(Serializable.class));
         Assert.assertTrue(map.containsKeyWithLock(Instant.class));
     }
 
     @Test public void testValuesAndContainsValues() {
-        LockableClassToInstanceMultiMap<AbstractInstant> map = new LockableClassToInstanceMultiMap<>();
+        LockableClassToInstanceMultiMap<Temporal> map = new LockableClassToInstanceMultiMap<>();
 
-        DateTime now = new DateTime();
-        map.putWithLock(now);
+        ZonedDateTime now = ZonedDateTime.now();
+        map.put(now);
 
-        DateTime now100 = now.plus(100);
-        map.putWithLock(now100);
+        ZonedDateTime now100 = now.plusMinutes(100);
+        map.put(now100);
 
-        Instant instant = new Instant();
-        map.putWithLock(instant);
+        Instant instant = Instant.now();
+        map.put(instant);
 
         Assert.assertEquals(map.valuesWithLock().size(), 3);
         Assert.assertFalse(map.containsValueWithLock(null));
-        Assert.assertFalse(map.containsValueWithLock(now.minus(100)));
-        Assert.assertFalse(map.containsValueWithLock(instant.minus(100)));
+        Assert.assertFalse(map.containsValueWithLock(now.minusMinutes(100)));
+        Assert.assertFalse(map.containsValueWithLock(instant.minusSeconds(100)));
         Assert.assertTrue(map.containsValueWithLock(instant));
         Assert.assertTrue(map.containsValueWithLock(now));
         Assert.assertTrue(map.containsValueWithLock(now100));
     }
 
     @Test public void testEquals() {
-        final LockableClassToInstanceMultiMap<AbstractInstant> map = new LockableClassToInstanceMultiMap<>();
-        final LockableClassToInstanceMultiMap<AbstractInstant> map2 = new LockableClassToInstanceMultiMap<>();
-        final LockableClassToInstanceMultiMap<AbstractInstant> map3 = new LockableClassToInstanceMultiMap<>();
+        final LockableClassToInstanceMultiMap<Temporal> map = new LockableClassToInstanceMultiMap<>();
+        final LockableClassToInstanceMultiMap<Temporal> map2 = new LockableClassToInstanceMultiMap<>();
+        final LockableClassToInstanceMultiMap<Temporal> map3 = new LockableClassToInstanceMultiMap<>();
 
-        final DateTime now = new DateTime();
+        final ZonedDateTime now = ZonedDateTime.now();
         map.putWithLock(now);
         map2.putWithLock(now);
         map3.putWithLock(now);
 
-        final DateTime now100 = now.plus(100);
+        final ZonedDateTime now100 = now.plusMinutes(100);
         map.putWithLock(now100);
         map2.putWithLock(now100);
         map3.putWithLock(now100);
 
-        final Instant instant = new Instant();
+        final Instant instant = Instant.now();
         map.putWithLock(instant);
         map2.putWithLock(instant);
 
@@ -129,13 +123,13 @@ public class LockableClassToInstanceMultiMapTest {
     }
 
     @Test public void testGet() {
-        LockableClassToInstanceMultiMap<AbstractInstant> map = new LockableClassToInstanceMultiMap<>();
+        LockableClassToInstanceMultiMap<Temporal> map = new LockableClassToInstanceMultiMap<>();
         populate(map);
 
         List<?> values = map.getWithLock(null);
         Assert.assertEquals(values.size(), 0);
 
-        values = map.getWithLock(DateTime.class);
+        values = map.getWithLock(ZonedDateTime.class);
         Assert.assertEquals(values.size(), 2);
 
         values = map.getWithLock(Instant.class);
@@ -317,15 +311,15 @@ public class LockableClassToInstanceMultiMapTest {
         Assert.assertFalse(map.containsKeyWithLock(Bar.class));
     }
 
-    protected void populate(LockableClassToInstanceMultiMap<AbstractInstant> map) {
-        DateTime now = new DateTime();
-        map.putWithLock(now);
+    protected void populate(ClassToInstanceMultiMap<Temporal> map) {
+        ZonedDateTime now = ZonedDateTime.now();
+        map.put(now);
 
-        DateTime now100 = now.plus(100);
-        map.putWithLock(now100);
+        ZonedDateTime now100 = now.plusMinutes(100);
+        map.put(now100);
 
-        Instant instant = new Instant();
-        map.putWithLock(instant);
+        Instant instant = Instant.now();
+        map.put(instant);
     }
 
     // Test classes and interfaces

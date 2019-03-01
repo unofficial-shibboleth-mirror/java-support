@@ -17,6 +17,7 @@
 
 package net.shibboleth.utilities.java.support.service;
 
+import java.time.Instant;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -31,8 +32,6 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
 import net.shibboleth.utilities.java.support.primitive.TimerSupport;
 
-import org.joda.time.DateTime;
-import org.joda.time.chrono.ISOChronology;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,11 +61,11 @@ public abstract class AbstractReloadableService<T> extends AbstractIdentifiableI
     /** Watcher that monitors the set of configuration resources for this service for changes. */
     @Nullable private ServiceReloadTask reloadTask;
 
-    /** The last time time the service was reloaded, whether successful or not. */
-    @Nullable private DateTime lastReloadInstant;
+    /** The last time the service was reloaded, whether successful or not. */
+    @Nullable private Instant lastReloadInstant;
 
     /** The last time the service was reloaded successfully. */
-    @Nullable private DateTime lastSuccessfulReleaseInstant;
+    @Nullable private Instant lastSuccessfulReleaseInstant;
 
     /** The cause of the last reload failure, if the last reload failed. */
     @Nullable private Throwable reloadFailureCause;
@@ -133,17 +132,17 @@ public abstract class AbstractReloadableService<T> extends AbstractIdentifiableI
     }
 
     /** {@inheritDoc} */
-    @Override @Nullable public DateTime getLastReloadAttemptInstant() {
+    @Nullable public Instant getLastReloadAttemptInstant() {
         return lastReloadInstant;
     }
 
     /** {@inheritDoc} */
-    @Override @Nullable public DateTime getLastSuccessfulReloadInstant() {
+    @Nullable public Instant getLastSuccessfulReloadInstant() {
         return lastSuccessfulReleaseInstant;
     }
 
     /** {@inheritDoc} */
-    @Override @Nullable public Throwable getReloadFailureCause() {
+    @Nullable public Throwable getReloadFailureCause() {
         return reloadFailureCause;
     }
 
@@ -172,7 +171,7 @@ public abstract class AbstractReloadableService<T> extends AbstractIdentifiableI
 
         log.info("{} Performing initial load", getLogPrefix());
         try {
-            lastReloadInstant = new DateTime(ISOChronology.getInstanceUTC());
+            lastReloadInstant = Instant.now();
             doReload();
             lastSuccessfulReleaseInstant = lastReloadInstant;
         } catch (final ServiceException e) {
@@ -220,7 +219,7 @@ public abstract class AbstractReloadableService<T> extends AbstractIdentifiableI
     /** {@inheritDoc} */
     @Override public final void reload() {
 
-        final DateTime now = new DateTime(ISOChronology.getInstanceUTC());
+        final Instant now = Instant.now();
         lastReloadInstant = now;
 
         try {

@@ -17,11 +17,11 @@
 
 package net.shibboleth.utilities.java.support.service;
 
+import java.time.Instant;
+
 import javax.annotation.Nullable;
 
 import net.shibboleth.utilities.java.support.component.InitializableComponent;
-
-import org.joda.time.DateTime;
 
 /**
  * A service that supports reloading its configuration.
@@ -36,7 +36,7 @@ public interface ReloadableService<T> extends InitializableComponent {
      * 
      * @return time when the service was last successfully reloaded
      */
-    @Nullable DateTime getLastSuccessfulReloadInstant();
+    @Nullable Instant getLastSuccessfulReloadInstant();
 
     /**
      * Gets the time when the service last attempted to reload. If the reload was successful this time should match the
@@ -44,7 +44,7 @@ public interface ReloadableService<T> extends InitializableComponent {
      * 
      * @return time when the service last attempted to reload
      */
-    @Nullable DateTime getLastReloadAttemptInstant();
+    @Nullable Instant getLastReloadAttemptInstant();
 
     /**
      * Gets the reason the last reload failed.

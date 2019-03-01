@@ -18,17 +18,15 @@
 package net.shibboleth.utilities.java.support.collection;
 
 import java.io.Serializable;
+import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.time.chrono.ChronoZonedDateTime;
+import java.time.chrono.Chronology;
+import java.time.temporal.Temporal;
+import java.time.temporal.TemporalAdjuster;
 import java.util.Arrays;
 import java.util.List;
 
-import org.joda.time.Chronology;
-import org.joda.time.DateTime;
-import org.joda.time.Instant;
-import org.joda.time.ReadableDateTime;
-import org.joda.time.ReadableInstant;
-import org.joda.time.base.AbstractDateTime;
-import org.joda.time.base.AbstractInstant;
-import org.joda.time.base.BaseDateTime;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -49,74 +47,70 @@ public class ClassToInstanceMultiMapTest {
     }
 
     @Test public void testKeysAndContainsKey() {
-        ClassToInstanceMultiMap<AbstractInstant> map = new ClassToInstanceMultiMap<>();
+        ClassToInstanceMultiMap<Temporal> map = new ClassToInstanceMultiMap<>();
         populate(map);
         Assert.assertEquals(map.keys().size(), 2);
         Assert.assertFalse(map.containsKey(null));
         Assert.assertFalse(map.containsKey(Chronology.class));
-        Assert.assertFalse(map.containsKey(AbstractInstant.class));
-        Assert.assertFalse(map.containsKey(AbstractDateTime.class));
-        Assert.assertFalse(map.containsKey(BaseDateTime.class));
-        Assert.assertTrue(map.containsKey(DateTime.class));
+        Assert.assertFalse(map.containsKey(Temporal.class));
+        Assert.assertFalse(map.containsKey(TemporalAdjuster.class));
+        Assert.assertTrue(map.containsKey(ZonedDateTime.class));
+        Assert.assertFalse(map.containsKey(ChronoZonedDateTime.class));
         Assert.assertFalse(map.containsKey(Comparable.class));
-        Assert.assertFalse(map.containsKey(ReadableDateTime.class));
-        Assert.assertFalse(map.containsKey(ReadableInstant.class));
         Assert.assertFalse(map.containsKey(Serializable.class));
         Assert.assertTrue(map.containsKey(Instant.class));
 
         map = new ClassToInstanceMultiMap<>(true);
         populate(map);
-        Assert.assertEquals(map.keys().size(), 9);
+        Assert.assertEquals(map.keys().size(), 8);
         Assert.assertFalse(map.containsKey(null));
         Assert.assertFalse(map.containsKey(Chronology.class));
-        Assert.assertTrue(map.containsKey(AbstractInstant.class));
-        Assert.assertTrue(map.containsKey(AbstractDateTime.class));
-        Assert.assertTrue(map.containsKey(BaseDateTime.class));
-        Assert.assertTrue(map.containsKey(DateTime.class));
+        Assert.assertTrue(map.containsKey(Temporal.class));
+        Assert.assertTrue(map.containsKey(TemporalAdjuster.class));
+        Assert.assertTrue(map.containsKey(ZonedDateTime.class));
+        Assert.assertTrue(map.containsKey(ChronoZonedDateTime.class));
         Assert.assertTrue(map.containsKey(Comparable.class));
-        Assert.assertTrue(map.containsKey(ReadableDateTime.class));
-        Assert.assertTrue(map.containsKey(ReadableInstant.class));
         Assert.assertTrue(map.containsKey(Serializable.class));
         Assert.assertTrue(map.containsKey(Instant.class));
     }
 
     @Test public void testValuesAndContainsValues() {
-        ClassToInstanceMultiMap<AbstractInstant> map = new ClassToInstanceMultiMap<>();
+        ClassToInstanceMultiMap<Temporal> map = new ClassToInstanceMultiMap<>();
 
-        DateTime now = new DateTime();
+        ZonedDateTime now = ZonedDateTime.now();
         map.put(now);
 
-        DateTime now100 = now.plus(100);
+        ZonedDateTime now100 = now.plusMinutes(100);
         map.put(now100);
 
-        Instant instant = new Instant();
+        Instant instant = Instant.now();
         map.put(instant);
 
         Assert.assertEquals(map.values().size(), 3);
         Assert.assertFalse(map.containsValue(null));
-        Assert.assertFalse(map.containsValue(now.minus(100)));
-        Assert.assertFalse(map.containsValue(instant.minus(100)));
+        Assert.assertFalse(map.containsValue(now.minusDays(100)));
+        Assert.assertFalse(map.containsValue(instant.minusSeconds(100)));
         Assert.assertTrue(map.containsValue(instant));
         Assert.assertTrue(map.containsValue(now));
         Assert.assertTrue(map.containsValue(now100));
     }
 
     @Test public void testEquals() {
-        final ClassToInstanceMultiMap<AbstractInstant> map = new ClassToInstanceMultiMap<>();
-        final ClassToInstanceMultiMap<AbstractInstant> map2 = new ClassToInstanceMultiMap<>();
-        final ClassToInstanceMultiMap<AbstractInstant> map3 = new ClassToInstanceMultiMap<>();
+        final ClassToInstanceMultiMap<Temporal> map = new ClassToInstanceMultiMap<>();
+        final ClassToInstanceMultiMap<Temporal> map2 = new ClassToInstanceMultiMap<>();
+        final ClassToInstanceMultiMap<Temporal> map3 = new ClassToInstanceMultiMap<>();
 
-        final DateTime now = new DateTime();
+        final ZonedDateTime now = ZonedDateTime.now();
         map.put(now);
         map2.put(now);
         map3.put(now);
 
-        final DateTime now100 = now.plus(100);
+        final ZonedDateTime now100 = now.plusMinutes(100);
         map.put(now100);
         map2.put(now100);
         map3.put(now100);
 
-        final Instant instant = new Instant();
+        final Instant instant = Instant.now();
         map.put(instant);
         map2.put(instant);
 
@@ -129,13 +123,13 @@ public class ClassToInstanceMultiMapTest {
     }
 
     @Test public void testGet() {
-        ClassToInstanceMultiMap<AbstractInstant> map = new ClassToInstanceMultiMap<>();
+        ClassToInstanceMultiMap<Temporal> map = new ClassToInstanceMultiMap<>();
         populate(map);
 
         List<?> values = map.get(null);
         Assert.assertEquals(values.size(), 0);
 
-        values = map.get(DateTime.class);
+        values = map.get(ZonedDateTime.class);
         Assert.assertEquals(values.size(), 2);
 
         values = map.get(Instant.class);
@@ -317,14 +311,14 @@ public class ClassToInstanceMultiMapTest {
         Assert.assertFalse(map.containsKey(Bar.class));
     }
 
-    protected void populate(ClassToInstanceMultiMap<AbstractInstant> map) {
-        DateTime now = new DateTime();
+    protected void populate(ClassToInstanceMultiMap<Temporal> map) {
+        ZonedDateTime now = ZonedDateTime.now();
         map.put(now);
 
-        DateTime now100 = now.plus(100);
+        ZonedDateTime now100 = now.plusMinutes(100);
         map.put(now100);
 
-        Instant instant = new Instant();
+        Instant instant = Instant.now();
         map.put(instant);
     }
 
