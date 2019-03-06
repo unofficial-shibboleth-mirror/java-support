@@ -19,12 +19,12 @@ package net.shibboleth.utilities.java.support.httpclient;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -102,7 +102,7 @@ public class FileCachingHttpClientBuilder extends HttpClientBuilder {
     private long maxCacheEntrySize;
     
     /** Interval at which the storage maintenance task should run. */
-    @Duration private long maintentanceTaskInterval;
+    @Nonnull private Duration maintentanceTaskInterval;
     
     /** The current managed storage instance. */
     private ManagedHttpCacheStorage managedStorage;
@@ -124,8 +124,7 @@ public class FileCachingHttpClientBuilder extends HttpClientBuilder {
         cacheDir = new File(System.getProperty("java.io.tmpdir") + File.separator + "wwwcache");
         maxCacheEntries = 100;
         maxCacheEntrySize = 10485760;
-        // 30 minutes
-        maintentanceTaskInterval = 30*60*1000;
+        maintentanceTaskInterval = Duration.ofMinutes(30);
     }
 
     /**
@@ -198,20 +197,22 @@ public class FileCachingHttpClientBuilder extends HttpClientBuilder {
     /**
      * Get the interval at which the storage maintenance task should run.
      * 
-     * @return the maintenance task interval, in milliseconds
+     * @return the maintenance task interval
      */
-    public long getMaintentanceTaskInterval() {
+    @Nonnull public Duration getMaintentanceTaskInterval() {
         return maintentanceTaskInterval;
     }
 
     /**
      * Set the interval at which the storage maintenance task should run.
      * 
-     * @param value the new maintenance task interval, in milliseconds
+     * @param value the new maintenance task interval
      */
-    public void setMaintentanceTaskInterval(final long value) {
-        maintentanceTaskInterval = Constraint.isGreaterThan(0, value, 
-                "Maintenance task interval must be greater than 0");
+    public void setMaintentanceTaskInterval(@Nonnull final Duration value) {
+        Constraint.isNotNull(value, "Interval cannot be null");
+        Constraint.isFalse(value.isNegative() || value.isZero(), "Interval must be positive");
+        
+        maintentanceTaskInterval = value;
     }
 
     /** {@inheritDoc} */
@@ -255,14 +256,14 @@ public class FileCachingHttpClientBuilder extends HttpClientBuilder {
         final ManagedHttpCacheStorage tempStorage = managedStorage;
         // Null this out so we don't keep a reference, inhibiting garbage collection.
         managedStorage = null;
-        return new StorageManagingHttpClient(client, tempStorage, getMaintentanceTaskInterval());
+        return new StorageManagingHttpClient(client, tempStorage, getMaintentanceTaskInterval().toMillis());
     }
     
     /**
      * Class which wraps a caching instance of {@link CloseableHttpClient} and its associated 
      * {@link ManagedHttpCacheStorage}, and manages the scheduled maintenance and lifecycle of the latter.
      */
-    public static class StorageManagingHttpClient extends CloseableHttpClient 
+    private static class StorageManagingHttpClient extends CloseableHttpClient 
             implements InitializableComponent, DestructableComponent {
         
         /** Logger. */
@@ -298,7 +299,6 @@ public class FileCachingHttpClientBuilder extends HttpClientBuilder {
          */
         public StorageManagingHttpClient(@Nonnull final CloseableHttpClient wrappedClient, 
                 @Nonnull final ManagedHttpCacheStorage managedStorage, final long taskInterval)  {
-           super(); 
            httpClient = Constraint.isNotNull(wrappedClient, "HttpClient was null");
            storage = Constraint.isNotNull(managedStorage, "ManagedHttpCacheStorage was null");
            maintenanceTaskInterval = taskInterval;
@@ -378,7 +378,7 @@ public class FileCachingHttpClientBuilder extends HttpClientBuilder {
     /**
      * Scheduled task to manage an instance of {@link ManagedHttpCacheStorage}.
      */
-    public static class StorageMaintenanceTask extends TimerTask {
+    private static class StorageMaintenanceTask extends TimerTask {
         
         /** Logger. */
         private Logger log = LoggerFactory.getLogger(StorageMaintenanceTask.class);

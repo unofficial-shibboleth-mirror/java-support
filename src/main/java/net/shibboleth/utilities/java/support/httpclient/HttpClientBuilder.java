@@ -19,6 +19,7 @@ package net.shibboleth.utilities.java.support.httpclient;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -44,7 +45,6 @@ import org.apache.http.util.CharsetUtils;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 
-import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
@@ -153,7 +153,7 @@ public class HttpClientBuilder {
     /**
      * Maximum period inactivity between two consecutive data packets in milliseconds. Default value: 60000 (60 seconds)
      */
-    @Duration private int socketTimeout;
+    @Nonnull private Duration socketTimeout;
 
     /** Socket buffer size in bytes. Default size is 8192 bytes. */
     private int socketBufferSize;
@@ -162,13 +162,13 @@ public class HttpClientBuilder {
      * Maximum length of time in milliseconds to wait for the connection to be established. Default value: 60000 (60
      * seconds)
      */
-    @Duration private int connectionTimeout;
+    @Nonnull private Duration connectionTimeout;
     
     /**
      * Maximum length of time in milliseconds to wait for a connection to be returned from the connection
      * manager. Default value: 60000 (60 seconds);
      */
-    @Duration private int connectionRequestTimeout;
+    @Nonnull private Duration connectionRequestTimeout;
     
     /**
      * Max total simultaneous connections allowed by the pooling connection manager.
@@ -283,9 +283,9 @@ public class HttpClientBuilder {
         maxConnectionsPerRoute = -1;
         socketLocalAddress = null;
         socketBufferSize = 8192;
-        socketTimeout = 60*1000;
-        connectionTimeout = 60*1000;
-        connectionRequestTimeout = 60*1000;
+        socketTimeout = Duration.ofSeconds(60);
+        connectionTimeout = Duration.ofSeconds(60);
+        connectionRequestTimeout = Duration.ofSeconds(60);
         connectionDisregardTLSCertificate = false;
         connectionCloseAfterResponse = true;
         connectionStaleCheck = false;
@@ -364,26 +364,26 @@ public class HttpClientBuilder {
     }
 
     /**
-     * Gets the maximum period inactivity between two consecutive data packets in milliseconds. A value of less than 1
+     * Gets the maximum period inactivity between two consecutive data packets. A value of less than 1 ms
      * indicates no timeout.
      * 
-     * @return maximum period inactivity between two consecutive data packets in milliseconds
+     * @return maximum period inactivity between two consecutive data packets
      */
-    @Duration public int getSocketTimeout() {
+    @Nonnull public Duration getSocketTimeout() {
         return socketTimeout;
     }
 
     /**
-     * Sets the maximum period inactivity between two consecutive data packets in milliseconds. A value of less than 1
+     * Sets the maximum period inactivity between two consecutive data packets. A value of less than 1 ms
      * indicates no timeout.
      * 
-     * @param timeout maximum period inactivity between two consecutive data packets in milliseconds
+     * @param timeout maximum period inactivity between two consecutive data packets
      */
-    public void setSocketTimeout(@Duration final long timeout) {
-        if (timeout > Integer.MAX_VALUE) {
-            throw new IllegalArgumentException("Timeout was too large");
-        }
-        this.socketTimeout = (int) timeout;
+    public void setSocketTimeout(@Nonnull final Duration timeout) {
+        Constraint.isNotNull(timeout, "Timeout cannot be null");
+        Constraint.isLessThanOrEqual(Integer.MAX_VALUE, timeout.toMillis(), "Timeout too large");
+
+        socketTimeout = timeout;
     }
 
     /**
@@ -405,49 +405,49 @@ public class HttpClientBuilder {
     }
 
     /**
-     * Gets the maximum length of time in milliseconds to wait for the connection to be established. A value of less
-     * than 1 indicates no timeout.
+     * Gets the maximum length of time to wait for the connection to be established. A value of less
+     * than 1 ms indicates no timeout.
      * 
-     * @return maximum length of time in milliseconds to wait for the connection to be established
+     * @return maximum length of time to wait for the connection to be established
      */
-    @Duration public int getConnectionTimeout() {
+    @Nonnull public Duration getConnectionTimeout() {
         return connectionTimeout;
     }
 
     /**
-     * Sets the maximum length of time in milliseconds to wait for the connection to be established. A value of less
-     * than 1 indicates no timeout.
+     * Sets the maximum length of time to wait for the connection to be established. A value of less
+     * than 1 ms indicates no timeout.
      * 
-     * @param timeout maximum length of time in milliseconds to wait for the connection to be established
+     * @param timeout maximum length of time to wait for the connection to be established
      */
-    public void setConnectionTimeout(@Duration final long timeout) {
-        if (timeout > Integer.MAX_VALUE) {
-            throw new IllegalArgumentException("Timeout was too large");
-        }
-        connectionTimeout = (int) timeout;
+    public void setConnectionTimeout(@Nonnull final Duration timeout) {
+        Constraint.isNotNull(timeout, "Connection timeout cannot be null");
+        Constraint.isLessThanOrEqual(Integer.MAX_VALUE, timeout.toMillis(), "Connection timeout too large");
+
+        connectionTimeout = timeout;
     }
 
     /**
-     * Gets the maximum length of time in milliseconds to wait for a connection to be returned from the connection
-     * manager. A value of less than 1 indicates no timeout.
+     * Gets the maximum length of time to wait for a connection to be returned from the connection
+     * manager. A value of less than 1 ms indicates no timeout.
      * 
-     * @return maximum length of time in milliseconds to wait for the connection to be established
+     * @return maximum length of time to wait for the connection to be established
      */
-    @Duration public int getConnectionRequestTimeout() {
+    @Nonnull public Duration getConnectionRequestTimeout() {
         return connectionRequestTimeout;
     }
 
     /**
-     * Sets the maximum length of time in milliseconds to wait for a connection to be returned from the connection
-     * manager. A value of less than 1 indicates no timeout.
+     * Sets the maximum length of time to wait for a connection to be returned from the connection
+     * manager. A value of less than 1 ms indicates no timeout.
      * 
-     * @param timeout maximum length of time in milliseconds to wait for the connection to be established
+     * @param timeout maximum length of time to wait for the connection to be established
      */
-    public void setConnectionRequestTimeout(@Duration final long timeout) {
-        if (timeout > Integer.MAX_VALUE) {
-            throw new IllegalArgumentException("Timeout was too large");
-        }
-        connectionRequestTimeout = (int) timeout;
+    public void setConnectionRequestTimeout(@Nonnull final Duration timeout) {
+        Constraint.isNotNull(timeout, "Connection request timeout cannot be null");
+        Constraint.isLessThanOrEqual(Integer.MAX_VALUE, timeout.toMillis(), "Connection request timeout too large");
+        
+        connectionRequestTimeout = timeout;
     }
 
     /**
@@ -1051,16 +1051,16 @@ public class HttpClientBuilder {
             requestConfigBuilder.setLocalAddress(socketLocalAddress);
         }
 
-        if (socketTimeout >= 0) {
-            requestConfigBuilder.setSocketTimeout(socketTimeout);
+        if (!socketTimeout.isNegative()) {
+            requestConfigBuilder.setSocketTimeout((int) socketTimeout.toMillis());
         }
 
-        if (connectionTimeout >= 0) {
-            requestConfigBuilder.setConnectTimeout(connectionTimeout);
+        if (!connectionTimeout.isNegative()) {
+            requestConfigBuilder.setConnectTimeout((int) connectionTimeout.toMillis());
         }
         
-        if (connectionRequestTimeout >= 0) {
-            requestConfigBuilder.setConnectionRequestTimeout(connectionRequestTimeout);
+        if (!connectionRequestTimeout.isNegative()) {
+            requestConfigBuilder.setConnectionRequestTimeout((int) connectionRequestTimeout.toMillis());
         }
         
         requestConfigBuilder.setStaleConnectionCheckEnabled(connectionStaleCheck);

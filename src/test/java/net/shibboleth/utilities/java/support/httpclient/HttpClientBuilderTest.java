@@ -18,9 +18,13 @@
 
 package net.shibboleth.utilities.java.support.httpclient;
 
+import java.time.Duration;
+
 import org.apache.http.client.HttpClient;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 public class HttpClientBuilderTest {
     
@@ -29,9 +33,16 @@ public class HttpClientBuilderTest {
         final HttpClientBuilder builder = new HttpClientBuilder();
         
         // Check the defaults at the builder level
-        Assert.assertEquals(builder.getConnectionTimeout(), 60000);
-        Assert.assertEquals(builder.getSocketTimeout(), 60000);
-        Assert.assertEquals(builder.getConnectionRequestTimeout(), 60000);
+        Assert.assertEquals(builder.getConnectionTimeout(), Duration.ofSeconds(60));
+        Assert.assertEquals(builder.getSocketTimeout(), Duration.ofSeconds(60));
+        Assert.assertEquals(builder.getConnectionRequestTimeout(), Duration.ofSeconds(60));
+        
+        try {
+            builder.setSocketTimeout(Duration.ofMillis(Long.MAX_VALUE));
+            Assert.fail();
+        } catch (final ConstraintViolationException e) {
+            
+        }
         
         // Just make sure we can create a client, too
         final HttpClient client = builder.buildClient();
