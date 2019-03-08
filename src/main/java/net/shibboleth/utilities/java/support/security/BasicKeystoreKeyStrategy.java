@@ -26,6 +26,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.time.Duration;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -34,8 +35,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.crypto.SecretKey;
 
-import net.shibboleth.utilities.java.support.annotation.Duration;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.collection.Pair;
@@ -92,8 +91,8 @@ public class BasicKeystoreKeyStrategy extends AbstractInitializableComponent imp
     /** Current default key loaded. */
     @NonnullAfterInit private SecretKey defaultKey;
     
-    /** Number of milliseconds between key update checks. Default value: (PT15M). */
-    @Duration @NonNegative private long updateInterval;
+    /** Time between key update checks. Default value: (PT15M). */
+    @Nonnull private Duration updateInterval;
 
     /** Timer used to schedule update tasks. */
     private Timer updateTaskTimer;
@@ -107,7 +106,7 @@ public class BasicKeystoreKeyStrategy extends AbstractInitializableComponent imp
     /** Constructor. */
     public BasicKeystoreKeyStrategy() {
         keystoreType = "JCEKS";
-        updateInterval = 15 * 60 * 1000L;
+        updateInterval = Duration.ofMinutes(15);
     }
     
     /**
@@ -202,18 +201,20 @@ public class BasicKeystoreKeyStrategy extends AbstractInitializableComponent imp
     }
 
     /**
-     * Set the number of milliseconds between key update checks. A value of 0 indicates that no updates will be
+     * Set the time between key update checks. A value of 0 indicates that no updates will be
      * performed.
      * 
      * This setting cannot be changed after the service has been initialized.
      * 
-     * @param interval number of milliseconds between key update checks
+     * @param interval time between key update checks
      */
-    @Duration public void setUpdateInterval(@Duration @NonNegative final long interval) {
+    public void setUpdateInterval(@Nonnull final Duration interval) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        Constraint.isNotNull(interval, "Interval cannot be null");
+        Constraint.isFalse(interval.isNegative(), "Interval cannot be negative");
 
-        updateInterval = Constraint.isGreaterThanOrEqual(0, interval,
-                "Update interval must be greater than or equal to zero");
+        updateInterval = interval;
     }
 
     /**
@@ -249,7 +250,7 @@ public class BasicKeystoreKeyStrategy extends AbstractInitializableComponent imp
             throw new ComponentInitializationException("Exception loading the default key", e);
         }
 
-        if (updateInterval > 0) {
+        if (!updateInterval.isZero()) {
             updateTask = new TimerTask() {
                 @Override
                 public void run() {
@@ -265,7 +266,7 @@ public class BasicKeystoreKeyStrategy extends AbstractInitializableComponent imp
             } else {
                 internalTaskTimer = updateTaskTimer;
             }
-            internalTaskTimer.schedule(updateTask, updateInterval, updateInterval);
+            internalTaskTimer.schedule(updateTask, updateInterval.toMillis(), updateInterval.toMillis());
         }
     }
 

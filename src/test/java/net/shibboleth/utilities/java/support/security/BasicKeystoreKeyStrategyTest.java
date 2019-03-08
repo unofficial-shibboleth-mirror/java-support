@@ -19,6 +19,7 @@ package net.shibboleth.utilities.java.support.security;
 
 import java.io.File;
 import java.security.KeyException;
+import java.time.Duration;
 
 import net.shibboleth.utilities.java.support.resource.TestResourceConverter;
 
@@ -51,7 +52,7 @@ public class BasicKeystoreKeyStrategyTest {
         strategy.setKeystorePassword("password");
         strategy.setKeystoreResource(TestResourceConverter.of(new FileSystemResource(keystoreFile)));
         strategy.setKeyVersionResource(TestResourceConverter.of(new FileSystemResource(versionFile)));
-        strategy.setUpdateInterval(1000);
+        strategy.setUpdateInterval(Duration.ofSeconds(1));
         strategy.initialize();
         
         Assert.assertEquals(strategy.getDefaultKey().getFirst(), "secret1");

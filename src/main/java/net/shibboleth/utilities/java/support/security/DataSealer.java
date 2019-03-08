@@ -27,6 +27,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.KeyException;
 import java.security.SecureRandom;
+import java.time.Instant;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -312,7 +313,8 @@ public class DataSealer extends AbstractInitializableComponent {
      * @return the encoded blob
      * @throws DataSealerException if the wrapping operation fails
      */
-    @Nonnull public String wrap(@Nonnull @NotEmpty final String data, final long exp) throws DataSealerException {
+    @Nonnull public String wrap(@Nonnull @NotEmpty final String data, @Nonnull final Instant exp)
+            throws DataSealerException {
 
         if (data == null || data.length() == 0) {
             throw new IllegalArgumentException("Data must be supplied for the wrapping operation");
@@ -334,7 +336,7 @@ public class DataSealer extends AbstractInitializableComponent {
             final GZIPOutputStream compressedStream = new GZIPOutputStream(byteStream);
             final DataOutputStream dataStream = new DataOutputStream(compressedStream);
 
-            dataStream.writeLong(exp);
+            dataStream.writeLong(exp.toEpochMilli());
             
             int count = 0;
             int start = 0;

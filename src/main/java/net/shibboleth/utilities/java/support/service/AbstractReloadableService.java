@@ -17,6 +17,7 @@
 
 package net.shibboleth.utilities.java.support.service;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -24,12 +25,12 @@ import java.util.TimerTask;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.TimerSupport;
 
 import org.slf4j.Logger;
@@ -49,8 +50,8 @@ public abstract class AbstractReloadableService<T> extends AbstractIdentifiableI
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractReloadableService.class);
 
-    /** Number of milliseconds between one reload check and another. */
-    @Duration private long reloadCheckDelay;
+    /** Time between one reload check and another. */
+    @Nonnull private Duration reloadCheckDelay;
 
     /** Timer used to schedule configuration reload tasks. */
     @Nullable private Timer reloadTaskTimer;
@@ -78,35 +79,35 @@ public abstract class AbstractReloadableService<T> extends AbstractIdentifiableI
 
     /** Constructor. */
     public AbstractReloadableService() {
-        reloadCheckDelay = 0;
+        reloadCheckDelay = Duration.ZERO;
     }
 
     /**
-     * Gets the number of milliseconds between one reload check and another. A value of 0 or less indicates that no
+     * Gets the time between one reload check and another. A value of 0 or less indicates that no
      * reloading will be performed.
      * 
      * <p>
      * Default value: 0
      * </p>
      * 
-     * @return number of milliseconds between one reload check and another
+     * @return time between one reload check and another
      */
-    @Duration public long getReloadCheckDelay() {
+    @Nonnull public Duration getReloadCheckDelay() {
         return reloadCheckDelay;
     }
 
     /**
-     * Sets the number of milliseconds between one reload check and another. A value of 0 or less indicates that no
+     * Sets the time between one reload check and another. A value of 0 or less indicates that no
      * reloading will be performed.
      * 
-     * This setting can not be changed after the service has been initialized.
+     * <p>This setting cannot be changed after the service has been initialized.</p>
      * 
      * @param delay number of milliseconds between one reload check and another
      */
-    @Duration public void setReloadCheckDelay(@Duration final long delay) {
+    public void setReloadCheckDelay(@Nonnull final Duration delay) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
-        reloadCheckDelay = delay;
+        reloadCheckDelay = Constraint.isNotNull(delay, "Delay cannot be null");
     }
 
     /**
@@ -179,25 +180,26 @@ public abstract class AbstractReloadableService<T> extends AbstractIdentifiableI
                 throw new ComponentInitializationException(getLogPrefix() + " could not perform initial load", e);
             }
             log.error("{} Initial load failed", getLogPrefix(), e);
-            if (reloadCheckDelay > 0) {
-                log.info("{} Continuing to poll configuration", getLogPrefix());
-            } else {
+            
+            if (reloadCheckDelay.isNegative() || reloadCheckDelay.isZero()) {
                 log.error("{} No further attempts will be made to reload", getLogPrefix());
+            } else {
+                log.info("{} Continuing to poll configuration", getLogPrefix());
             }
         } catch (final Exception e) {
             throw new ComponentInitializationException(getLogPrefix() + " Unexpected error during initial load", e);
         }
 
-        if (reloadCheckDelay > 0) {
+        if (!(reloadCheckDelay.isNegative() || reloadCheckDelay.isZero())) {
             if (null == reloadTaskTimer) {
                 log.debug("{} No reload task timer specified, creating default", getLogPrefix());
                 internalTaskTimer = new Timer(TimerSupport.getTimerName(this), true);
             } else {
                 internalTaskTimer = reloadTaskTimer;
             }
-            log.info("{} Reload time set to: {}, starting refresh thread", getLogPrefix(), reloadCheckDelay);
+            log.info("{} Reload interval set to: {}, starting refresh thread", getLogPrefix(), reloadCheckDelay);
             reloadTask = new ServiceReloadTask();
-            internalTaskTimer.schedule(reloadTask, reloadCheckDelay, reloadCheckDelay);
+            internalTaskTimer.schedule(reloadTask, reloadCheckDelay.toMillis(), reloadCheckDelay.toMillis());
         }
     }
 

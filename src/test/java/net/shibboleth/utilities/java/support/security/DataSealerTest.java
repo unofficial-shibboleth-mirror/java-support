@@ -22,6 +22,8 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.resource.Resource;
 import net.shibboleth.utilities.java.support.resource.TestResourceConverter;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Arrays;
 
 import javax.annotation.Nonnull;
@@ -45,7 +47,7 @@ public class DataSealerTest {
             + "THIS IS SOME TEST DATA THIS IS SOME TEST DATA THIS IS SOME TEST DATA THIS IS SOME TEST DATA THIS IS SOME TEST DATA THIS IS SOME TEST DATA"
             + "THIS IS SOME TEST DATA THIS IS SOME TEST DATA THIS IS SOME TEST DATA THIS IS SOME TEST DATA THIS IS SOME TEST DATA THIS IS SOME TEST DATA"
             + "THIS IS SOME TEST DATA THIS IS SOME TEST DATA THIS IS SOME TEST DATA THIS IS SOME TEST DATA THIS IS SOME TEST DATA THIS IS SOME TEST DATA";
-    final private long THE_DELAY = 500;
+    final private Duration THE_DELAY = Duration.ofMillis(500);
 
     @BeforeClass public void initializeKeystoreResource() {
         ClassPathResource resource =
@@ -105,7 +107,7 @@ public class DataSealerTest {
     @Test public void encodeDecode() throws DataSealerException, ComponentInitializationException {
         final DataSealer sealer = createDataSealer();
 
-        final String encoded = sealer.wrap(THE_DATA, System.currentTimeMillis() + 50000);
+        final String encoded = sealer.wrap(THE_DATA, Instant.now().plusSeconds(50));
         final StringBuffer alias = new StringBuffer(); 
         Assert.assertEquals(sealer.unwrap(encoded, alias), THE_DATA);
         Assert.assertEquals(alias.toString(), "secret1");
@@ -116,7 +118,7 @@ public class DataSealerTest {
         final DataSealer sealer2 = createDataSealer2();
 
         final StringBuffer alias = new StringBuffer(); 
-        final String encoded = sealer.wrap(THE_DATA, System.currentTimeMillis() + 50000);
+        final String encoded = sealer.wrap(THE_DATA, Instant.now().plusSeconds(50));
         Assert.assertEquals(sealer.unwrap(encoded, alias), THE_DATA);
         Assert.assertEquals(alias.toString(), "secret1");
         alias.setLength(0);
@@ -127,8 +129,8 @@ public class DataSealerTest {
     @Test public void timeOut() throws DataSealerException, InterruptedException, ComponentInitializationException {
         final DataSealer sealer = createDataSealer();
 
-        String encoded = sealer.wrap(THE_DATA, System.currentTimeMillis() + THE_DELAY);
-        Thread.sleep(THE_DELAY + 1);
+        String encoded = sealer.wrap(THE_DATA, Instant.now().plus(THE_DELAY));
+        Thread.sleep(THE_DELAY.toMillis() + 1);
         try {
             sealer.unwrap(encoded);
             Assert.fail("Should have timed out");
@@ -143,7 +145,7 @@ public class DataSealerTest {
         char[] buffer = new char[1000000];
         Arrays.fill(buffer, 'x');
         final String longData = new String(buffer);
-        final String encoded = sealer.wrap(longData, System.currentTimeMillis() + 50000);
+        final String encoded = sealer.wrap(longData, Instant.now().plusSeconds(50));
         final StringBuffer alias = new StringBuffer(); 
         Assert.assertEquals(sealer.unwrap(encoded, alias), longData);
         Assert.assertEquals(alias.toString(), "secret1");
@@ -175,7 +177,7 @@ public class DataSealerTest {
             // OK
         }
 
-        final String wrapped = sealer.wrap(THE_DATA, 3600 * 1000);
+        final String wrapped = sealer.wrap(THE_DATA, Instant.now().plusSeconds(3600));
 
         final String corrupted = wrapped.substring(0, 25) + "A" + wrapped.substring(27);
 
@@ -187,7 +189,7 @@ public class DataSealerTest {
         }
 
         try {
-            sealer.wrap(nullValue(), 10);
+            sealer.wrap(nullValue(), Instant.ofEpochMilli(10));
             Assert.fail("no data");
         } catch (IllegalArgumentException e) {
             // OK
