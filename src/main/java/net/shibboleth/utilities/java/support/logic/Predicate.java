@@ -25,7 +25,7 @@ import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.Object
 /**
  * A convenience interface to allow our own classes to implement the Java
  * {@link java.util.function.Predicate} and log any calls to the
- * {@link #apply(T)} method as deprecated.
+ * {@link #apply(Object)} method as deprecated.
  * 
  * @param <T> type of object upon which this predicate operates
  */
@@ -36,7 +36,7 @@ public interface Predicate<T> extends java.util.function.Predicate<T> {
      * 
      * @param input input to predicate
      * 
-     * @return the result of the {@link #test(T)} method
+     * @return the result of the {@link #test(Object)} method
      * @deprecated
      */
     @Deprecated
