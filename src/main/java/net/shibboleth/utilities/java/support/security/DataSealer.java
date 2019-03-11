@@ -176,7 +176,7 @@ public class DataSealer extends AbstractInitializableComponent {
     }
 
     /**
-     * Decrypts and verifies an encrypted bundle created with {@link #wrap(String, long)}.
+     * Decrypts and verifies an encrypted bundle created with {@link #wrap(String, Instant)}.
      * 
      * @param wrapped the encoded blob
      * 
@@ -189,7 +189,7 @@ public class DataSealer extends AbstractInitializableComponent {
     }
     
     /**
-     * Decrypts and verifies an encrypted bundle created with {@link #wrap(String, long)}, optionally
+     * Decrypts and verifies an encrypted bundle created with {@link #wrap(String, Instant)}, optionally
      * returning the label of the key used to encrypt the data.
      * 
      * @param wrapped the encoded blob
