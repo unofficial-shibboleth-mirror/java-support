@@ -271,10 +271,6 @@ public class HttpClientBuilder {
     public HttpClientBuilder(@Nonnull final org.apache.http.impl.client.HttpClientBuilder builder) {
         apacheBuilder = Constraint.isNotNull(builder, "Apache HttpClientBuilder may not be null");
         resetDefaults();
-        requestInterceptorsFirst = Collections.emptyList();
-        requestInterceptorsLast = Collections.emptyList();
-        responseInterceptorsFirst = Collections.emptyList();
-        responseInterceptorsLast = Collections.emptyList();
     }
 
     /** Resets all builder parameters to their defaults. */
@@ -296,6 +292,11 @@ public class HttpClientBuilder {
         httpFollowRedirects = true;
         httpContentCharSet = "UTF-8";
         userAgent = null;
+        
+        requestInterceptorsFirst = Collections.emptyList();
+        requestInterceptorsLast = Collections.emptyList();
+        responseInterceptorsFirst = Collections.emptyList();
+        responseInterceptorsLast = Collections.emptyList();
     }
 
     /**
