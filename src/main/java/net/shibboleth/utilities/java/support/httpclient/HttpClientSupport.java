@@ -46,6 +46,8 @@ import org.apache.http.conn.ssl.StrictHostnameVerifier;
 import org.apache.http.entity.ContentType;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.CharArrayBuffer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
@@ -138,22 +140,38 @@ public final class HttpClientSupport {
      * @return a new trust manager instance
      */
     @Nonnull public static X509TrustManager buildNoTrustX509TrustManager() {
+        // Checkstyle: AnonInnerLength OFF
         return new X509TrustManager() {
+            private Logger log = LoggerFactory.getLogger(HttpClientSupport.class.getName()
+                    + ".NoTrustX509TrustManager");
 
             public X509Certificate[] getAcceptedIssuers() {
+                log.trace("In getAcceptedIssuers");
                 return null;
             }
 
             public void checkServerTrusted(final X509Certificate[] chain, final String authType)
                     throws CertificateException {
+                log.trace("In checkServerTrusted");
+                if (chain != null) {
+                    log.trace("Cert chain length: {}", chain.length);
+                    for (final X509Certificate cert : chain) {
+                        log.trace("Cert key type: {}, subject: {}",
+                                cert.getPublicKey().getAlgorithm(), cert.getSubjectX500Principal().getName());
+                    }
+                } else {
+                    log.trace("Cert chain was null");
+                }
                 // accept everything
             }
 
             public void checkClientTrusted(final X509Certificate[] chain, final String authType)
                     throws CertificateException {
+                log.trace("In checkClientTrusted");
                 // accept everything
             }
         };
+        // Checkstyle: AnonInnerLength ON
         
     }
 
