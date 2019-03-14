@@ -84,6 +84,17 @@ public final class DOMTypeSupport {
     public static long durationToLong(final Duration duration) {
         return duration.getTimeInMillis(baseline);
     }
+
+    /**
+     * Converts a lexical duration, as defined by XML Schema 1.0, into a {@link java.time.Duration}.
+     * 
+     * @param duration lexical duration representation
+     * 
+     * @return duration in Java form
+     */
+    public static java.time.Duration durationToDuration(final String duration) {
+        return java.time.Duration.ofMillis(durationToLong(duration));
+    }
     
     /**
      * Gets a static instance of a JAXP DatatypeFactory.
