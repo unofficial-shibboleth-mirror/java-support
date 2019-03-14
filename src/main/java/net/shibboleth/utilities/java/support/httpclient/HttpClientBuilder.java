@@ -856,10 +856,11 @@ public class HttpClientBuilder {
     /**
      * Get the list of request interceptors to add first.
      * 
-     * @return the list of interceptors, may be null
+     * @return the list of interceptors
      */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<HttpRequestInterceptor> getFirstRequestInterceptors() {
-        return requestInterceptorsFirst;
+    @Nonnull @NonnullElements @NotLive @Unmodifiable
+    public List<HttpRequestInterceptor> getFirstRequestInterceptors() {
+        return ImmutableList.copyOf(requestInterceptorsFirst);
     }
     
     /**
@@ -874,10 +875,11 @@ public class HttpClientBuilder {
     /**
      * Get the list of request interceptors to add last.
      * 
-     * @return the list of interceptors, may be null
+     * @return the list of interceptors
      */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<HttpRequestInterceptor> getLastRequestInterceptors() {
-        return requestInterceptorsLast;
+    @Nonnull @NonnullElements @NotLive @Unmodifiable
+    public List<HttpRequestInterceptor> getLastRequestInterceptors() {
+        return ImmutableList.copyOf(requestInterceptorsLast);
     }
 
     /**
@@ -892,11 +894,11 @@ public class HttpClientBuilder {
     /**
      * Get the list of response interceptors to add first.
      * 
-     * @return the list of interceptors, may be null
+     * @return the list of interceptors
      */
     @Nonnull @NonnullElements @NotLive @Unmodifiable
     public List<HttpResponseInterceptor> getFirstResponseInterceptors() {
-        return responseInterceptorsFirst;
+        return ImmutableList.copyOf(responseInterceptorsFirst);
     }
 
     /**
@@ -911,11 +913,11 @@ public class HttpClientBuilder {
     /**
      * Get the list of response interceptors to add last.
      * 
-     * @return the list of interceptors, may be null
+     * @return the list of interceptors
      */
     @Nonnull @NonnullElements @NotLive @Unmodifiable
     public List<HttpResponseInterceptor> getLastResponseInterceptors() {
-        return responseInterceptorsLast;
+        return ImmutableList.copyOf(responseInterceptorsLast);
     }
 
     /**
