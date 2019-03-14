@@ -18,11 +18,16 @@
 
 package net.shibboleth.utilities.java.support.httpclient;
 
+import java.io.IOException;
 import java.time.Duration;
 
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.Lists;
 
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
@@ -48,5 +53,55 @@ public class HttpClientBuilderTest {
         final HttpClient client = builder.buildClient();
         Assert.assertNotNull(client);
     }
+    
+    @Test
+    public void testContextHandlingSupport() throws Exception {
+        
+        HttpClientContextHandler handler1 = new TestContextHandler();
+        HttpClientContextHandler handler2 = new TestContextHandler();
+        HttpClientContextHandler handler3 = new TestContextHandler();
+        
+        final HttpClientBuilder builder = new HttpClientBuilder();
+        
+        Assert.assertNotNull(builder.getStaticContextHandlers());
+        Assert.assertTrue(builder.getStaticContextHandlers().isEmpty());
+        
+        builder.setStaticContextHandlers(Lists.newArrayList(null, handler1, null, handler2, null, handler3));
+        Assert.assertEquals(builder.getStaticContextHandlers(), Lists.newArrayList(handler1, handler2, handler3));
+        
+        try {
+            builder.getStaticContextHandlers().add(new TestContextHandler());
+            Assert.fail("List should have been unmodifaible");
+        } catch (UnsupportedOperationException e) {
+            //expected
+        }
+        
+        builder.resetDefaults();
+        
+        Assert.assertNotNull(builder.getStaticContextHandlers());
+        Assert.assertTrue(builder.getStaticContextHandlers().isEmpty());
+        
+        final HttpClient client = builder.buildClient();
+        Assert.assertNotNull(client);
+        Assert.assertTrue(ContextHandlingHttpClient.class.isInstance(client));
+        
+    }
+    
+    //Helpers 
+    
+    public class TestContextHandler implements HttpClientContextHandler {
+
+        /** {@inheritDoc} */
+        public void invokeBefore(HttpClientContext context, HttpUriRequest request) throws IOException {
+            
+        }
+
+        /** {@inheritDoc} */
+        public void invokeAfter(HttpClientContext context, HttpUriRequest request) throws IOException {
+            
+        }
+        
+    }
+     
     
 }

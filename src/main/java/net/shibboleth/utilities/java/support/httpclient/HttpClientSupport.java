@@ -28,7 +28,9 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -38,6 +40,7 @@ import javax.net.ssl.X509TrustManager;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.ParseException;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.conn.socket.LayeredConnectionSocketFactory;
 import org.apache.http.conn.ssl.AllowAllHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
@@ -49,6 +52,7 @@ import org.apache.http.util.CharArrayBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
@@ -57,6 +61,11 @@ import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.Object
  */
 public final class HttpClientSupport {
     
+    /** Context key for instances of dynamic context handlers to be invoked before and after the HTTP request.
+     * Must be an instance of
+     * {@link java.util.List}<code>&lt;</code>{@link HttpClientContextHandler}<code>&gt;</code>. */
+    private static final String CONTEXT_KEY_DYNAMIC_CONTEXT_HANDLERS = "java-support.DynamicContextHandlers";
+
     /** Constructor to prevent instantiation. */
     private HttpClientSupport() { }
     
@@ -173,6 +182,50 @@ public final class HttpClientSupport {
         };
         // Checkstyle: AnonInnerLength ON
         
+    }
+
+    /**
+     * Get the list of {@link HttpClientContextHandler} for the {@link HttpClientContext}.
+     *
+     * @param context the client context
+     * @return the handler list
+     */
+    @Nonnull public static List<HttpClientContextHandler> getDynamicContextHandlerList(
+            @Nonnull final HttpClientContext context) {
+        Constraint.isNotNull(context, "HttpClientContext was null");
+        List<HttpClientContextHandler> handlers =
+                context.getAttribute(CONTEXT_KEY_DYNAMIC_CONTEXT_HANDLERS, List.class);
+        if (handlers == null) {
+            handlers = new ArrayList<>();
+            context.setAttribute(CONTEXT_KEY_DYNAMIC_CONTEXT_HANDLERS, handlers);
+        }
+        return handlers;
+    }
+
+    /**
+     * Add the specified instance of {@link HttpClientContextHandler}
+     * to the {@link HttpClientContext} in the first handler list position.
+     *
+     * @param context the client context
+     * @param handler the handler to add
+     */
+    public static void addDynamicContextHandlerFirst(@Nonnull final HttpClientContext context,
+            @Nonnull final HttpClientContextHandler handler) {
+        Constraint.isNotNull(handler, "HttpClientContextHandler was null");
+        getDynamicContextHandlerList(context).add(0, handler);
+    }
+
+    /**
+     * Add the specified instance of {@link HttpClientContextHandler}
+     * to the {@link HttpClientContext} in the last handler list position.
+     *
+     * @param context the client context
+     * @param handler the handler to add
+     */
+    public static void addDynamicContextHandlerLast(@Nonnull final HttpClientContext context,
+            @Nonnull final HttpClientContextHandler handler) {
+        Constraint.isNotNull(handler, "HttpClientContextHandler was null");
+        getDynamicContextHandlerList(context).add(handler);
     }
 
 // Checkstyle: CyclomaticComplexity OFF
