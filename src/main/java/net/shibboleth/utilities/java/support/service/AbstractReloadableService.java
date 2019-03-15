@@ -102,7 +102,7 @@ public abstract class AbstractReloadableService<T> extends AbstractIdentifiableI
      * 
      * <p>This setting cannot be changed after the service has been initialized.</p>
      * 
-     * @param delay number of milliseconds between one reload check and another
+     * @param delay between one reload check and another
      */
     public void setReloadCheckDelay(@Nonnull final Duration delay) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);

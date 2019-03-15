@@ -151,23 +151,18 @@ public class HttpClientBuilder {
     /** Local IP address used when establishing connections. Default value: system default local address */
     private InetAddress socketLocalAddress;
 
-    /**
-     * Maximum period inactivity between two consecutive data packets in milliseconds. Default value: 60000 (60 seconds)
-     */
+    /** Maximum period inactivity between two consecutive data packets. Default value: (60 seconds) */
     @Nonnull private Duration socketTimeout;
 
     /** Socket buffer size in bytes. Default size is 8192 bytes. */
     private int socketBufferSize;
 
-    /**
-     * Maximum length of time in milliseconds to wait for the connection to be established. Default value: 60000 (60
-     * seconds)
-     */
+    /** Maximum length of time to wait for the connection to be established. Default value: (60 seconds) */
     @Nonnull private Duration connectionTimeout;
     
     /**
-     * Maximum length of time in milliseconds to wait for a connection to be returned from the connection
-     * manager. Default value: 60000 (60 seconds);
+     * Maximum length of time to wait for a connection to be returned from the connection manager.
+     * Default value: (60 seconds);
      */
     @Nonnull private Duration connectionRequestTimeout;
     
