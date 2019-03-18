@@ -17,6 +17,8 @@
 
 package net.shibboleth.utilities.java.support.httpclient;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
@@ -43,23 +45,23 @@ public class IdleConnectionSweeper implements DestructableComponent {
     private boolean createdTimer;
 
     /** HttpClientConnectionManager whose connections will be swept. */
-    private final HttpClientConnectionManager connectionManager;
+    @Nonnull private final HttpClientConnectionManager connectionManager;
 
     /** Timer used to schedule and execute the sweeping task. */
-    private final Timer taskTimer;
+    @Nonnull private final Timer taskTimer;
 
     /** Sweeping task executed by the timer. */
-    private final TimerTask sweeper;
+    @Nonnull private final TimerTask sweeper;
 
     /**
      * Constructor. This method will create a daemon {@link Timer} and use it to periodically sweep connections.
      * 
      * @param manager HTTP client connection manager whose connections will be swept
-     * @param idleTimeout length of time, in milliseconds, connection may be idle before being closed down
-     * @param sweepInterval length of time, in milliseconds, between sweeps
+     * @param idleTimeout length of time connection may be idle before being closed down
+     * @param sweepInterval length of time between sweeps
      */
-    public IdleConnectionSweeper(@Nonnull final HttpClientConnectionManager manager, final long idleTimeout,
-            final long sweepInterval) {
+    public IdleConnectionSweeper(@Nonnull final HttpClientConnectionManager manager,
+            @Nonnull final Duration idleTimeout, @Nonnull final Duration sweepInterval) {
         this(manager, idleTimeout, sweepInterval,
                 new Timer(TimerSupport.getTimerName(IdleConnectionSweeper.class.getName(), null), true));
         createdTimer = true;
@@ -69,36 +71,37 @@ public class IdleConnectionSweeper implements DestructableComponent {
      * Constructor.
      * 
      * @param manager HTTP client connection manager whose connections will be swept
-     * @param idleTimeout length of time, in milliseconds, connection may be idle before being closed down
-     * @param sweepInterval length of time, in milliseconds, between sweeps
+     * @param idleTimeout length of time connection may be idle before being closed down
+     * @param sweepInterval length of time between sweeps
      * @param backgroundTimer timer used to schedule the background sweeping task
      */
-    public IdleConnectionSweeper(@Nonnull final HttpClientConnectionManager manager, final long idleTimeout,
-            final long sweepInterval, @Nonnull final Timer backgroundTimer) {
+    public IdleConnectionSweeper(@Nonnull final HttpClientConnectionManager manager,
+            @Nonnull final Duration idleTimeout, @Nonnull final Duration sweepInterval,
+            @Nonnull final Timer backgroundTimer) {
         connectionManager = Constraint.isNotNull(manager, "HttpClientConnectionManager can not be null");
         taskTimer = Constraint.isNotNull(backgroundTimer, "Sweeper task timer can not be null");
 
         sweeper = new TimerTask() {
             public void run() {
-                connectionManager.closeIdleConnections(idleTimeout, TimeUnit.MILLISECONDS);
+                connectionManager.closeIdleConnections(idleTimeout.toMillis(), TimeUnit.MILLISECONDS);
             }
         };
 
-        taskTimer.schedule(sweeper, sweepInterval, sweepInterval);
+        taskTimer.schedule(sweeper, sweepInterval.toMillis(), sweepInterval.toMillis());
     }
 
     /**
-     * Gets the time, in milliseconds since the epoch, when the sweeper last executed or, if it has not yet executed,
+     * Gets the time when the sweeper last executed or, if it has not yet executed,
      * when it was first scheduled to run.
      * 
      * @return the time when the sweeper last executed or when it was first scheduled to run
      */
-    public long scheduledExecutionTime() {
+    @Nonnull public Instant scheduledExecutionTime() {
         if (isDestroyed()) {
             throw new DestroyedComponentException();
         }
 
-        return sweeper.scheduledExecutionTime();
+        return Instant.ofEpochMilli(sweeper.scheduledExecutionTime());
     }
 
     /** {@inheritDoc} */

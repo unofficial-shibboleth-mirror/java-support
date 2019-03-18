@@ -17,6 +17,8 @@
 
 package net.shibboleth.utilities.java.support.httpclient;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Timer;
 
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
@@ -28,14 +30,14 @@ import org.testng.annotations.Test;
 /** {@link IdleConnectionSweeper} unit test. */
 public class IdleConectionSweeperTest {
 
-    private final long SWEEP_INTERVAL = 50;
+    private final Duration SWEEP_INTERVAL = Duration.ofMillis(50);
 
     @Test public void test() throws Exception {
         PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
 
-        IdleConnectionSweeper sweeper = new IdleConnectionSweeper(connectionManager, 30, SWEEP_INTERVAL);
+        IdleConnectionSweeper sweeper = new IdleConnectionSweeper(connectionManager, Duration.ofMillis(30), SWEEP_INTERVAL);
         Thread.sleep(75);
-        Assert.assertTrue(sweeper.scheduledExecutionTime() + SWEEP_INTERVAL > System.currentTimeMillis());
+        Assert.assertTrue(sweeper.scheduledExecutionTime().plus(SWEEP_INTERVAL).isAfter(Instant.now()));
 
         sweeper.destroy();
         Assert.assertTrue(sweeper.isDestroyed());
@@ -48,9 +50,9 @@ public class IdleConectionSweeperTest {
         }
 
         Timer timer = new Timer(true);
-        sweeper = new IdleConnectionSweeper(connectionManager, 30, SWEEP_INTERVAL, timer);
+        sweeper = new IdleConnectionSweeper(connectionManager, Duration.ofMillis(30), SWEEP_INTERVAL, timer);
         Thread.sleep(10);
-        Assert.assertTrue(sweeper.scheduledExecutionTime() + SWEEP_INTERVAL > System.currentTimeMillis());
+        Assert.assertTrue(sweeper.scheduledExecutionTime().plus(SWEEP_INTERVAL).isAfter(Instant.now()));
 
         sweeper.destroy();
         Assert.assertTrue(sweeper.isDestroyed());
