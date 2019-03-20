@@ -17,6 +17,7 @@
 
 package net.shibboleth.utilities.java.support.xml;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -26,7 +27,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.Duration;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
 
@@ -77,26 +77,14 @@ public final class DOMTypeSupport {
     }
 
     /**
-     * Converts a lexical duration, as defined by XML Schema 1.0, into milliseconds.
-     * 
-     * @param duration JAXP duration representation
-     * 
-     * @return duration in milliseconds
-     */
-    @Deprecated
-    public static long durationToLong(final Duration duration) {
-        return duration.getTimeInMillis(baseline);
-    }
-
-    /**
-     * Converts a lexical duration, as defined by XML Schema 1.0, into a {@link java.time.Duration}.
+     * Converts a lexical duration, as defined by XML Schema 1.0, into a {@link Duration}.
      * 
      * @param duration lexical duration representation
      * 
      * @return duration in Java form
      */
-    public static java.time.Duration durationToDuration(final String duration) {
-        return java.time.Duration.ofMillis(durationToLong(duration));
+    public static Duration durationToDuration(final String duration) {
+        return Duration.ofMillis(durationToLong(duration));
     }
     
     /**
