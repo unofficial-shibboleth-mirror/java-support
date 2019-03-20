@@ -17,6 +17,7 @@
 
 package net.shibboleth.utilities.java.support.xml;
 
+import java.time.Instant;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
@@ -49,18 +50,18 @@ public final class DOMTypeSupport {
     }
 
     /**
-     * Converts a lexical dateTime, as defined by XML Schema 1.0, into milliseconds since the epoch.
+     * Converts a lexical dateTime, as defined by XML Schema 1.0, into an {@link Instant}.
      * 
      * @param dateTime lexical date/time, may not be null
      * 
-     * @return the date/time expressed as milliseconds since the epoch
+     * @return the date/time expressed as an {@link Instant}
      */
-    public static long dateTimeToLong(@Nonnull final String dateTime) {
+    public static Instant dateTimeToInstant(@Nonnull final String dateTime) {
         final String trimmedString =
                 Constraint.isNotNull(StringSupport.trimOrNull(dateTime), "Lexical dateTime may not be null or empty");
 
         final XMLGregorianCalendar calendar = dataTypeFactory.newXMLGregorianCalendar(trimmedString);
-        return calendar.toGregorianCalendar().getTimeInMillis();
+        return calendar.toGregorianCalendar().toInstant();
     }
 
     /**
@@ -70,6 +71,7 @@ public final class DOMTypeSupport {
      * 
      * @return duration in milliseconds
      */
+    @Deprecated
     public static long durationToLong(final String duration) {
         return dataTypeFactory.newDuration(duration).getTimeInMillis(baseline);
     }
@@ -81,6 +83,7 @@ public final class DOMTypeSupport {
      * 
      * @return duration in milliseconds
      */
+    @Deprecated
     public static long durationToLong(final Duration duration) {
         return duration.getTimeInMillis(baseline);
     }
@@ -139,17 +142,22 @@ public final class DOMTypeSupport {
     }
 
     /**
-     * Converts a numerical date/time, given in milliseconds since the epoch, to a lexical dateTime defined by XML
+     * Converts a numerical date/time, given as an {@link Instant}, to a lexical dateTime defined by XML
      * Schema 1.0.
+     * 
+     * Note that simply using <code>instant.toString()</code> is equivalent for many use cases, but
+     * the result will be different on a system with a higher-resolution clock, as the resulting
+     * string value may have sub-millisecond precision. This method always works to millisecond
+     * precision.
      * 
      * @param dateTime the date time to be converted
      * 
      * @return the lexical representation of the date/time
      */
-    @Nonnull public static String longToDateTime(final long dateTime) {
+    @Nonnull public static String instantToDateTime(@Nonnull final Instant dateTime) {
         final GregorianCalendar calendar = new GregorianCalendar();
         calendar.setTimeZone(TimeZone.getTimeZone("UTC"));
-        calendar.setTimeInMillis(dateTime);
+        calendar.setTimeInMillis(dateTime.toEpochMilli());
 
         return dataTypeFactory.newXMLGregorianCalendar(calendar).normalize().toXMLFormat();
     }
@@ -161,6 +169,7 @@ public final class DOMTypeSupport {
      * 
      * @return the lexical representation
      */
+    @Deprecated
     @Nonnull public static String longToDuration(final long duration) {
         return dataTypeFactory.newDuration(duration).toString();
     }

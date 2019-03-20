@@ -18,6 +18,9 @@
 package net.shibboleth.utilities.java.support.xml;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -423,29 +426,29 @@ public class AttributeSupportTest {
         Assert.assertEquals(AttributeSupport.getAttributeValueAsQName(AttributeSupport.getAttribute(attributes,
                 new QName(TEST_NS, "testAttrZero"))), new QName("0"), "attribute called testAttrZero");
 
-        // getDateTimeAttributeAsLong
+        // getDateTimeAttribute
         // Use the previously tested AttributeSupport.getAttribute
-        Assert.assertNull(AttributeSupport.getDateTimeAttributeAsLong(null), "null attribute should be null");
-        Assert.assertNull(AttributeSupport.getDateTimeAttributeAsLong(AttributeSupport.getAttribute(attributes,
+        Assert.assertNull(AttributeSupport.getDateTimeAttribute(null), "null attribute should be null");
+        Assert.assertNull(AttributeSupport.getDateTimeAttribute(AttributeSupport.getAttribute(attributes,
                 new QName(TEST_NS, "testAttrEmpty"))), "\"\" should be null");
-        Assert.assertNull(AttributeSupport.getDateTimeAttributeAsLong(AttributeSupport.getAttribute(attributes,
+        Assert.assertNull(AttributeSupport.getDateTimeAttribute(AttributeSupport.getAttribute(attributes,
                 new QName(TEST_NS, "testAttrEmpty"))), "\"0\" should be null");
         Assert.assertEquals(
-                AttributeSupport.getDateTimeAttributeAsLong(
-                        AttributeSupport.getAttribute(attributes, new QName(TEST_NS, "testAttrEpochPlusOneSec")))
-                        .intValue(), 1000, "attribute called testAttrEpochPlusOneSec");
+                AttributeSupport.getDateTimeAttribute(
+                        AttributeSupport.getAttribute(attributes, new QName(TEST_NS, "testAttrEpochPlusOneSec"))),
+                Instant.ofEpochSecond(1), "attribute called testAttrEpochPlusOneSec");
 
         // getDurationAttributeValueAsLong
         // Use the previously tested AttributeSupport.getAttribute
-        Assert.assertNull(AttributeSupport.getDurationAttributeValueAsLong(null), "null attribute should be null");
-        Assert.assertNull(AttributeSupport.getDurationAttributeValueAsLong(AttributeSupport.getAttribute(attributes,
+        Assert.assertNull(AttributeSupport.getDurationAttributeValue(null), "null attribute should be null");
+        Assert.assertNull(AttributeSupport.getDurationAttributeValue(AttributeSupport.getAttribute(attributes,
                 new QName(TEST_NS, "testAttrEmpty"))), "\"\" should be null");
-        Assert.assertNull(AttributeSupport.getDurationAttributeValueAsLong(AttributeSupport.getAttribute(attributes,
+        Assert.assertNull(AttributeSupport.getDurationAttributeValue(AttributeSupport.getAttribute(attributes,
                 new QName(TEST_NS, "testAttrEmpty"))), "\"0\" should be null");
         Assert.assertEquals(
-                AttributeSupport.getDurationAttributeValueAsLong(
-                        AttributeSupport.getAttribute(attributes, new QName(TEST_NS, "testAttrMinusOneDay")))
-                        .intValue(), -24 * 60 * 60 * 1000, "attribute called testAttrMinusOneDay");
+                AttributeSupport.getDurationAttributeValue(
+                        AttributeSupport.getAttribute(attributes, new QName(TEST_NS, "testAttrMinusOneDay"))),
+                        Duration.ofDays(-1), "attribute called testAttrMinusOneDay");
     }
 
     @Test(dependsOnMethods = {"testGetAttributeMethods", "testGetID"}) public void testAppends() {
@@ -592,7 +595,7 @@ public class AttributeSupportTest {
         Assert.assertEquals(AttributeSupport.getIdAttribute(createdElement).getValue(), testResult,
                 "id Attribute added correctly");
 
-        int duration = 1000;
+        final var duration = Duration.ofSeconds(1);
         qNameBase = qNameBase + "New";
         qName = new QName(TEST_NS, qNameBase, TEST_PREFIX);
         Assert.assertNull(AttributeSupport.getAttributeValue(createdElement, qName), "Test precondition");
@@ -620,10 +623,12 @@ public class AttributeSupportTest {
         }
         Assert.assertFalse(thrown, "All non nulls should not throw");
         Assert.assertEquals(
-                AttributeSupport.getDurationAttributeValueAsLong(AttributeSupport.getAttribute(createdElement, qName))
-                        .intValue(), duration, "getDurationAttributeValueAsLong failed");
+                AttributeSupport.getDurationAttributeValue(AttributeSupport.getAttribute(createdElement, qName)),
+                        duration, "getDurationAttributeValueAsLong failed");
 
-        long time = 1000 * 60 * 60 * 24;
+        // Construct a time that contains nothing below the level of milliseconds,
+        // for compatibility with representations that don't have higher precision.
+        final var time = Instant.now().truncatedTo(ChronoUnit.MILLIS);
         qNameBase = qNameBase + "New";
         qName = new QName(TEST_NS, qNameBase, TEST_PREFIX);
         Assert.assertNull(AttributeSupport.getAttributeValue(createdElement, qName), "Test precondition");
@@ -651,8 +656,8 @@ public class AttributeSupportTest {
         }
         Assert.assertFalse(thrown, "All non nulls should not throw");
         Assert.assertEquals(
-                AttributeSupport.getDateTimeAttributeAsLong(AttributeSupport.getAttribute(createdElement, qName))
-                        .intValue(), time, "getDurationAttributeValueAsLong failed");
+                AttributeSupport.getDateTimeAttribute(AttributeSupport.getAttribute(createdElement, qName)),
+                        time, "getDurationAttributeValueAsLong failed");
 
     }
 

@@ -18,6 +18,7 @@
 package net.shibboleth.utilities.java.support.xml;
 
 import java.io.IOException;
+import java.time.Instant;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
@@ -60,16 +61,9 @@ public class DomTypeSupportTest {
     }
     
     
-    @Test public void testDateTimeToLong() {
-        Assert.assertEquals(DOMTypeSupport.dateTimeToLong("1970-01-01T00:00:01Z"), 1000, "Epoch plus one second");
-        Assert.assertEquals(DOMTypeSupport.dateTimeToLong("1969-12-31T23:59:59Z"), -1000, "Epoch minus one second");
-        Assert.assertEquals(DOMTypeSupport.dateTimeToLong("1970-01-01T00:00:00-05:00"), 5 * 3600 * 1000,
-                "Epoch minus 5 hours timezone");
-    }
-
-    @Test public void testLongToDateTime() {
-        Assert.assertEquals(DOMTypeSupport.longToDateTime(1000), "1970-01-01T00:00:01.000Z", "Epoch plus one second");
-        Assert.assertEquals(DOMTypeSupport.longToDateTime(-1000), "1969-12-31T23:59:59.000Z", "Epoch minus one second");
+    @Test public void testInstantToDateTime() {
+        Assert.assertEquals(DOMTypeSupport.instantToDateTime(Instant.EPOCH.plusMillis(1000)), "1970-01-01T00:00:01.000Z", "Epoch plus one second");
+        Assert.assertEquals(DOMTypeSupport.instantToDateTime(Instant.EPOCH.plusMillis(-1000)), "1969-12-31T23:59:59.000Z", "Epoch minus one second");
     }
 
     @Test public void testDurationToLong() {

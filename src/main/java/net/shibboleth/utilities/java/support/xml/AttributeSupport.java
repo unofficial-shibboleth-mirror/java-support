@@ -17,6 +17,8 @@
 
 package net.shibboleth.utilities.java.support.xml;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -155,16 +157,21 @@ public final class AttributeSupport {
     }
 
     /**
-     * Adds an attribute to the given element. The value of the attribute is the instant now + the given duration
+     * Adds an attribute to the given element. The value of the attribute is the given instant
      * expressed in XML dateTime format.
+     *
+     * Note that simply using <code>instant.toString()</code> is equivalent for many use cases, but
+     * the result will be different on a system with a higher-resolution clock, as the resulting
+     * string value may have sub-millisecond precision. This method always works to millisecond
+     * precision.
      * 
      * @param element element to which the attribute will be added, not null
      * @param attributeName name of the attribute, not null
-     * @param duration duration, in milliseconds, must be greater than 0
+     * @param instant instant to set into the attribute, not null
      */
     public static void appendDateTimeAttribute(@Nonnull final Element element, @Nonnull final QName attributeName,
-            final long duration) {
-        appendAttribute(element, attributeName, DOMTypeSupport.longToDateTime(duration));
+            @Nonnull final Instant instant) {
+        appendAttribute(element, attributeName, DOMTypeSupport.instantToDateTime(instant));
     }
 
     /**
@@ -172,11 +179,11 @@ public final class AttributeSupport {
      * 
      * @param element element to which the attribute will be added, not null
      * @param attributeName name of the attribute, not null
-     * @param duration duration, in milliseconds, must be greater than 0
+     * @param duration duration, must be greater than 0
      */
     public static void appendDurationAttribute(@Nonnull final Element element, @Nonnull final QName attributeName,
-            final long duration) {
-        appendAttribute(element, attributeName, DOMTypeSupport.longToDuration(duration));
+            @Nonnull final Duration duration) {
+        appendAttribute(element, attributeName, DOMTypeSupport.longToDuration(duration.toMillis()));
     }
 
     /**
@@ -346,33 +353,33 @@ public final class AttributeSupport {
     }
 
     /**
-     * Gets the value of a dateTime-type attribute in milliseconds since the epoch.
+     * Gets the value of a dateTime-type attribute as an {@link Instant}.
      * 
      * @param attribute attribute from which to extract the value, may be null
      * 
-     * @return date/time in millisecond since the epoch, or null if the attribute was null
+     * @return date/time as an {@link Instant}, or null if the attribute was null
      */
-    @Nullable public static Long getDateTimeAttributeAsLong(@Nullable final Attr attribute) {
+    @Nullable public static Instant getDateTimeAttribute(@Nullable final Attr attribute) {
         if (attribute == null || StringSupport.trimOrNull(attribute.getValue()) == null) {
             return null;
         }
 
-        return DOMTypeSupport.dateTimeToLong(attribute.getValue());
+        return DOMTypeSupport.dateTimeToInstant(attribute.getValue());
     }
 
     /**
-     * Gets the value of a duration-type attribute in milliseconds.
+     * Gets the value of a duration-type attribute as a {@link Duration}.
      * 
      * @param attribute attribute from which to extract the value, may be null
      * 
-     * @return duration, in millisecond, or null if the attribute was null
+     * @return duration, or null if the attribute was null
      */
-    @Nullable public static Long getDurationAttributeValueAsLong(@Nullable final Attr attribute) {
+    @Nullable public static Duration getDurationAttributeValue(@Nullable final Attr attribute) {
         if (attribute == null || StringSupport.trimOrNull(attribute.getValue()) == null)  {
             return null;
         }
 
-        return DOMTypeSupport.durationToLong(attribute.getValue());
+        return DOMTypeSupport.durationToDuration(attribute.getValue());
     }
 
     /**
