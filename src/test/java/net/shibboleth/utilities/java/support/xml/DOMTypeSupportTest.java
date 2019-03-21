@@ -37,7 +37,7 @@ import org.xml.sax.SAXException;
 /**
  * Tests for {@link DOMTypeSupport};
  */
-public class DomTypeSupportTest {
+public class DOMTypeSupportTest {
 
     private ParserPool parserPool;
     private Element xsStringXSITypeElement;
