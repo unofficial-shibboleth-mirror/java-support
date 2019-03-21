@@ -18,6 +18,7 @@
 package net.shibboleth.utilities.java.support.xml;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.time.Instant;
 
 import javax.xml.namespace.QName;
@@ -61,24 +62,24 @@ public class DomTypeSupportTest {
     }
     
     
-    @Test public void testInstantToDateTime() {
-        Assert.assertEquals(DOMTypeSupport.instantToDateTime(Instant.EPOCH.plusMillis(1000)), "1970-01-01T00:00:01.000Z", "Epoch plus one second");
-        Assert.assertEquals(DOMTypeSupport.instantToDateTime(Instant.EPOCH.plusMillis(-1000)), "1969-12-31T23:59:59.000Z", "Epoch minus one second");
+    @Test public void testInstantToString() {
+        Assert.assertEquals(DOMTypeSupport.instantToString(Instant.EPOCH.plusMillis(1000)), "1970-01-01T00:00:01.000Z", "Epoch plus one second");
+        Assert.assertEquals(DOMTypeSupport.instantToString(Instant.EPOCH.plusMillis(-1000)), "1969-12-31T23:59:59.000Z", "Epoch minus one second");
     }
 
-    @Test public void testDurationToLong() {
-        Assert.assertEquals(DOMTypeSupport.durationToLong("P0Y0M0DT00H00M01S"), 1000, "One second duration");
-        Assert.assertEquals(DOMTypeSupport.durationToLong("-P1D"), -1 * 1000 * 24 * 3600, "Back One day duration");
+    @Test public void testStringToDuration() {
+        Assert.assertEquals(DOMTypeSupport.stringToDuration("P0Y0M0DT00H00M01S"), Duration.ofSeconds(1), "One second duration");
+        Assert.assertEquals(DOMTypeSupport.stringToDuration("-P1D"), Duration.ofDays(-1), "Back One day duration");
     }
 
-    @Test public void testLongToDuration() {
+    @Test public void testDurationToString() {
         // We have to check for two different possible return values because Oracle's and Xerces' implementations
         // are different.
         
-        String onesec = DOMTypeSupport.longToDuration(1000);
+        String onesec = DOMTypeSupport.durationToString(Duration.ofSeconds(1));
         Assert.assertTrue("P0Y0M0DT0H0M1.000S".equals(onesec) || "PT1.000S".equals(onesec), "One second duration");
 
-        String backday = DOMTypeSupport.longToDuration(-1000*24*3600);
+        String backday = DOMTypeSupport.durationToString(Duration.ofDays(-1));
         Assert.assertTrue("-P0Y0M1DT0H0M0.000S".equals(backday) || "-P1DT0H0M0.000S".equals(backday), "Back one day duration");
     }
     

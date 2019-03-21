@@ -56,24 +56,12 @@ public final class DOMTypeSupport {
      * 
      * @return the date/time expressed as an {@link Instant}
      */
-    public static Instant dateTimeToInstant(@Nonnull final String dateTime) {
+    public static Instant stringToInstant(@Nonnull final String dateTime) {
         final String trimmedString =
                 Constraint.isNotNull(StringSupport.trimOrNull(dateTime), "Lexical dateTime may not be null or empty");
 
         final XMLGregorianCalendar calendar = dataTypeFactory.newXMLGregorianCalendar(trimmedString);
         return calendar.toGregorianCalendar().toInstant();
-    }
-
-    /**
-     * Converts a lexical duration, as defined by XML Schema 1.0, into milliseconds.
-     * 
-     * @param duration lexical duration representation
-     * 
-     * @return duration in milliseconds
-     */
-    @Deprecated
-    public static long durationToLong(final String duration) {
-        return dataTypeFactory.newDuration(duration).getTimeInMillis(baseline);
     }
 
     /**
@@ -83,8 +71,8 @@ public final class DOMTypeSupport {
      * 
      * @return duration in Java form
      */
-    public static Duration durationToDuration(final String duration) {
-        return Duration.ofMillis(durationToLong(duration));
+    public static Duration stringToDuration(@Nonnull final String duration) {
+        return Duration.ofMillis(dataTypeFactory.newDuration(duration).getTimeInMillis(baseline));
     }
     
     /**
@@ -142,7 +130,7 @@ public final class DOMTypeSupport {
      * 
      * @return the lexical representation of the date/time
      */
-    @Nonnull public static String instantToDateTime(@Nonnull final Instant dateTime) {
+    @Nonnull public static String instantToString(@Nonnull final Instant dateTime) {
         final GregorianCalendar calendar = new GregorianCalendar();
         calendar.setTimeZone(TimeZone.getTimeZone("UTC"));
         calendar.setTimeInMillis(dateTime.toEpochMilli());
@@ -151,15 +139,14 @@ public final class DOMTypeSupport {
     }
 
     /**
-     * Converts a duration in milliseconds to a lexical duration, as defined by XML Schema 1.0.
+     * Converts a {@link Duration} to a lexical duration, as defined by XML Schema 1.0.
      * 
      * @param duration the duration
      * 
      * @return the lexical representation
      */
-    @Deprecated
-    @Nonnull public static String longToDuration(final long duration) {
-        return dataTypeFactory.newDuration(duration).toString();
+    @Nonnull public static String durationToString(@Nonnull final Duration duration) {
+        return dataTypeFactory.newDuration(duration.toMillis()).toString();
     }
 
     static {

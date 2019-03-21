@@ -171,7 +171,7 @@ public final class AttributeSupport {
      */
     public static void appendDateTimeAttribute(@Nonnull final Element element, @Nonnull final QName attributeName,
             @Nonnull final Instant instant) {
-        appendAttribute(element, attributeName, DOMTypeSupport.instantToDateTime(instant));
+        appendAttribute(element, attributeName, DOMTypeSupport.instantToString(instant));
     }
 
     /**
@@ -183,7 +183,7 @@ public final class AttributeSupport {
      */
     public static void appendDurationAttribute(@Nonnull final Element element, @Nonnull final QName attributeName,
             @Nonnull final Duration duration) {
-        appendAttribute(element, attributeName, DOMTypeSupport.longToDuration(duration.toMillis()));
+        appendAttribute(element, attributeName, DOMTypeSupport.durationToString(duration));
     }
 
     /**
@@ -364,7 +364,7 @@ public final class AttributeSupport {
             return null;
         }
 
-        return DOMTypeSupport.dateTimeToInstant(attribute.getValue());
+        return DOMTypeSupport.stringToInstant(attribute.getValue());
     }
 
     /**
@@ -379,7 +379,7 @@ public final class AttributeSupport {
             return null;
         }
 
-        return DOMTypeSupport.durationToDuration(attribute.getValue());
+        return DOMTypeSupport.stringToDuration(attribute.getValue());
     }
 
     /**
