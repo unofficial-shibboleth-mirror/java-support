@@ -28,12 +28,13 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpContext;
@@ -45,6 +46,10 @@ import org.testng.annotations.Test;
 import com.google.common.collect.Lists;
 
 public class ContextHandlingHttpClientTest {
+    
+    public static final CloseableHttpResponse STATIC_RESPONSE_HTTP = new MockCloseableHttpResponse(new ProtocolVersion("HTTP", 1, 1), HttpStatus.SC_OK, "OK");
+        
+    public static final Object STATIC_RESPONSE_HANDLER = new Object();
     
     private ContextHandlingHttpClient client;
     
@@ -80,16 +85,16 @@ public class ContextHandlingHttpClientTest {
         context = HttpClientContext.create();
         
         //Non-context execute methods
-        Assert.assertSame(client.execute(request), MockHttpClient.STATIC_RESPONSE_HTTP);
-        Assert.assertSame(client.execute(request, responseHandler), MockHttpClient.STATIC_RESPONSE_HANDLER);
-        Assert.assertSame(client.execute(target, request), MockHttpClient.STATIC_RESPONSE_HTTP);
-        Assert.assertSame(client.execute(target, request, responseHandler), MockHttpClient.STATIC_RESPONSE_HANDLER);
+        Assert.assertSame(client.execute(request), STATIC_RESPONSE_HTTP);
+        Assert.assertSame(client.execute(request, responseHandler), STATIC_RESPONSE_HANDLER);
+        Assert.assertSame(client.execute(target, request), STATIC_RESPONSE_HTTP);
+        Assert.assertSame(client.execute(target, request, responseHandler), STATIC_RESPONSE_HANDLER);
         
         //Context execute methods
-        Assert.assertSame(client.execute(request, context), MockHttpClient.STATIC_RESPONSE_HTTP);
-        Assert.assertSame(client.execute(request, responseHandler, context), MockHttpClient.STATIC_RESPONSE_HANDLER);
-        Assert.assertSame(client.execute(target, request, context), MockHttpClient.STATIC_RESPONSE_HTTP);
-        Assert.assertSame(client.execute(target, request, responseHandler, context), MockHttpClient.STATIC_RESPONSE_HANDLER);
+        Assert.assertSame(client.execute(request, context), STATIC_RESPONSE_HTTP);
+        Assert.assertSame(client.execute(request, responseHandler, context), STATIC_RESPONSE_HANDLER);
+        Assert.assertSame(client.execute(target, request, context), STATIC_RESPONSE_HTTP);
+        Assert.assertSame(client.execute(target, request, responseHandler, context), STATIC_RESPONSE_HANDLER);
     }
     
     @Test
@@ -106,19 +111,19 @@ public class ContextHandlingHttpClientTest {
                 );
         
         context = HttpClientContext.create();
-        Assert.assertSame(client.execute(request, context), MockHttpClient.STATIC_RESPONSE_HTTP);
+        Assert.assertSame(client.execute(request, context), STATIC_RESPONSE_HTTP);
         Assert.assertEquals(context.getAttribute(TestContextHandler.TEST_KEY), control);
         
         context = HttpClientContext.create();
-        Assert.assertSame(client.execute(request, responseHandler, context), MockHttpClient.STATIC_RESPONSE_HANDLER);
+        Assert.assertSame(client.execute(request, responseHandler, context), STATIC_RESPONSE_HANDLER);
         Assert.assertEquals(context.getAttribute(TestContextHandler.TEST_KEY), control);
         
         context = HttpClientContext.create();
-        Assert.assertSame(client.execute(target, request, context), MockHttpClient.STATIC_RESPONSE_HTTP);
+        Assert.assertSame(client.execute(target, request, context), STATIC_RESPONSE_HTTP);
         Assert.assertEquals(context.getAttribute(TestContextHandler.TEST_KEY), control);
         
         context = HttpClientContext.create();
-        Assert.assertSame(client.execute(target, request, responseHandler, context), MockHttpClient.STATIC_RESPONSE_HANDLER);
+        Assert.assertSame(client.execute(target, request, responseHandler, context), STATIC_RESPONSE_HANDLER);
         Assert.assertEquals(context.getAttribute(TestContextHandler.TEST_KEY), control);
     }
     
@@ -139,22 +144,22 @@ public class ContextHandlingHttpClientTest {
         
         context = HttpClientContext.create();
         HttpClientSupport.getDynamicContextHandlerList(context).addAll(handlers);
-        Assert.assertSame(client.execute(request, context), MockHttpClient.STATIC_RESPONSE_HTTP);
+        Assert.assertSame(client.execute(request, context), STATIC_RESPONSE_HTTP);
         Assert.assertEquals(context.getAttribute(TestContextHandler.TEST_KEY), control);
         
         context = HttpClientContext.create();
         HttpClientSupport.getDynamicContextHandlerList(context).addAll(handlers);
-        Assert.assertSame(client.execute(request, responseHandler, context), MockHttpClient.STATIC_RESPONSE_HANDLER);
+        Assert.assertSame(client.execute(request, responseHandler, context), STATIC_RESPONSE_HANDLER);
         Assert.assertEquals(context.getAttribute(TestContextHandler.TEST_KEY), control);
         
         context = HttpClientContext.create();
         HttpClientSupport.getDynamicContextHandlerList(context).addAll(handlers);
-        Assert.assertSame(client.execute(target, request, context), MockHttpClient.STATIC_RESPONSE_HTTP);
+        Assert.assertSame(client.execute(target, request, context), STATIC_RESPONSE_HTTP);
         Assert.assertEquals(context.getAttribute(TestContextHandler.TEST_KEY), control);
         
         context = HttpClientContext.create();
         HttpClientSupport.getDynamicContextHandlerList(context).addAll(handlers);
-        Assert.assertSame(client.execute(target, request, responseHandler, context), MockHttpClient.STATIC_RESPONSE_HANDLER);
+        Assert.assertSame(client.execute(target, request, responseHandler, context), STATIC_RESPONSE_HANDLER);
         Assert.assertEquals(context.getAttribute(TestContextHandler.TEST_KEY), control);
     }
     
@@ -181,22 +186,22 @@ public class ContextHandlingHttpClientTest {
         
         context = HttpClientContext.create();
         HttpClientSupport.getDynamicContextHandlerList(context).addAll(handlers);
-        Assert.assertSame(client.execute(request, context), MockHttpClient.STATIC_RESPONSE_HTTP);
+        Assert.assertSame(client.execute(request, context), STATIC_RESPONSE_HTTP);
         Assert.assertEquals(context.getAttribute(TestContextHandler.TEST_KEY), control);
         
         context = HttpClientContext.create();
         HttpClientSupport.getDynamicContextHandlerList(context).addAll(handlers);
-        Assert.assertSame(client.execute(request, responseHandler, context), MockHttpClient.STATIC_RESPONSE_HANDLER);
+        Assert.assertSame(client.execute(request, responseHandler, context), STATIC_RESPONSE_HANDLER);
         Assert.assertEquals(context.getAttribute(TestContextHandler.TEST_KEY), control);
         
         context = HttpClientContext.create();
         HttpClientSupport.getDynamicContextHandlerList(context).addAll(handlers);
-        Assert.assertSame(client.execute(target, request, context), MockHttpClient.STATIC_RESPONSE_HTTP);
+        Assert.assertSame(client.execute(target, request, context), STATIC_RESPONSE_HTTP);
         Assert.assertEquals(context.getAttribute(TestContextHandler.TEST_KEY), control);
         
         context = HttpClientContext.create();
         HttpClientSupport.getDynamicContextHandlerList(context).addAll(handlers);
-        Assert.assertSame(client.execute(target, request, responseHandler, context), MockHttpClient.STATIC_RESPONSE_HANDLER);
+        Assert.assertSame(client.execute(target, request, responseHandler, context), STATIC_RESPONSE_HANDLER);
         Assert.assertEquals(context.getAttribute(TestContextHandler.TEST_KEY), control);
     }
     
@@ -1850,11 +1855,7 @@ public class ContextHandlingHttpClientTest {
         
     }
     
-    private static class MockHttpClient implements HttpClient {
-        
-        public static final HttpResponse STATIC_RESPONSE_HTTP = new BasicHttpResponse(new ProtocolVersion("HTTP", 1, 1), HttpStatus.SC_OK, "OK");
-        
-        public static final Object STATIC_RESPONSE_HANDLER = new Object();
+    private static class MockHttpClient extends CloseableHttpClient {
         
         private Throwable error;
         
@@ -1874,61 +1875,17 @@ public class ContextHandlingHttpClientTest {
         public ClientConnectionManager getConnectionManager() {
             return null;
         }
-
-        /** {@inheritDoc} */
-        public HttpResponse execute(HttpUriRequest request) throws IOException, ClientProtocolException {
-            return responseHTTP();
-        }
-
-        /** {@inheritDoc} */
-        public HttpResponse execute(HttpUriRequest request, HttpContext context)
-                throws IOException, ClientProtocolException {
-            return responseHTTP();
-        }
-
-        /** {@inheritDoc} */
-        public HttpResponse execute(HttpHost target, HttpRequest request) throws IOException, ClientProtocolException {
-            return responseHTTP();
-        }
-
-        /** {@inheritDoc} */
-        public HttpResponse execute(HttpHost target, HttpRequest request, HttpContext context)
-                throws IOException, ClientProtocolException {
-            return responseHTTP();
-        }
-
-        /** {@inheritDoc} */
-        public <T> T execute(HttpUriRequest request, ResponseHandler<? extends T> responseHandler)
-                throws IOException, ClientProtocolException {
-           return responseHandler();
-        }
-
-        /** {@inheritDoc} */
-        public <T> T execute(HttpUriRequest request, ResponseHandler<? extends T> responseHandler, HttpContext context)
-                throws IOException, ClientProtocolException {
-            return responseHandler();
-        }
-
-        /** {@inheritDoc} */
-        public <T> T execute(HttpHost target, HttpRequest request, ResponseHandler<? extends T> responseHandler)
-                throws IOException, ClientProtocolException {
-            return responseHandler();
-        }
-
-        /** {@inheritDoc} */
-        public <T> T execute(HttpHost target, HttpRequest request, ResponseHandler<? extends T> responseHandler,
-                HttpContext context) throws IOException, ClientProtocolException {
-            return responseHandler();
-        }
         
-        private HttpResponse responseHTTP() throws IOException {
+        /** {@inheritDoc} */
+        public void close() throws IOException {
+            // nothing to do
+        }
+
+        /** {@inheritDoc} */
+        protected CloseableHttpResponse doExecute(HttpHost target, HttpRequest request, HttpContext context)
+                throws IOException, ClientProtocolException {
             ThrowableHelper.checkAndThrowError(error);
             return STATIC_RESPONSE_HTTP;
-        }
-        
-        private <T> T responseHandler() throws IOException {
-            ThrowableHelper.checkAndThrowError(error);
-            return (T) STATIC_RESPONSE_HANDLER;
         }
         
     }
@@ -1936,9 +1893,21 @@ public class ContextHandlingHttpClientTest {
     public static class MockResponseHandler implements ResponseHandler<Object> {
 
         public Object handleResponse(HttpResponse response) throws ClientProtocolException, IOException {
-            return null;
+            return STATIC_RESPONSE_HANDLER;
         }
 
+    }
+    
+    public static class MockCloseableHttpResponse extends BasicHttpResponse implements CloseableHttpResponse {
+
+        public MockCloseableHttpResponse(ProtocolVersion ver, int code, String reason) {
+            super(ver, code, reason);
+        }
+
+        public void close() throws IOException {
+            
+        }
+        
     }
     
     public static class ThrowableHelper {

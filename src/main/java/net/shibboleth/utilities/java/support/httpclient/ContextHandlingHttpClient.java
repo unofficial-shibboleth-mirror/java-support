@@ -25,15 +25,16 @@ import javax.annotation.Nonnull;
 
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpRequestWrapper;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.params.HttpParams;
+import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,13 +66,13 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
  * </ol>
  * </p>
  */
-class ContextHandlingHttpClient implements HttpClient {
+class ContextHandlingHttpClient extends CloseableHttpClient {
     
     /** Logger. */
     private Logger log = LoggerFactory.getLogger(ContextHandlingHttpClient.class);
     
     /** The wrapped client instance. */
-    @Nonnull private HttpClient httpClient;
+    @Nonnull private CloseableHttpClient httpClient;
     
     /** Optional list of static handlers supplied to this class instance. */
     @Nonnull private List<HttpClientContextHandler> handlers;
@@ -81,7 +82,7 @@ class ContextHandlingHttpClient implements HttpClient {
      *
      * @param client the wrapped client instance
      */
-    public ContextHandlingHttpClient(@Nonnull final HttpClient client) {
+    public ContextHandlingHttpClient(@Nonnull final CloseableHttpClient client) {
         this(client, null);
     }
 
@@ -91,7 +92,7 @@ class ContextHandlingHttpClient implements HttpClient {
      * @param client the wrapped client instance
      * @param staticHandlers the list of static handlers
      */
-    public ContextHandlingHttpClient(@Nonnull final HttpClient client, 
+    public ContextHandlingHttpClient(@Nonnull final CloseableHttpClient client, 
             @Nonnull final List<HttpClientContextHandler> staticHandlers) {
         httpClient = Constraint.isNotNull(client, "HttpClient was null");
         handlers = staticHandlers != null ? staticHandlers : Collections.emptyList();
@@ -106,100 +107,25 @@ class ContextHandlingHttpClient implements HttpClient {
     public ClientConnectionManager getConnectionManager() {
         return httpClient.getConnectionManager();
     }
-
+    
     /** {@inheritDoc} */
-    public HttpResponse execute(final HttpUriRequest request) throws IOException, ClientProtocolException {
-        return httpClient.execute(request);
+    public void close() throws IOException {
+        httpClient.close();
     }
 
     /** {@inheritDoc} */
-    public HttpResponse execute(final HttpHost target, final HttpRequest request)
-            throws IOException, ClientProtocolException {
-        return httpClient.execute(target, request);
-    }
-
-    /** {@inheritDoc} */
-    public <T> T execute(final HttpUriRequest request, final ResponseHandler<? extends T> responseHandler)
-            throws IOException, ClientProtocolException {
-        return httpClient.execute(request, responseHandler);
-    }
-
-    /** {@inheritDoc} */
-    public <T> T execute(final HttpHost target, final HttpRequest request, 
-            final ResponseHandler<? extends T> responseHandler)
-            throws IOException, ClientProtocolException {
-        return httpClient.execute(target, request, responseHandler);
-    }
-
-    /** {@inheritDoc} */
-    public HttpResponse execute(final HttpUriRequest uriRequest, final HttpContext context)
-            throws IOException, ClientProtocolException {
-        
-        Throwable error = null;
-        
-        final HttpClientContext clientContext = HttpClientContext.adapt(context);
-        try {
-            invokeBefore(uriRequest, clientContext);
-            return httpClient.execute(uriRequest, context);
-        } catch (final Throwable t) {
-            error = t;
-            throw t;
-        } finally {
-            invokeAfter(uriRequest, clientContext, error);
-        }
-    }
-
-    /** {@inheritDoc} */
-    public HttpResponse execute(final HttpHost target, final HttpRequest request, final HttpContext context)
-            throws IOException, ClientProtocolException {
-        
-        Throwable error = null;
-        
-        final HttpClientContext clientContext = HttpClientContext.adapt(context);
-        final HttpUriRequest uriRequest = HttpUriRequest.class.isInstance(request) 
-                ? (HttpUriRequest)request : HttpRequestWrapper.wrap(request, target);
-        try {
-            invokeBefore(uriRequest, clientContext);
-            return httpClient.execute(target, request, context);
-        } catch (final Throwable t) {
-            error = t;
-            throw t;
-        } finally {
-            invokeAfter(uriRequest, clientContext, error);
-        }
-    }
-
-    /** {@inheritDoc} */
-    public <T> T execute(final HttpUriRequest uriRequest, final ResponseHandler<? extends T> responseHandler,
+    protected CloseableHttpResponse doExecute(final HttpHost target, final HttpRequest request, 
             final HttpContext context) throws IOException, ClientProtocolException {
         
         Throwable error = null;
         
-        final HttpClientContext clientContext = HttpClientContext.adapt(context);
-        try {
-            invokeBefore(uriRequest, clientContext);
-            return httpClient.execute(uriRequest, responseHandler, context);
-        } catch (final Throwable t) {
-            error = t;
-            throw t;
-        } finally {
-            invokeAfter(uriRequest, clientContext, error);
-        }
-    }
-
-    /** {@inheritDoc} */
-    public <T> T execute(final HttpHost target, final HttpRequest request, 
-            final ResponseHandler<? extends T> responseHandler, final HttpContext context) 
-                    throws IOException, ClientProtocolException {
-        
-        Throwable error = null;
-        
-        final HttpClientContext clientContext = HttpClientContext.adapt(context);
+        final HttpClientContext clientContext = 
+                HttpClientContext.adapt(context != null ? context : new BasicHttpContext());
         final HttpUriRequest uriRequest = HttpUriRequest.class.isInstance(request) 
                 ? (HttpUriRequest)request : HttpRequestWrapper.wrap(request, target);
         try {
             invokeBefore(uriRequest, clientContext);
-            return httpClient.execute(target, request, responseHandler, context);
+            return httpClient.execute(target, request, clientContext);
         } catch (final Throwable t) {
             error = t;
             throw t;
@@ -375,5 +301,7 @@ class ContextHandlingHttpClient implements HttpClient {
             throw invokeAfterException;
         }
     }
+
+
 
 }
