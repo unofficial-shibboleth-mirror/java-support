@@ -20,6 +20,7 @@ package net.shibboleth.utilities.java.support.collection;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -28,6 +29,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
@@ -77,6 +79,26 @@ public final class CollectionSupport {
             return ImmutableSet.copyOf(source);
         } else {
             return Collections.emptySet();
+        }
+    }    
+
+    /**
+     * Builds an immutable set containing the source collection, allowing for a null collection.
+     * 
+     * @param <K> key type
+     * @param <V> value type
+     * @param source objects to populate into map, or null
+     * 
+     * @return An immutable map containing the source objects
+     * 
+     * @since 8.0.0
+     */
+    @Nonnull @NotLive @Unmodifiable public static <K,V> Map<K,V> buildImmutableMap(
+            @Nullable final Map<? extends K, ? extends V> source) {
+        if (source != null) {
+            return ImmutableMap.copyOf(source);
+        } else {
+            return Collections.emptyMap();
         }
     }    
     
