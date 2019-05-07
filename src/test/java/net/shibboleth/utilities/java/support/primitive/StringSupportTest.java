@@ -26,13 +26,13 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
-
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 /**
  * test for the various methods inside {@link StringSupport}
@@ -153,4 +153,16 @@ public class StringSupportTest {
         return null;
     }
 
+    @Test public void testToBoolean() {
+        Assert.assertNull(StringSupport.booleanOf(""));
+        Assert.assertFalse(Boolean.valueOf(""));
+        Assert.assertNull(StringSupport.booleanOf(null));
+        Assert.assertFalse(Boolean.valueOf(null));
+        Assert.assertTrue(StringSupport.booleanOf("true"));
+        Assert.assertTrue(Boolean.valueOf("true"));
+        Assert.assertFalse(StringSupport.booleanOf("false"));
+        Assert.assertFalse(Boolean.valueOf("false"));
+        Assert.assertFalse(StringSupport.booleanOf("elephant"));
+        Assert.assertFalse(Boolean.valueOf("elephant"));
+    }
 }

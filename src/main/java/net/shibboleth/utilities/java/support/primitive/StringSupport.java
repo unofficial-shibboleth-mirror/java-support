@@ -181,4 +181,16 @@ public final class StringSupport {
         return Collections2.filter(Collections2.transform(values, TrimOrNullStringFunction.INSTANCE::apply),
                 Predicates.notNull());
     }
+
+    /** Null/empty preserving conversion from string to {@link Boolean}.
+     * @param what the string: potentially empty or null
+     * @return null or the boolean equivalent.
+     */
+    @Nullable public static Boolean booleanOf(final String what) {
+        final String trimmed = trimOrNull(what);
+        if (trimmed == null) {
+            return null;
+        }
+        return Boolean.valueOf(trimmed);
+    }
 }
