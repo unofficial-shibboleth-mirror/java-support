@@ -17,7 +17,10 @@
 
 package net.shibboleth.utilities.java.support.codec;
 
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.binary.Hex;
 import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /** {@link Base64Support} unit test. */
@@ -37,16 +40,48 @@ public class Base64SupportTest {
             "TG9yZW0gaXBzdW0gZG9sb3Igc2l0IGFtZXQsIGNvbnNlY3RldHVyIGFkaXBpc2NpbmcgZWxpdC4g\n"
                     + "QWVuZWFuIG1hbGVzdWFkYSwgZXJvcyB0ZW1wb3IgYWxpcXVhbSB1bGxhbWNvcnBlciwgbWF1cmlz\n"
                     + "IHZlbGl0IGlhY3VsaXMgbWV0dXMsIHF1aXMgdnVscHV0YXRlIGRpYW0gcXVhbQ==";
+    
+    private final static String URLSAFE_UNCHUNCKED_ENCODED_TEXT =
+            "TG9yZW0gaXBzdW0gZG9sb3Igc2l0IGFtZXQsIGNvbnNlY3RldHVyIGFkaXBpc2NpbmcgZWxpdC4g"
+                    + "QWVuZWFuIG1hbGVzdWFkYSwgZXJvcyB0ZW1wb3IgYWxpcXVhbSB1bGxhbWNvcnBlciwgbWF1cmlz"
+                    + "IHZlbGl0IGlhY3VsaXMgbWV0dXMsIHF1aXMgdnVscHV0YXRlIGRpYW0gcXVhbQ";
 
+    //Inited below
+    private static byte[] PLAIN_BYTES;
+    
+    private final static String UNCHUNCKED_ENCODED_BYTES = "FPucA9l+";
+    
+    private final static String URLSAFE_UNCHUNCKED_ENCODED_BYTES = "FPucA9l-";
+    
+
+    @BeforeClass
+    public void setUp() throws DecoderException {
+        PLAIN_BYTES = Hex.decodeHex("14fb9c03d97e".toCharArray());
+    }
+    
     /** Test Base64 encoding content. */
     @Test public void testEncode() {
         Assert.assertEquals(Base64Support.encode(PLAIN_TEXT.getBytes(), false), UNCHUNCKED_ENCODED_TEXT);
         Assert.assertEquals(Base64Support.encode(PLAIN_TEXT.getBytes(), true), CHUNCKED_ENCODED_TEXT);
+        Assert.assertEquals(Base64Support.encode(PLAIN_BYTES, false), UNCHUNCKED_ENCODED_BYTES);
     }
 
     /** Test Base64 decoding content. */
     @Test public void testDecode() {
         Assert.assertEquals(new String(Base64Support.decode(UNCHUNCKED_ENCODED_TEXT)), PLAIN_TEXT);
         Assert.assertEquals(new String(Base64Support.decode(CHUNCKED_ENCODED_TEXT)), PLAIN_TEXT);
+        Assert.assertEquals(Base64Support.decode(UNCHUNCKED_ENCODED_BYTES), PLAIN_BYTES);
+    }
+    
+    /** Test Base64 encoding content. */
+    @Test public void testEncodeURLSafe() {
+        Assert.assertEquals(Base64Support.encodeURLSafe(PLAIN_TEXT.getBytes()), URLSAFE_UNCHUNCKED_ENCODED_TEXT);
+        Assert.assertEquals(Base64Support.encodeURLSafe(PLAIN_BYTES), URLSAFE_UNCHUNCKED_ENCODED_BYTES);
+    }
+
+    /** Test Base64 decoding content. */
+    @Test public void testDecodeURLSafe() {
+        Assert.assertEquals(new String(Base64Support.decodeURLSafe(URLSAFE_UNCHUNCKED_ENCODED_TEXT)), PLAIN_TEXT);
+        Assert.assertEquals(Base64Support.decodeURLSafe(URLSAFE_UNCHUNCKED_ENCODED_BYTES), PLAIN_BYTES);
     }
 }

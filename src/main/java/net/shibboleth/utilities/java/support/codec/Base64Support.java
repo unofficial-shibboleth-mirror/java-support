@@ -82,4 +82,47 @@ public final class Base64Support {
         Constraint.isNotNull(data, "Base64 encoded data can not be null");
         return Constraint.isNotNull(CHUNKED_ENCODER.decode(data), "Decoded data was null");
     }
+    
+    /**
+     * Base64URL encodes the given binary data.
+     * 
+     * <p>
+     * This is compliant with RFC 4648, Section 5: "Base 64 Encoding with URL and Filename Safe Alphabet".
+     * </p>
+     * 
+     * @param data data to encode
+     * 
+     * @return the base64url encoded data
+     */
+    @Nonnull public static String encodeURLSafe(@Nonnull final byte[] data) {
+        String s = encode(data, false);
+        s = s.split("=")[0];
+        s = s.replace('+', '-');
+        s = s.replace('/', '_');
+        return s;
+    }
+
+    /**
+     * Decodes (un)chunked Base64URL encoded data.
+     * 
+     * <p>
+     * This is compliant with RFC 4648, Section 5: "Base 64 Encoding with URL and Filename Safe Alphabet".
+     * </p>
+     * 
+     * @param data Base64URL encoded data
+     * 
+     * @return the decoded data
+     */
+    @Nonnull public static byte[] decodeURLSafe(@Nonnull final String data) {
+        String s = Constraint.isNotNull(data, "Base64URL encoded data can not be null");
+        s = s.replace('-', '+');
+        s = s.replace('_', '/');
+        switch (s.length() % 4) {
+          case 0: break;
+          case 2: s += "=="; break;
+          case 3: s += "="; break;
+          default: throw new IllegalArgumentException("Illegal Base64URL string!");
+        }
+        return decode(s);
+    }
 }
