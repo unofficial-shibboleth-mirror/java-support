@@ -20,8 +20,6 @@ package net.shibboleth.utilities.java.support.service;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.utilities.java.support.logic.Constraint;
-
 /**
  * Utility class for wrapping a serviceable component in a dummy reloadable service.
  * 
@@ -31,8 +29,8 @@ public class MockReloadableService<T> extends AbstractReloadableService<T> {
 
     @Nonnull private final ServiceableComponent<T> component;
 
-    public MockReloadableService(@Nonnull final ServiceableComponent<T> what) {
-        component = Constraint.isNotNull(what, "Component cannot be null");
+    public MockReloadableService(@Nullable final ServiceableComponent<T> what) {
+        component = what;
     }
 
     /** {@inheritDoc} */
