@@ -68,4 +68,18 @@ public final class FunctionSupport {
         return g.compose(f);
     }
 
+    /**
+     * Creates a function that returns the same boolean output as the given predicate for all inputs.
+     *
+     * <p>Primarily provided for Spring wiring use cases that can't express a method reference.</p>
+     * 
+     * @param <T> input type
+     * @param predicate input predicate
+     * 
+     * @return a corresponding function 
+     */
+    @Nonnull public static <T> Function<T,Boolean> forPredicate(@Nonnull final Predicate<T> predicate) {
+        return predicate::test;
+    }
+    
 }
