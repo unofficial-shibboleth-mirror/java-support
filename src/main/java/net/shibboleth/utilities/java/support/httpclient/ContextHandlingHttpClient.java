@@ -230,7 +230,7 @@ class ContextHandlingHttpClient extends CloseableHttpClient {
     
     /**
      * Process the error(s) seen during {@link #invokeBefore(HttpUriRequest, HttpClientContext)} 
-     * or {@link #invokeAfter(HttpUriRequest, HttpClientContext, IOException, boolean)}
+     * or {@link #invokeAfter(HttpUriRequest, HttpClientContext, Throwable)}
      * into a single {@link IOException} that will be propagated out of that method.
      * 
      * @param stage the name of the stage, for reporting purposes

@@ -522,6 +522,7 @@ public class HttpClientBuilder {
      * 
      * @deprecated use {@link #isConnectionStaleCheck()}
      */
+    @Deprecated
     public boolean isConnectionStalecheck() {
         return isConnectionStaleCheck();
     }
@@ -536,6 +537,7 @@ public class HttpClientBuilder {
      * 
      * @deprecated use {@link #setConnectionStaleCheck(boolean)}
      */
+    @Deprecated
     public void setConnectionStalecheck(final boolean check) {
         setConnectionStaleCheck(check);
     }
