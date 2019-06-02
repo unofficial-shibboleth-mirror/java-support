@@ -32,7 +32,7 @@ public class IdleConectionSweeperTest {
 
     private final Duration SWEEP_INTERVAL = Duration.ofMillis(50);
 
-    @Test public void test() throws Exception {
+    @Test(enabled = false) public void test() throws Exception {
         PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
 
         IdleConnectionSweeper sweeper = new IdleConnectionSweeper(connectionManager, Duration.ofMillis(30), SWEEP_INTERVAL);
