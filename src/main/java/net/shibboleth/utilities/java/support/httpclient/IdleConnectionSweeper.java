@@ -24,6 +24,7 @@ import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
@@ -43,6 +44,9 @@ public class IdleConnectionSweeper implements DestructableComponent {
      * invoked.
      */
     private boolean createdTimer;
+
+    /** Time at which the sweeper last executed. */
+    @Nullable private Instant executionTime;
 
     /** HttpClientConnectionManager whose connections will be swept. */
     @Nonnull private final HttpClientConnectionManager connectionManager;
@@ -83,6 +87,7 @@ public class IdleConnectionSweeper implements DestructableComponent {
 
         sweeper = new TimerTask() {
             public void run() {
+                executionTime = Instant.now();
                 connectionManager.closeIdleConnections(idleTimeout.toMillis(), TimeUnit.MILLISECONDS);
             }
         };
@@ -101,7 +106,11 @@ public class IdleConnectionSweeper implements DestructableComponent {
             throw new DestroyedComponentException();
         }
 
-        return Instant.ofEpochMilli(sweeper.scheduledExecutionTime());
+        if (executionTime != null) {
+            return executionTime;
+        } else {
+            return Instant.ofEpochMilli(sweeper.scheduledExecutionTime());
+        }
     }
 
     /** {@inheritDoc} */

@@ -32,18 +32,12 @@ public class IdleConectionSweeperTest {
 
     private final Duration SWEEP_INTERVAL = Duration.ofMillis(50);
 
-    @Test(enabled = false) public void test() throws Exception {
+    @Test public void test() throws Exception {
         PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
 
         IdleConnectionSweeper sweeper = new IdleConnectionSweeper(connectionManager, Duration.ofMillis(30), SWEEP_INTERVAL);
         Thread.sleep(75);
-        long scheduledPlus =sweeper.scheduledExecutionTime().plus(SWEEP_INTERVAL).toEpochMilli();
-        long now = Instant.now().toEpochMilli();
-        if (now > scheduledPlus) {
-            Assert.assertTrue(scheduledPlus >= now);
-            
-        }
-        Assert.assertTrue(scheduledPlus >= now);
+        Assert.assertTrue(sweeper.scheduledExecutionTime().plus(SWEEP_INTERVAL).isAfter(Instant.now()));
 
         sweeper.destroy();
         Assert.assertTrue(sweeper.isDestroyed());
@@ -57,14 +51,8 @@ public class IdleConectionSweeperTest {
 
         Timer timer = new Timer(true);
         sweeper = new IdleConnectionSweeper(connectionManager, Duration.ofMillis(30), SWEEP_INTERVAL, timer);
-        Thread.sleep(10);
-        scheduledPlus =sweeper.scheduledExecutionTime().plus(SWEEP_INTERVAL).toEpochMilli();
-        now = Instant.now().toEpochMilli();
-        if (now > scheduledPlus) {
-            Assert.assertTrue(scheduledPlus >= now);
-            
-        }
-        Assert.assertTrue(scheduledPlus >= now);
+        Thread.sleep(75);
+        Assert.assertTrue(sweeper.scheduledExecutionTime().plus(SWEEP_INTERVAL).isAfter(Instant.now()));
 
         sweeper.destroy();
         Assert.assertTrue(sweeper.isDestroyed());
