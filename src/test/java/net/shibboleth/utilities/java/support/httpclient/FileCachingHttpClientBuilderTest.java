@@ -25,7 +25,7 @@ public class FileCachingHttpClientBuilderTest {
     @Test
     public void testDefaults() throws Exception {
         final FileCachingHttpClientBuilder builder = new FileCachingHttpClientBuilder();
-        final HttpClient client = builder.buildClient();
+        @SuppressWarnings("unused") final HttpClient client = builder.buildClient();
     }
 
 }

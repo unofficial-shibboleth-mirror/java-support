@@ -25,7 +25,7 @@ public class InMemoryCachingHttpClientBuilderTest {
     @Test
     public void testDefaults() throws Exception {
         final InMemoryCachingHttpClientBuilder builder = new InMemoryCachingHttpClientBuilder();
-        final HttpClient client = builder.buildClient();
+        @SuppressWarnings("unused") final HttpClient client = builder.buildClient();
     }
 
 }
