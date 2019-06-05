@@ -23,7 +23,6 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
@@ -262,22 +261,6 @@ public class AttributeSupportTest {
     @Test public void testXMLLang() {
         Assert.assertEquals(AttributeSupport.getXMLLang(goodBaseIdSpaceLang), "fr-ca", "xml:lang mismatch");
         Assert.assertNull(AttributeSupport.getXMLLang(noBaseIdSpaceLang), "xml:lang found erroneously");
-
-        Locale locale = AttributeSupport.getXMLLangAsLocale(goodBaseIdSpaceLang);
-
-        // Assert.assertEquals(locale.getCountry(), "ca", "getXMLLangAsLocale test (country)");
-        Assert.assertEquals(locale.getLanguage(), "fr", "getXMLLangAsLocale test (country)");
-
-        Locale current = Locale.getDefault();
-        Locale testLocale = new Locale("en", "gb");
-
-        try {
-            Locale.setDefault(testLocale);
-            Assert.assertEquals(AttributeSupport.getXMLLangAsLocale(noBaseIdSpaceLang), testLocale,
-                    "Defaulting behavior of getXMLLangAsLocale");
-        } finally {
-            Locale.setDefault(current);
-        }
 
         // test Add
         boolean thrown = false;

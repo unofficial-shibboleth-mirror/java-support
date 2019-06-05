@@ -21,7 +21,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -437,31 +436,6 @@ public final class AttributeSupport {
      */
     @Nullable public static String getXMLLang(@Nullable final Element element) {
         return getAttributeValue(element, XMLConstants.XML_LANG_ATTRIB_NAME);
-    }
-
-    /**
-     * Gets the locale currently active for the element. This is done by looking for an xml:lang attribute and parsing
-     * its content. If no xml:lang attribute is present the default locale is returned. This method only uses the
-     * language primary tag, as defined by RFC3066.
-     * 
-     * @param element element to retrieve local information for
-     * 
-     * @return the active local of the element
-     */
-    @Nullable public static Locale getXMLLangAsLocale(@Nullable final Element element) {
-        if (element == null) {
-            return null;
-        }
-
-        String lang = StringSupport.trimOrNull(getXMLLang(element));
-        if (lang != null) {
-            if (lang.contains("-")) {
-                lang = lang.substring(0, lang.indexOf("-"));
-            }
-            return new Locale(lang.toUpperCase());
-        } else {
-            return Locale.getDefault();
-        }
     }
 
     /**
