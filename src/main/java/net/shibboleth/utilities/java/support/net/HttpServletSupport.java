@@ -18,14 +18,21 @@
 package net.shibboleth.utilities.java.support.net;
 
 import java.net.URI;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale.LanguageRange;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.ImmutableList;
 import com.google.common.net.MediaType;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /** Utilities for working with HTTP Servlet requests and responses. */
@@ -135,4 +142,19 @@ public final class HttpServletSupport {
                 noContentTypeIsValid, isOneOfStrategy);
     }
     
+    /** Return the {@link LanguageRange} associated with this request.  This
+     * is more up to date than {@link HttpServletRequest#getLocales()}.
+     * @param request the request to process
+     * @return The range.
+     */
+    @Nonnull @NonnullElements @Unmodifiable
+    public static List<LanguageRange> getLanguageRange(final HttpServletRequest request) {
+        
+        final String languages = StringSupport.trimOrNull(request.getHeader("Accept-Language"));
+        if (languages == null) {
+            return Collections.EMPTY_LIST;
+        }
+        return ImmutableList.copyOf(LanguageRange.parse(languages));
+                
+    }
 }
