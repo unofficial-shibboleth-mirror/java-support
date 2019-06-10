@@ -21,6 +21,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.resource.Resource;
 import net.shibboleth.utilities.java.support.resource.TestResourceConverter;
+import net.shibboleth.utilities.java.support.security.impl.BasicKeystoreKeyStrategy;
 
 import java.time.Duration;
 import java.time.Instant;

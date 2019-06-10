@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.utilities.java.support.security;
+package net.shibboleth.utilities.java.support.security.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,6 +46,8 @@ import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.primitive.TimerSupport;
 import net.shibboleth.utilities.java.support.resource.Resource;
+import net.shibboleth.utilities.java.support.security.DataSealerKeyStrategy;
+import net.shibboleth.utilities.java.support.security.KeyNotFoundException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

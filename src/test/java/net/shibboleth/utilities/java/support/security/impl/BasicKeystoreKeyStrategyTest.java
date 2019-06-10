@@ -15,13 +15,15 @@
  * limitations under the License.
  */
 
-package net.shibboleth.utilities.java.support.security;
+package net.shibboleth.utilities.java.support.security.impl;
 
 import java.io.File;
 import java.security.KeyException;
 import java.time.Duration;
 
 import net.shibboleth.utilities.java.support.resource.TestResourceConverter;
+import net.shibboleth.utilities.java.support.security.BasicKeystoreKeyStrategyTool;
+import net.shibboleth.utilities.java.support.security.impl.BasicKeystoreKeyStrategy;
 
 import org.springframework.core.io.FileSystemResource;
 import org.testng.Assert;
