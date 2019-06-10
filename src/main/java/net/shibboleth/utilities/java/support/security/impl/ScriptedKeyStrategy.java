@@ -31,6 +31,7 @@ import javax.script.ScriptContext;
 import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.collection.Pair;
@@ -83,9 +84,13 @@ public class ScriptedKeyStrategy extends AbstractInitializableComponent implemen
     /** Task that checks for updated key version. */
     @Nullable private TimerTask updateTask;
     
+    /** Size of key cache to maintain. */
+    @NonNegative private long cacheSize;
+    
     /** Constructor. */
     public ScriptedKeyStrategy() {
-        keyCache = new LinkedHashMap<>(10);
+        cacheSize = 30;
+        keyCache = new LinkedHashMap<>((int) cacheSize);
         updateInterval = Duration.ofMinutes(15);
     }
 
@@ -124,6 +129,7 @@ public class ScriptedKeyStrategy extends AbstractInitializableComponent implemen
      */
     public void setUpdateInterval(@Nonnull final Duration interval) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         
         Constraint.isNotNull(interval, "Interval cannot be null");
         Constraint.isFalse(interval.isNegative(), "Interval cannot be negative");
@@ -140,8 +146,23 @@ public class ScriptedKeyStrategy extends AbstractInitializableComponent implemen
      */
     public void setUpdateTaskTimer(@Nullable final Timer timer) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         updateTaskTimer = timer;
+    }
+    
+    /**
+     * Set the number of keys to cache.
+     * 
+     * <p>Defaults to 30.</p>
+     * 
+     * @param size size of cache
+     */
+    public void setCacheSize(@NonNegative final long size) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+
+        cacheSize = Constraint.isGreaterThanOrEqual(0, size, "Key cache size cannot be negative");
     }
     
     /** {@inheritDoc} */
@@ -256,9 +277,9 @@ public class ScriptedKeyStrategy extends AbstractInitializableComponent implemen
         
         synchronized(this) {
             int size = keyCache.size();
-            if (size > 30) {
+            if (size > cacheSize) {
                 final Iterator<String> iter = keyCache.keySet().iterator();
-                while (size > 30) {
+                while (size > cacheSize) {
                     iter.next();
                     iter.remove();
                     size--;

@@ -61,6 +61,7 @@ public class ScriptedKeyStrategyTest {
         strategy.setUpdateInterval(Duration.ofSeconds(1));
         strategy.setKeyScript(new EvaluableScript("javascript", new File(scriptPath)));
         strategy.setCustomObject(customMap);
+        strategy.setCacheSize(1);
         strategy.initialize();
     }
     
@@ -78,21 +79,34 @@ public class ScriptedKeyStrategyTest {
     }
     
     @Test public void testScriptedKeystoreKeyStrategy() throws Exception {
-
+    
         
         Assert.assertEquals(strategy.getDefaultKey().getFirst(), "secret1");
         try {
             strategy.getKey("secret2");
             Assert.fail("secret2 should not exist");
         } catch (final KeyException e) {
-
+    
         }
-
+    
         customMap.put("secret2", keyGenerator.generateKey());
         customMap.put("default", "secret2");
         Thread.sleep(5000);
         Assert.assertEquals(strategy.getDefaultKey().getFirst(), "secret2");
         Assert.assertNotNull(strategy.getKey("secret1"));
+    
+        customMap.put("secret3", keyGenerator.generateKey());
+        customMap.put("default", "secret3");
+        customMap.remove("secret1");
+        Thread.sleep(5000);
+        Assert.assertEquals(strategy.getDefaultKey().getFirst(), "secret3");
+        Assert.assertNotNull(strategy.getKey("secret2"));
+        try {
+            strategy.getKey("secret1");
+            Assert.fail("secret1 should not exist");
+        } catch (final KeyException e) {
+    
+        }
     }
     
 }
