@@ -22,6 +22,7 @@ import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
@@ -50,6 +51,9 @@ public class IdleConnectionSweeper implements DestructableComponent {
 
     /** Sweeping task executed by the timer. */
     private final TimerTask sweeper;
+    
+    /** Time at which the sweeper last executed. */
+    @Nullable private long executionTime;
 
     /**
      * Constructor. This method will create a daemon {@link Timer} and use it to periodically sweep connections.
@@ -81,6 +85,8 @@ public class IdleConnectionSweeper implements DestructableComponent {
         sweeper = new TimerTask() {
             public void run() {
                 connectionManager.closeIdleConnections(idleTimeout, TimeUnit.MILLISECONDS);
+                executionTime = System.currentTimeMillis();
+
             }
         };
 
@@ -96,6 +102,9 @@ public class IdleConnectionSweeper implements DestructableComponent {
     public long scheduledExecutionTime() {
         if (isDestroyed()) {
             throw new DestroyedComponentException();
+        }
+        if (executionTime != 0) {
+            return executionTime;
         }
 
         return sweeper.scheduledExecutionTime();
