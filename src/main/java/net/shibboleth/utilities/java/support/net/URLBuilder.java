@@ -104,19 +104,20 @@ public class URLBuilder {
         final String queryString = url.getQuery();
         if (!Strings.isNullOrEmpty(queryString)) {
             final String[] queryComps = queryString.split("&");
-            String queryComp;
-            String[] paramComps;
-            String paramName;
-            String paramValue;
-            for (int i = 0; i < queryComps.length; i++) {
-                queryComp = queryComps[i];
-                if (!queryComp.contains("=")) {
-                    paramName = URISupport.doURLDecode(queryComp);
+            for (final String queryComp :queryComps) {
+                final int where = queryComp.indexOf('=');
+                if (where < 0) {
+                    final String paramName = URISupport.doURLDecode(queryComp);
                     queryParams.add(new Pair<String, String>(paramName, null));
                 } else {
-                    paramComps = queryComp.split("=");
-                    paramName = URISupport.doURLDecode(paramComps[0]);
-                    paramValue = URISupport.doURLDecode(paramComps[1]);
+                    String paramName = URISupport.doURLDecode(queryComp.substring(0, where));
+                    if ("".equals(paramName)) {
+                        paramName = null;
+                    }
+                    String paramValue = URISupport.doURLDecode(queryComp.substring(where+1));
+                    if ("".equals(paramValue)) {
+                        paramValue = null;
+                    }
                     queryParams.add(new Pair<>(paramName, paramValue));
                 }
             }
