@@ -96,7 +96,7 @@ public class URLBuilderTest {
      */
     @Test
     public void testValues() throws MalformedURLException{
-        String url = "http://www.example.com:/index.html?=value1&attrib2=&attrib3=val3=val3b";
+        String url = "http://www.example.com/index.html?=value1&attrib2=&attrib3=val3=val3b";
         URLBuilder builder1 = new URLBuilder(url);
         Assert.assertEquals(builder1.getScheme(), "http");
         Assert.assertEquals(builder1.getUsername(), null);
@@ -110,7 +110,7 @@ public class URLBuilderTest {
         
         // NOTE that we drop the name-less value and properly encode the third value 
         
-        Assert.assertEquals(builder1.buildURL(), "http://www.example.com:/index.html?attrib2&attrib3=val3%3Dval3b");
+        Assert.assertEquals(builder1.buildURL(), "http://www.example.com/index.html?attrib2&attrib3=val3%3Dval3b");
     }
 
     
