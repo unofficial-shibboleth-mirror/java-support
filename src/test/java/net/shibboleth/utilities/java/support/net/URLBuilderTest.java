@@ -19,6 +19,7 @@ package net.shibboleth.utilities.java.support.net;
 
 import java.net.MalformedURLException;
 
+import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.net.URLBuilder;
 
 import org.testng.annotations.Test;
@@ -88,6 +89,30 @@ public class URLBuilderTest {
         
         Assert.assertEquals(builder1.buildURL(), url);
     }
+    
+    /**
+     * Test with some odd values.
+     * @throws MalformedURLException 
+     */
+    @Test
+    public void testValues() throws MalformedURLException{
+        String url = "http://www.example.com:/index.html?=value1&attrib2=&attrib3=val3=val3b";
+        URLBuilder builder1 = new URLBuilder(url);
+        Assert.assertEquals(builder1.getScheme(), "http");
+        Assert.assertEquals(builder1.getUsername(), null);
+        Assert.assertEquals(builder1.getPassword(), null);
+        Assert.assertEquals(builder1.getHost(), "www.example.com");
+        Assert.assertEquals(builder1.getQueryParams().size(), 3);
+        Assert.assertEquals(builder1.getQueryParams().get(0), new Pair((String)null, "value1"));
+        Assert.assertEquals(builder1.getQueryParams().get(1), new Pair("attrib2", (String)null));
+        Assert.assertEquals(builder1.getQueryParams().get(2), new Pair("attrib3", "val3=val3b"));
+        Assert.assertEquals(builder1.getFragment(), null);
+        
+        // NOTE that we drop the name-less value and properly encode the third value 
+        
+        Assert.assertEquals(builder1.buildURL(), "http://www.example.com:/index.html?attrib2&attrib3=val3%3Dval3b");
+    }
+
     
     /**
      * Test with scheme, host, and fragment.
