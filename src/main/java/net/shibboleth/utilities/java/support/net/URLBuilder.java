@@ -61,7 +61,7 @@ public class URLBuilder {
     @Nonnull private List<Pair<String, String>> queryParams;
 
     /** URL fragment. */
-    private String fragement;
+    private String fragment;
 
     /**
      * Constructor.
@@ -132,7 +132,7 @@ public class URLBuilder {
      * @return URL fragment in its decoded form
      */
     @Nullable public String getFragment() {
-        return fragement;
+        return fragment;
     }
 
     /**
@@ -141,7 +141,7 @@ public class URLBuilder {
      * @param newFragment URL fragment in its decoded form
      */
     public void setFragment(@Nullable final String newFragment) {
-        fragement = StringSupport.trimOrNull(newFragment);
+        fragment = StringSupport.trimOrNull(newFragment);
     }
 
     /**
@@ -217,7 +217,14 @@ public class URLBuilder {
     }
 
     /**
-     * Gets the query string parameters for the URL. Params may be added and removed through the map interface.
+     * Gets the query string parameters for the URL. Params may be added and removed through the {@link List} interface.
+     * <br/>
+     * A note on the use of nulls in the {@link Pair}.
+     * <ul><li>A null {@link Pair#getFirst()} is generated from a URL segment such as {@code ?=foo}.
+     * Such pairs are ignored by {@link #buildURL()}.</li>
+     * <li> A null {@link Pair#getSecond()} is generated from a URL segment such as {@code ?foo=&bar=fred} and
+     * will be rendered as {@code foo&bar=fred} by {@link #buildURL()}.</li>
+     * </ul>
      * 
      * @return query string parameters for the URL
      */
@@ -308,9 +315,9 @@ public class URLBuilder {
             builder.append(queryString);
         }
 
-        if (!Strings.isNullOrEmpty(fragement)) {
+        if (!Strings.isNullOrEmpty(fragment)) {
             builder.append("#");
-            builder.append(fragement);
+            builder.append(fragment);
         }
 
         return builder.toString();
