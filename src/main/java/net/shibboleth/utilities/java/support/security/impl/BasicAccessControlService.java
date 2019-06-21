@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.utilities.java.support.security;
+package net.shibboleth.utilities.java.support.security.impl;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -33,6 +33,8 @@ import net.shibboleth.utilities.java.support.component.AbstractIdentifiableIniti
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.security.AccessControl;
+import net.shibboleth.utilities.java.support.security.AccessControlService;
 
 /** Simple implementation that uses an in-memory map of policies. */
 public class BasicAccessControlService extends AbstractIdentifiableInitializableComponent

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.utilities.java.support.security;
+package net.shibboleth.utilities.java.support.security.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,6 +30,7 @@ import net.shibboleth.utilities.java.support.component.AbstractIdentifiableIniti
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.net.IPRange;
+import net.shibboleth.utilities.java.support.security.AccessControl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
