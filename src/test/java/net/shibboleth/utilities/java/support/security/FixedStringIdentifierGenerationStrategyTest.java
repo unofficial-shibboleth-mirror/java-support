@@ -4,6 +4,8 @@ package net.shibboleth.utilities.java.support.security;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import net.shibboleth.utilities.java.support.security.impl.FixedStringIdentifierGenerationStrategy;
+
 public class FixedStringIdentifierGenerationStrategyTest {
 
     @Test

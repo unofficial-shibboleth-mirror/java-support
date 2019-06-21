@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.utilities.java.support.security;
+package net.shibboleth.utilities.java.support.security.impl;
 
 import java.util.UUID;
 
@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 
 /** Generates a type 4 UUID as an identifier. */
 @ThreadSafe

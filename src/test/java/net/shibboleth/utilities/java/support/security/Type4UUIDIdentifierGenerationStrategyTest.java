@@ -25,6 +25,8 @@ import java.util.regex.Pattern;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import net.shibboleth.utilities.java.support.security.impl.Type4UUIDIdentifierGenerationStrategy;
+
 public class Type4UUIDIdentifierGenerationStrategyTest {
 
     /**
