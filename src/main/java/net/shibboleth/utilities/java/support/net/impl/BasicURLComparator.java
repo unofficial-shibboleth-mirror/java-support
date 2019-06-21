@@ -15,11 +15,15 @@
  * limitations under the License.
  */
 
-package net.shibboleth.utilities.java.support.net;
+package net.shibboleth.utilities.java.support.net.impl;
 
 import java.net.MalformedURLException;
 
 import javax.annotation.Nullable;
+
+import net.shibboleth.utilities.java.support.net.SimpleURLCanonicalizer;
+import net.shibboleth.utilities.java.support.net.URIComparator;
+import net.shibboleth.utilities.java.support.net.URIException;
 
 
 /**
