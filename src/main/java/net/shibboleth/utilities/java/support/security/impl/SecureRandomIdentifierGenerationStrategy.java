@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.utilities.java.support.security;
+package net.shibboleth.utilities.java.support.security.impl;
 
 import java.security.SecureRandom;
 

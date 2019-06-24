@@ -29,6 +29,8 @@ import org.apache.commons.codec.binary.Hex;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import net.shibboleth.utilities.java.support.security.impl.SecureRandomIdentifierGenerationStrategy;
+
 public class SecureRandomIdentifierGenerationStrategyTest {
 
     /**
