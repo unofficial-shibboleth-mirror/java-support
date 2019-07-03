@@ -84,9 +84,8 @@ public class IdleConnectionSweeper implements DestructableComponent {
 
         sweeper = new TimerTask() {
             public void run() {
-                connectionManager.closeIdleConnections(idleTimeout, TimeUnit.MILLISECONDS);
                 executionTime = System.currentTimeMillis();
-
+                connectionManager.closeIdleConnections(idleTimeout, TimeUnit.MILLISECONDS);
             }
         };
 
