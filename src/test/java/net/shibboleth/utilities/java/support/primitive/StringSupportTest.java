@@ -17,6 +17,13 @@
 
 package net.shibboleth.utilities.java.support.primitive;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -28,7 +35,6 @@ import javax.annotation.Nonnull;
 
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -55,15 +61,15 @@ public class StringSupportTest {
         try (final InputStream stream = resource.getInputStream()) {
             str = StringSupport.inputStreamToString(stream, null);
         }
-        Assert.assertNotNull(str);
-        Assert.assertEquals(str,
+        assertNotNull(str);
+        assertEquals(str,
                 "The quick, brown lizard jumped over the lazy fish.\n" +
                 "Wait, I mean the slow, blue elephant jumped over the motivated squirrel.\n" +
                 "No, that's wrong too.\n");
     }
     
     @Test public void testListToStringValue() {
-        Assert.assertEquals(StringSupport.listToStringValue(TEST_LIST_AS_LIST, SEPARATOR), TEST_LIST,
+        assertEquals(StringSupport.listToStringValue(TEST_LIST_AS_LIST, SEPARATOR), TEST_LIST,
                 "toList<String> fails");
         boolean thrown = false;
         try {
@@ -71,7 +77,7 @@ public class StringSupportTest {
         } catch (ConstraintViolationException e) {
             thrown = true;
         }
-        Assert.assertTrue(thrown, "null separator should throw an assertion");
+        assertTrue(thrown, "null separator should throw an assertion");
 
         thrown = false;
         try {
@@ -79,13 +85,13 @@ public class StringSupportTest {
         } catch (ConstraintViolationException e) {
             thrown = true;
         }
-        Assert.assertTrue(thrown, "null list should throw an assertion");
+        assertTrue(thrown, "null list should throw an assertion");
     }
 
     @Test public void testStringToList() {
-        Assert.assertEquals(StringSupport.stringToList(TEST_LIST, SEPARATOR), TEST_LIST_AS_LIST,
+        assertEquals(StringSupport.stringToList(TEST_LIST, SEPARATOR), TEST_LIST_AS_LIST,
                 "from List<String> fails");
-        Assert.assertTrue(StringSupport.stringToList("", SEPARATOR).isEmpty(), "Empty input should give empty list");
+        assertTrue(StringSupport.stringToList("", SEPARATOR).isEmpty(), "Empty input should give empty list");
 
         boolean thrown = false;
         try {
@@ -93,7 +99,7 @@ public class StringSupportTest {
         } catch (ConstraintViolationException e) {
             thrown = true;
         }
-        Assert.assertTrue(thrown, "Null input should throw an assertion");
+        assertTrue(thrown, "Null input should throw an assertion");
 
         thrown = false;
         try {
@@ -101,25 +107,25 @@ public class StringSupportTest {
         } catch (ConstraintViolationException e) {
             thrown = true;
         }
-        Assert.assertTrue(thrown, "Null separator should throw an assertion");
+        assertTrue(thrown, "Null separator should throw an assertion");
     }
 
     @Test public void testTrim() {
 
-        Assert.assertEquals(StringSupport.trim(null), null, "Trimming Null should be OK");
-        Assert.assertEquals(StringSupport.trim(EMPTY_TRIM_TEST2).length(), 0,
+        assertEquals(StringSupport.trim(null), null, "Trimming Null should be OK");
+        assertEquals(StringSupport.trim(EMPTY_TRIM_TEST2).length(), 0,
                 "Trimming an empty string should return a string of zero length");
 
-        Assert.assertEquals(StringSupport.trim(TRIM_TEST1), TRIM_TEST1.trim(), "Trimming a string");
+        assertEquals(StringSupport.trim(TRIM_TEST1), TRIM_TEST1.trim(), "Trimming a string");
 
     }
 
     @Test public void testTrimOrNull() {
-        Assert.assertEquals(StringSupport.trimOrNull(null), null, "Trimming Null should be OK");
-        Assert.assertEquals(StringSupport.trimOrNull(EMPTY_TRIM_TEST2), null,
+        assertEquals(StringSupport.trimOrNull(null), null, "Trimming Null should be OK");
+        assertEquals(StringSupport.trimOrNull(EMPTY_TRIM_TEST2), null,
                 "Trimming an empty string should return null");
 
-        Assert.assertEquals(StringSupport.trim(TRIM_TEST1), TRIM_TEST1.trim(), "Trimming a string");
+        assertEquals(StringSupport.trim(TRIM_TEST1), TRIM_TEST1.trim(), "Trimming a string");
 
     }
     
@@ -127,26 +133,26 @@ public class StringSupportTest {
         Collection<String> output;
         
         output = StringSupport.normalizeStringCollection(new HashSet<>(Arrays.asList("foo", "bar", "baz")));
-        Assert.assertEquals(output.size(), 3);
-        Assert.assertTrue(output.contains("foo"));
-        Assert.assertTrue(output.contains("bar"));
-        Assert.assertTrue(output.contains("baz"));
+        assertEquals(output.size(), 3);
+        assertTrue(output.contains("foo"));
+        assertTrue(output.contains("bar"));
+        assertTrue(output.contains("baz"));
         
         output = StringSupport.normalizeStringCollection(new HashSet<>(Arrays.asList(" \t\t foo  ", "  ", "  baz \r\n")));
-        Assert.assertEquals(output.size(), 2);
-        Assert.assertTrue(output.contains("foo"));
-        Assert.assertTrue(output.contains("baz"));
+        assertEquals(output.size(), 2);
+        assertTrue(output.contains("foo"));
+        assertTrue(output.contains("baz"));
         
         output = StringSupport.normalizeStringCollection(new HashSet<>(Arrays.asList("   foo   ", null, "baz")));
-        Assert.assertEquals(output.size(), 2);
-        Assert.assertTrue(output.contains("foo"));
-        Assert.assertTrue(output.contains("baz"));
+        assertEquals(output.size(), 2);
+        assertTrue(output.contains("foo"));
+        assertTrue(output.contains("baz"));
         
         output = StringSupport.normalizeStringCollection(new HashSet<String>());
-        Assert.assertEquals(output.size(), 0);
+        assertEquals(output.size(), 0);
         
         output = StringSupport.normalizeStringCollection(null);
-        Assert.assertEquals(output.size(), 0);
+        assertEquals(output.size(), 0);
     }
 
     private <T> T nullValue() {
@@ -154,15 +160,21 @@ public class StringSupportTest {
     }
 
     @Test public void testToBoolean() {
-        Assert.assertNull(StringSupport.booleanOf(""));
-        Assert.assertFalse(Boolean.valueOf(""));
-        Assert.assertNull(StringSupport.booleanOf(null));
-        Assert.assertFalse(Boolean.valueOf(null));
-        Assert.assertTrue(StringSupport.booleanOf("true"));
-        Assert.assertTrue(Boolean.valueOf("true"));
-        Assert.assertFalse(StringSupport.booleanOf("false"));
-        Assert.assertFalse(Boolean.valueOf("false"));
-        Assert.assertFalse(StringSupport.booleanOf("elephant"));
-        Assert.assertFalse(Boolean.valueOf("elephant"));
+        assertNull(StringSupport.booleanOf(""));
+        assertFalse(Boolean.valueOf(""));
+        assertNull(StringSupport.booleanOf(null));
+        assertFalse(Boolean.valueOf(null));
+        assertTrue(StringSupport.booleanOf("true"));
+        assertTrue(Boolean.valueOf("true"));
+        assertFalse(StringSupport.booleanOf("false"));
+        assertFalse(Boolean.valueOf("false"));
+        assertFalse(StringSupport.booleanOf("0"));
+        assertTrue(StringSupport.booleanOf("1"));
+        try {
+            StringSupport.booleanOf("elephant");
+            fail("Should have thrown");
+        } catch (ConstraintViolationException e) {
+            // OK
+        }
     }
 }

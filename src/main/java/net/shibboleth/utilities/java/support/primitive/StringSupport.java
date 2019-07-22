@@ -39,6 +39,7 @@ import com.google.common.collect.Collections2;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import net.shibboleth.utilities.java.support.logic.TrimOrNullStringFunction;
 
 /** String utility methods. */
@@ -182,7 +183,7 @@ public final class StringSupport {
                 Predicates.notNull());
     }
 
-    /** Null/empty preserving conversion from string to {@link Boolean}.
+    /** Null/empty preserving conversion from xs:boolean to {@link Boolean}.
      * @param what the string: potentially empty or null
      * @return null or the boolean equivalent.
      */
@@ -191,6 +192,15 @@ public final class StringSupport {
         if (trimmed == null) {
             return null;
         }
-        return Boolean.valueOf(trimmed);
+        if ("1".equals(what)) {
+            return true;
+        } else if ("0".equals(what)) {
+            return false;
+        } else if ("true".equals(what)) {
+            return true;
+        } else if ("false".equals(what)) {
+            return false;
+        }
+        throw new ConstraintViolationException("XML Booleans must be 0/1/true/false");
     }
 }
