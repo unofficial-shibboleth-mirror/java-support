@@ -26,10 +26,10 @@ import net.shibboleth.utilities.java.support.component.InitializableComponent;
  * A {@link Function} that always throws a {@link ComponentInitializationException} when {@link #initialize()} is
  * called.
  */
-public class ComponentInitializationExceptionFunction implements Function, InitializableComponent {
+public class ComponentInitializationExceptionFunction<T,R> implements Function<T,R>, InitializableComponent {
 
     /** {@inheritDoc} */
-    public Object apply(Object arg0) {
+    public R apply(T arg0) {
         return null;
     }
 

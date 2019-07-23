@@ -98,56 +98,68 @@ public class ScriptedPredicate<T> extends AbstractScriptEvaluator implements Pre
     /**
      * Factory to create {@link ScriptedPredicate} from a {@link Resource}.
      * 
+     * @param <T> input type
      * @param resource the resource to look at
      * @param engineName the language
+     * 
      * @return the predicate
+     * 
      * @throws ScriptException if the compile fails
      * @throws IOException if the file doesn't exist.
      */
-    static ScriptedPredicate resourceScript(@Nonnull @NotEmpty final String engineName,
+    static <T> ScriptedPredicate<T> resourceScript(@Nonnull @NotEmpty final String engineName,
             @Nonnull final Resource resource) throws ScriptException, IOException {
         try (final InputStream is = resource.getInputStream()) {
             final EvaluableScript script = new EvaluableScript(engineName, is);
-            return new ScriptedPredicate(script, resource.getDescription());
+            return new ScriptedPredicate<>(script, resource.getDescription());
         }
     }
 
     /**
      * Factory to create {@link ScriptedPredicate} from a {@link Resource}.
      * 
+     * @param <T> input type
      * @param resource the resource to look at
+     * 
      * @return the predicate
+     * 
      * @throws ScriptException if the compile fails
      * @throws IOException if the file doesn't exist.
      */
-    static ScriptedPredicate resourceScript(final Resource resource) throws ScriptException, IOException {
+    static <T> ScriptedPredicate<T> resourceScript(final Resource resource) throws ScriptException, IOException {
         return resourceScript(DEFAULT_ENGINE, resource);
     }
 
     /**
      * Factory to create {@link ScriptedPredicate} from inline data.
-     * 
+     *
+     * @param <T> input type
      * @param scriptSource the script, as a string
      * @param engineName the language
+     * 
      * @return the predicate
+     * 
      * @throws ScriptException if the compile fails
      */
-    static ScriptedPredicate inlineScript(@Nonnull @NotEmpty final String engineName,
+    static <T> ScriptedPredicate<T> inlineScript(@Nonnull @NotEmpty final String engineName,
             @Nonnull @NotEmpty final String scriptSource) throws ScriptException {
         final EvaluableScript script = new EvaluableScript(engineName, scriptSource);
-        return new ScriptedPredicate(script, "Inline");
+        return new ScriptedPredicate<>(script, "Inline");
     }
 
     /**
      * Factory to create {@link ScriptedPredicate} from inline data.
-     * 
+     *
+     * @param <T> input type
      * @param scriptSource the script, as a string
+     * 
      * @return the predicate
+     * 
      * @throws ScriptException if the compile fails
      */
-    static ScriptedPredicate inlineScript(@Nonnull @NotEmpty final String scriptSource) throws ScriptException {
+    static <T> ScriptedPredicate<T> inlineScript(@Nonnull @NotEmpty final String scriptSource) throws ScriptException {
         final EvaluableScript script = new EvaluableScript(DEFAULT_ENGINE, scriptSource);
-        return new ScriptedPredicate(script, "Inline");
+        return new ScriptedPredicate<>(script, "Inline");
     }
 
 }

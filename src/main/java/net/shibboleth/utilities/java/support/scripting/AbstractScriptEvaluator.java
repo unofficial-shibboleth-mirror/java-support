@@ -51,7 +51,7 @@ public abstract class AbstractScriptEvaluator {
     @Nullable private String logPrefix;
 
     /** The output type to validate. */
-    @Nullable private Class outputType;
+    @Nullable private Class<?> outputType;
     
     /** A custom object to inject into the script. */
     @Nullable private Object customObject;
@@ -94,7 +94,7 @@ public abstract class AbstractScriptEvaluator {
      * 
      * @return output type
      */
-    @Nullable protected Class getOutputType() {
+    @Nullable protected Class<?> getOutputType() {
         return outputType;
     }
     
@@ -103,7 +103,7 @@ public abstract class AbstractScriptEvaluator {
      * 
      * @param type output type
      */
-    protected void setOutputType(@Nullable final Class type) {
+    protected void setOutputType(@Nullable final Class<?> type) {
         outputType = type;
     }
     

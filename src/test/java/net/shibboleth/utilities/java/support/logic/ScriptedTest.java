@@ -34,7 +34,7 @@ public class ScriptedTest {
 
     @Test public void testPredicate() throws ScriptException {
 
-        ScriptedPredicate test = ScriptedPredicate.inlineScript(returnSelf);
+        ScriptedPredicate<Object> test = ScriptedPredicate.inlineScript(returnSelf);
 
         Assert.assertTrue(test.test(Boolean.TRUE));
         Assert.assertFalse(test.test(Boolean.FALSE));
@@ -45,7 +45,7 @@ public class ScriptedTest {
 
     @Test public void testPredicateCustom() throws ScriptException {
 
-        ScriptedPredicate test = ScriptedPredicate.inlineScript(returnCustom);
+        ScriptedPredicate<Object> test = ScriptedPredicate.inlineScript(returnCustom);
 
         test.setCustomObject(Boolean.TRUE);
         Assert.assertTrue(test.test(Boolean.FALSE));
@@ -59,7 +59,7 @@ public class ScriptedTest {
 
     @Test public void testBadScriptPredicate() throws ScriptException {
 
-        final ScriptedPredicate test = ScriptedPredicate.inlineScript(returnSelfString);
+        final ScriptedPredicate<Object> test = ScriptedPredicate.inlineScript(returnSelfString);
 
         test.setHideExceptions(true);
         test.setReturnOnError(true);
@@ -79,7 +79,7 @@ public class ScriptedTest {
 
     @Test public void testFunction() throws ScriptException {
 
-        ScriptedFunction test = ScriptedFunction.inlineScript(returnSelf);
+        ScriptedFunction<Object,Object> test = ScriptedFunction.inlineScript(returnSelf);
 
         Assert.assertEquals(test.apply(Boolean.FALSE), Boolean.FALSE);
         Assert.assertEquals(test.apply(Boolean.TRUE), Boolean.TRUE);
@@ -90,42 +90,23 @@ public class ScriptedTest {
         Assert.assertNotEquals(test.apply(Integer.valueOf(1)), Integer.valueOf(1));
         test.setReturnOnError(Boolean.TRUE);
         Assert.assertEquals(test.apply(Integer.valueOf(1)), Boolean.TRUE);
-
-        test.setReturnOnError(Boolean.TRUE);
-        test.setOutputType(Integer.class);
-        test.setInputType(Integer.class);
-        Assert.assertEquals(test.apply(Boolean.FALSE), Boolean.TRUE);
-    }
-
-    @Test public void testFunctionCustom() throws ScriptException {
-
-        ScriptedFunction test = ScriptedFunction.inlineScript(returnCustom);
-
-        test.setReturnOnError(Integer.valueOf(99));
-        test.setOutputType(Integer.class);
-        test.setInputType(Integer.class);
-        test.setCustomObject(12);
-        Assert.assertEquals(test.apply(false), 99);
-        Assert.assertEquals(test.apply(1), 12);
-        test.setCustomObject(false);
-        Assert.assertEquals(test.apply(false), 99);
     }
 
     @Test public void testBadScriptFunction() throws ScriptException {
 
-        ScriptedFunction test = ScriptedFunction.inlineScript(returnSelfString);
+        ScriptedFunction<Boolean,Boolean> test = ScriptedFunction.inlineScript(returnSelfString);
         test.setOutputType(Boolean.class);
         test.setInputType(Boolean.class);
 
         test.setHideExceptions(true);
         test.setReturnOnError(true);
-        Assert.assertEquals(test.apply(null), true);
+        Assert.assertEquals(test.apply(null), Boolean.TRUE);
         test.setReturnOnError(false);
-        Assert.assertEquals(test.apply(null), false);
+        Assert.assertEquals(test.apply(null), Boolean.FALSE);
 
         test.setHideExceptions(false);
         try {
-            Assert.assertEquals(test.apply(null), true);
+            Assert.assertEquals(test.apply(null), Boolean.TRUE);
             Assert.fail();
         } catch (final RuntimeException e) {
             Assert.assertEquals(e.getCause().getClass(), ScriptException.class);

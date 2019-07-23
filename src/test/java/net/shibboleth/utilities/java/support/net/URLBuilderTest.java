@@ -103,9 +103,9 @@ public class URLBuilderTest {
         Assert.assertEquals(builder1.getPassword(), null);
         Assert.assertEquals(builder1.getHost(), "www.example.com");
         Assert.assertEquals(builder1.getQueryParams().size(), 3);
-        Assert.assertEquals(builder1.getQueryParams().get(0), new Pair((String)null, "value1"));
-        Assert.assertEquals(builder1.getQueryParams().get(1), new Pair("attrib2", (String)null));
-        Assert.assertEquals(builder1.getQueryParams().get(2), new Pair("attrib3", "val3=val3b"));
+        Assert.assertEquals(builder1.getQueryParams().get(0), new Pair<>((String)null, "value1"));
+        Assert.assertEquals(builder1.getQueryParams().get(1), new Pair<>("attrib2", (String)null));
+        Assert.assertEquals(builder1.getQueryParams().get(2), new Pair<>("attrib3", "val3=val3b"));
         Assert.assertEquals(builder1.getFragment(), null);
         
         // NOTE that we drop the name-less value and properly encode the third value 

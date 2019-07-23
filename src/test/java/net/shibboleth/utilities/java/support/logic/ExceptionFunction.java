@@ -22,7 +22,7 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 
 /** A {@link Function} that always throws a {@link RuntimeException} of some sort. */
-public class ExceptionFunction implements Function {
+public class ExceptionFunction<T,R> implements Function<T,R> {
 
     /** Exception that will be thrown when this function is executed. */
     private RuntimeException thrownException;
@@ -37,7 +37,7 @@ public class ExceptionFunction implements Function {
     }
 
     /** {@inheritDoc} */
-    public Object apply(Object arg0) {
+    public R apply(T arg0) {
         throw thrownException;
     }
 }

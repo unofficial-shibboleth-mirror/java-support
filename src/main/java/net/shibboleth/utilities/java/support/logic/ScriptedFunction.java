@@ -78,7 +78,7 @@ public class ScriptedFunction<T, U> extends AbstractScriptEvaluator implements F
      *
      * @param type output type
      */
-    @Override public void setOutputType(@Nullable final Class type) {
+    @Override public void setOutputType(@Nullable final Class<?> type) {
         super.setOutputType(type);
     }
 
@@ -87,7 +87,7 @@ public class ScriptedFunction<T, U> extends AbstractScriptEvaluator implements F
      *
      * @return input type
      */
-    @Nullable public  Class getInputType() {
+    @Nullable public  Class<T> getInputType() {
         return inputTypeClass;
     }
 
@@ -96,7 +96,7 @@ public class ScriptedFunction<T, U> extends AbstractScriptEvaluator implements F
      *
      * @param type input type
      */
-    public void setInputType(@Nullable final Class type) {
+    public void setInputType(@Nullable final Class<T> type) {
         inputTypeClass = type;
     }
 
@@ -130,55 +130,72 @@ public class ScriptedFunction<T, U> extends AbstractScriptEvaluator implements F
     /**
      * Factory to create {@link ScriptedFunction} from a {@link Resource}.
      *
+     * @param <T> input type
+     * @param <U> output type
      * @param resource the resource to look at
      * @param engineName the language
+     * 
      * @return the function
+     * 
      * @throws ScriptException if the compile fails
      * @throws IOException if the file doesn't exist.
      */
-    static ScriptedFunction resourceScript(@Nonnull @NotEmpty final String engineName,
+    static <T,U> ScriptedFunction<T,U> resourceScript(@Nonnull @NotEmpty final String engineName,
             @Nonnull final Resource resource) throws ScriptException, IOException {
         try (final InputStream is = resource.getInputStream()) {
             final EvaluableScript script = new EvaluableScript(engineName, is);
-            return new ScriptedFunction(script, resource.getDescription());
+            return new ScriptedFunction<>(script, resource.getDescription());
         }
     }
 
     /**
      * Factory to create {@link ScriptedFunction} from a {@link Resource}.
      *
+     * @param <T> input type
+     * @param <U> output type
      * @param resource the resource to look at
+     * 
      * @return the function
+     * 
      * @throws ScriptException if the compile fails
      * @throws IOException if the file doesn't exist.
      */
-    static ScriptedFunction resourceScript(final Resource resource) throws ScriptException, IOException {
+    static <T,U> ScriptedFunction<T,U> resourceScript(final Resource resource) throws ScriptException, IOException {
         return resourceScript(DEFAULT_ENGINE, resource);
     }
 
     /**
      * Factory to create {@link ScriptedFunction} from inline data.
      *
+     * @param <T> input type
+     * @param <U> output type
      * @param scriptSource the script, as a string
      * @param engineName the language
+     * 
      * @return the function
+     * 
      * @throws ScriptException if the compile fails
      */
-    static ScriptedFunction inlineScript(@Nonnull @NotEmpty final String engineName,
+    static <T,U> ScriptedFunction<T,U> inlineScript(@Nonnull @NotEmpty final String engineName,
             @Nonnull @NotEmpty final String scriptSource) throws ScriptException {
         final EvaluableScript script = new EvaluableScript(engineName, scriptSource);
-        return new ScriptedFunction(script, "Inline");
+        return new ScriptedFunction<>(script, "Inline");
     }
 
     /**
      * Factory to create {@link ScriptedFunction} from inline data.
      *
+     * @param <T> input type
+     * @param <U> output type
      * @param scriptSource the script, as a string
+     * 
      * @return the function
+     * 
      * @throws ScriptException if the compile fails
      */
-    static ScriptedFunction inlineScript(@Nonnull @NotEmpty final String scriptSource) throws ScriptException {
+    static <T,U> ScriptedFunction<T,U> inlineScript(@Nonnull @NotEmpty final String scriptSource)
+            throws ScriptException {
         final EvaluableScript script = new EvaluableScript(DEFAULT_ENGINE, scriptSource);
-        return new ScriptedFunction(script, "Inline");
+        return new ScriptedFunction<>(script, "Inline");
     }
 }

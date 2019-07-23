@@ -82,9 +82,9 @@ public class URISupportTest {
         Assert.assertTrue(map.isEmpty());
         
         List<Pair<String,String>> params = new ArrayList<>();
-        params.add(new Pair<String,String>("one", "1"));
-        params.add(new Pair<String,String>("two", "2"));
-        params.add(new Pair<String,String>("three", "3"));
+        params.add(new Pair<>("one", "1"));
+        params.add(new Pair<>("two", "2"));
+        params.add(new Pair<>("three", "3"));
         
         map = URISupport.buildQueryMap(params);
         Assert.assertNotNull(map);
@@ -214,14 +214,14 @@ public class URISupportTest {
 
         String queryString = "paramName1=paramValue1&paramName%3D=paramValue%26&paramName2";
         params = URISupport.parseQueryString(queryString);
-        Assert.assertTrue(params.contains(new Pair("paramName1", "paramValue1")));
-        Assert.assertTrue(params.contains(new Pair("paramName=", "paramValue&")));
-        Assert.assertTrue(params.contains(new Pair("paramName2", null)));
+        Assert.assertTrue(params.contains(new Pair<>("paramName1", "paramValue1")));
+        Assert.assertTrue(params.contains(new Pair<>("paramName=", "paramValue&")));
+        Assert.assertTrue(params.contains(new Pair<>("paramName2", null)));
 
         queryString = "?paramName1=paramValue1&paramName%3D=paramValue%26&paramName2#";
         params = URISupport.parseQueryString(queryString);
-        Assert.assertTrue(params.contains(new Pair("paramName1", "paramValue1")));
-        Assert.assertTrue(params.contains(new Pair("paramName=", "paramValue&")));
-        Assert.assertTrue(params.contains(new Pair("paramName2", null)));
+        Assert.assertTrue(params.contains(new Pair<>("paramName1", "paramValue1")));
+        Assert.assertTrue(params.contains(new Pair<>("paramName=", "paramValue&")));
+        Assert.assertTrue(params.contains(new Pair<>("paramName2", null)));
     }
 }

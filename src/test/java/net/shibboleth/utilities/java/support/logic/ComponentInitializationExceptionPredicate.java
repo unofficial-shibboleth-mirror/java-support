@@ -24,10 +24,10 @@ import net.shibboleth.utilities.java.support.component.InitializableComponent;
  * A {@link Predicate} that always throws a {@link ComponentInitializationException} when {@link #initialize()} is
  * called.
  */
-public class ComponentInitializationExceptionPredicate implements InitializableComponent, Predicate {
+public class ComponentInitializationExceptionPredicate<T> implements InitializableComponent, Predicate<T> {
 
     /** {@inheritDoc} */
-    public boolean test(Object arg0) {
+    public boolean test(T arg0) {
         return false;
     }
 

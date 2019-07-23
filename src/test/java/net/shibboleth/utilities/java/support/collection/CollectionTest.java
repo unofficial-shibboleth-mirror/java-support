@@ -45,10 +45,10 @@ public class CollectionTest {
     private final static String STRING_3 = "StringThree";
 
     public static final Function<String, Optional<? extends String>> nullRemoveFunction =
-            new TransformAndCheckFunction(Functions.identity(), Predicates.notNull(), false);
+            new TransformAndCheckFunction<>(Functions.identity(), Predicates.notNull(), false);
 
-    public static final Function<String, Optional<? extends String>> upcaseNotNull = new TransformAndCheckFunction(
-            new UpcaseFunction(), Predicates.notNull(), false);
+    public static final Function<String, Optional<? extends String>> upcaseNotNull =
+            new TransformAndCheckFunction<>(new UpcaseFunction(), Predicates.notNull(), false);
 
     @Test public void verifyTests() {
         CollectionTest.testSimpleCollection(new ArrayList<String>(), true);
@@ -62,7 +62,7 @@ public class CollectionTest {
 
     protected static void
             testArrayCollection(Collection<String> testCollection, Collection<String> knownGoodCollection) {
-        HashSet<String> set = new HashSet(2);
+        HashSet<String> set = new HashSet<>(2);
 
         Object[] testArray1 = testCollection.toArray();
         Object[] knownGood1 = knownGoodCollection.toArray();

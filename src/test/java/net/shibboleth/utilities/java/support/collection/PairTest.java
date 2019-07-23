@@ -41,7 +41,7 @@ public class PairTest {
         pair1 = new Pair<>(INTEGER_1, STRING_1);
         pair2 = new Pair<>(null, null);
         pair3 = new Pair<>(null, null);
-        pair4 = new Pair<Object, Object>(INTEGER_2, STRING_2);
+        pair4 = new Pair<>(INTEGER_2, STRING_2);
         
         Assert.assertEquals(pair1.getFirst(), INTEGER_1, "Should find " + INTEGER_1);
         Assert.assertNotSame(pair1.getSecond(), INTEGER_1, "Should not find " + INTEGER_1);

@@ -251,12 +251,12 @@ public class ScriptedKeyStrategy extends AbstractInitializableComponent implemen
                 }
                 log.debug("Loaded key '{}' from external script", name);
                 return (SecretKey) result;
-            } else if (result instanceof Pair && ((Pair) result).getSecond() instanceof SecretKey) {
+            } else if (result instanceof Pair && ((Pair<?,?>) result).getSecond() instanceof SecretKey) {
                 synchronized(this) {
-                    keyCache.put(name, (SecretKey) ((Pair<String,SecretKey>) result).getSecond());
+                    keyCache.put(name, (SecretKey) ((Pair<?,?>) result).getSecond());
                 }
                 log.debug("Loaded key '{}' from external script", name);
-                return ((Pair<String,SecretKey>) result).getSecond();
+                return (SecretKey) ((Pair<?,?>) result).getSecond();
             } else {
                 throw new KeyException("Script did not return SecretKey or Pair<String,SecretKey> result.");
             }
@@ -294,7 +294,7 @@ public class ScriptedKeyStrategy extends AbstractInitializableComponent implemen
             final Object result = keyScript.eval(scriptContext);
             
             if (result instanceof Pair) {
-                final Pair p = (Pair) result;
+                final Pair<?,?> p = (Pair<?,?>) result;
                 if (p.getFirst() instanceof String && p.getSecond() instanceof SecretKey) {
                     synchronized(this) {
                         if (currentAlias == null) {

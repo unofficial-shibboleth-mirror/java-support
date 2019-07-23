@@ -85,7 +85,7 @@ public final class PredicateSupport {
      */
     @Nonnull public static <T> Predicate<T> fromFunction(@Nonnull final Function<T,Boolean> function,
             @Nonnull final java.util.function.Predicate<T> defValue) {
-        return new Predicate<T>() {
+        return new Predicate<>() {
             public boolean test(@Nullable final T input) {
                 final Boolean result = function.apply(input);
                 return result != null ? result : defValue.test(input);
