@@ -23,12 +23,14 @@ import java.util.List;
 
 import org.joda.time.Chronology;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.Instant;
 import org.joda.time.ReadableDateTime;
 import org.joda.time.ReadableInstant;
 import org.joda.time.base.AbstractDateTime;
 import org.joda.time.base.AbstractInstant;
 import org.joda.time.base.BaseDateTime;
+import org.joda.time.chrono.ISOChronology;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -83,14 +85,24 @@ public class LockableClassToInstanceMultiMapTest {
     @Test public void testValuesAndContainsValues() {
         LockableClassToInstanceMultiMap<AbstractInstant> map = new LockableClassToInstanceMultiMap<>();
 
-        DateTime now = new DateTime();
+        // Create now as a DateTime with a specific chronology so that it
+        // can be guaranteed to compare non-equals with "instant" below.
+        final DateTimeZone notUTC = DateTimeZone.forID("America/Los_Angeles");
+        DateTime now = new DateTime(ISOChronology.getInstance(notUTC));
         map.putWithLock(now);
 
         DateTime now100 = now.plus(100);
         map.putWithLock(now100);
 
+        // instants implicitly have the ISOChronology in the UTC time zone
         Instant instant = new Instant();
         map.putWithLock(instant);
+
+        // This test makes the assumption that "now" and "instant"
+        // do not compare as "equal". If they do, the second added will
+        // be omitted from the map.values() collection because the collection
+        // .contains() the first one.
+        Assert.assertFalse(now.equals(instant), "now is equals to instant; test assumption violated");
 
         Assert.assertEquals(map.valuesWithLock().size(), 3);
         Assert.assertFalse(map.containsValueWithLock(null));
