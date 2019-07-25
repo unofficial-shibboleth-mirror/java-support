@@ -18,14 +18,14 @@
 package net.shibboleth.utilities.java.support.httpclient;
 
 import java.time.Duration;
-import java.time.Instant;
 import java.util.Timer;
-
-import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 
 /** {@link IdleConnectionSweeper} unit test. */
 public class IdleConectionSweeperTest {
@@ -33,11 +33,20 @@ public class IdleConectionSweeperTest {
     private final Duration SWEEP_INTERVAL = Duration.ofMillis(50);
 
     @Test public void test() throws Exception {
-        PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
+        MyCm  connectionManager = new MyCm();
 
         IdleConnectionSweeper sweeper = new IdleConnectionSweeper(connectionManager, Duration.ofMillis(30), SWEEP_INTERVAL);
-        Thread.sleep(75);
-        Assert.assertTrue(sweeper.scheduledExecutionTime().plus(SWEEP_INTERVAL).isAfter(Instant.now()));
+        Thread.yield(); // for luck.
+        if (!connectionManager.isCloseCalled()) {
+            Thread.sleep(25+SWEEP_INTERVAL.toMillis());
+            Thread.yield();
+            if (!connectionManager.isCloseCalled()) {
+                // Windows sometimes takes its time...
+                Thread.sleep(25+SWEEP_INTERVAL.toMillis());
+                Thread.yield();
+                Assert.assertTrue(connectionManager.isCloseCalled());
+            }
+        }
 
         sweeper.destroy();
         Assert.assertTrue(sweeper.isDestroyed());
@@ -49,10 +58,21 @@ public class IdleConectionSweeperTest {
             // expected this
         }
 
+        connectionManager = new MyCm();
+
         Timer timer = new Timer(true);
         sweeper = new IdleConnectionSweeper(connectionManager, Duration.ofMillis(30), SWEEP_INTERVAL, timer);
-        Thread.sleep(75);
-        Assert.assertTrue(sweeper.scheduledExecutionTime().plus(SWEEP_INTERVAL).isAfter(Instant.now()));
+        Thread.yield();
+        if (!connectionManager.isCloseCalled()) {
+            Thread.sleep(SWEEP_INTERVAL.toMillis());
+            Thread.yield();
+            if (!connectionManager.isCloseCalled()) {
+                // Windows sometimes takes its time...
+                Thread.sleep(SWEEP_INTERVAL.toMillis());
+                Thread.yield();
+                Assert.assertTrue(connectionManager.isCloseCalled());
+            }
+        }
 
         sweeper.destroy();
         Assert.assertTrue(sweeper.isDestroyed());
@@ -66,4 +86,14 @@ public class IdleConectionSweeperTest {
         timer.cancel();
     }
     
+    private class MyCm extends PoolingHttpClientConnectionManager {
+        private boolean closeCalled;
+        public void closeIdleConnections(long idletime, TimeUnit timeUnit) {
+            closeCalled = true;
+            super.closeIdleConnections(idletime, timeUnit);
+        }
+        public boolean isCloseCalled() {
+            return closeCalled;
+        }
+    }
 }
