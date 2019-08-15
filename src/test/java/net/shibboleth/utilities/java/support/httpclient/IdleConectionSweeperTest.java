@@ -66,11 +66,12 @@ public class IdleConectionSweeperTest {
         if (!connectionManager.isCloseCalled()) {
             Thread.sleep(SWEEP_INTERVAL.toMillis());
             Thread.yield();
-            if (!connectionManager.isCloseCalled()) {
+            int loopCount = 0;
+            while (!connectionManager.isCloseCalled()) {
                 // Windows sometimes takes its time...
                 Thread.sleep(SWEEP_INTERVAL.toMillis());
                 Thread.yield();
-                Assert.assertTrue(connectionManager.isCloseCalled());
+                Assert.assertTrue(++loopCount != 5); // 5 time 50 ms is quarter of a second
             }
         }
 
