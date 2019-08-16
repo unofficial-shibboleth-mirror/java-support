@@ -53,9 +53,8 @@ public class AllMatchPredicate<T> implements Predicate<Iterable<T>> {
         for (final T input : inputs) {
             if (!predicate.test(input)) {
                 return false;
-            } else {
-                matchedAll = true;
             }
+            matchedAll = true;
         }
 
         return matchedAll;

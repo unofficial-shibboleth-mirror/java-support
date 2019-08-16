@@ -108,9 +108,9 @@ public class IdleConnectionSweeper implements DestructableComponent {
 
         if (executionTime != null) {
             return executionTime;
-        } else {
-            return Instant.ofEpochMilli(sweeper.scheduledExecutionTime());
         }
+        
+        return Instant.ofEpochMilli(sweeper.scheduledExecutionTime());
     }
 
     /** {@inheritDoc} */

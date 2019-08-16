@@ -45,10 +45,10 @@ public class LazySet<ElementType> implements Set<ElementType>, Serializable {
         if (delegate.isEmpty()) {
             delegate = Collections.singleton(element);
             return true;
-        } else {
-            delegate = createImplementation();
-            return delegate.add(element);
         }
+        
+        delegate = createImplementation();
+        return delegate.add(element);
     }
 
     /** {@inheritDoc} */

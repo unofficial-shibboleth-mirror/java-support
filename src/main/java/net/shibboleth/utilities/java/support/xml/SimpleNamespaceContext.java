@@ -87,9 +87,8 @@ public class SimpleNamespaceContext implements NamespaceContext {
         final String uri = mappings.get(prefix);
         if (uri == null) {
             return javax.xml.XMLConstants.NULL_NS_URI;
-        } else {
-            return uri;
         }
+        return uri;
     }
 
     /** {@inheritDoc} */
@@ -110,9 +109,8 @@ public class SimpleNamespaceContext implements NamespaceContext {
         final String prefix = mappings.inverse().get(namespaceURI);
         if (prefix == null) {
             return Collections.<String> emptyList().iterator();
-        } else {
-            return Collections.singletonList(prefix).iterator();
         }
+        return Collections.singletonList(prefix).iterator();
     }
     
     /**

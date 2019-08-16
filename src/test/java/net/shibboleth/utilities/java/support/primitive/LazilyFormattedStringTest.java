@@ -28,24 +28,24 @@ public class LazilyFormattedStringTest {
     private final static String FORMAT = "%d--%o++%x";
 
     @Test public void testFormat() {
-        Formatter formatter = new Formatter();
-        Object value = Integer.valueOf(1234567);
-        formatter.format(FORMAT, value, value, value);
-        LazilyFormattedString testString = new LazilyFormattedString(FORMAT, value, value, value);
-
-        Assert.assertEquals(testString.toString(), formatter.out().toString(),
-                "Should be the same result regardless of whether lazily or actively formatted");
-        formatter.close();
+        try (final Formatter formatter = new Formatter()) {
+            final Object value = Integer.valueOf(1234567);
+            formatter.format(FORMAT, value, value, value);
+            final LazilyFormattedString testString = new LazilyFormattedString(FORMAT, value, value, value);
+    
+            Assert.assertEquals(testString.toString(), formatter.out().toString(),
+                    "Should be the same result regardless of whether lazily or actively formatted");
+        }
     }
 
     @Test public void testNullFormat() {
-        Formatter formatter = new Formatter();
-        Object value = Integer.valueOf(78654321);
-        formatter.format(FORMAT, null, value, null, value);
-        LazilyFormattedString testString = new LazilyFormattedString(FORMAT, null, value, null, value);
-
-        Assert.assertEquals(testString.toString(), formatter.out().toString(),
-                "Should be the same result regardless of whether lazily or actively formatted");
-        formatter.close();
+        try (final Formatter formatter = new Formatter()) {
+            final Object value = Integer.valueOf(78654321);
+            formatter.format(FORMAT, null, value, null, value);
+            final LazilyFormattedString testString = new LazilyFormattedString(FORMAT, null, value, null, value);
+    
+            Assert.assertEquals(testString.toString(), formatter.out().toString(),
+                    "Should be the same result regardless of whether lazily or actively formatted");
+        }
     }
 }

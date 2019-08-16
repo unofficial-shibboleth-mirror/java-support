@@ -65,10 +65,10 @@ public final class Base32Support {
         if (chunked) {
             return Constraint.isNotNull(StringSupport.trim(CHUNKED_ENCODER.encodeToString(data)),
                     "Encoded data was null");
-        } else {
-            return Constraint.isNotNull(StringSupport.trim(UNCHUNKED_ENCODER.encodeToString(data)),
-                    "Encoded data was null");
         }
+        
+        return Constraint.isNotNull(StringSupport.trim(UNCHUNKED_ENCODER.encodeToString(data)),
+                "Encoded data was null");
     }
 
     /**

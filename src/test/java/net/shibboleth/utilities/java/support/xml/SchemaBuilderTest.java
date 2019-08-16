@@ -78,10 +78,9 @@ public class SchemaBuilderTest {
         validator.validate(workingSource());
 
         boolean thrown = false;
-        StreamSource fails = failingSource();
         try {
-            validator.validate(fails);
-        } catch (Exception e) {
+            validator.validate(failingSource());
+        } catch (final Exception e) {
             thrown = true;
         }
         Assert.assertTrue(thrown, "Should fail to validate");
@@ -101,10 +100,9 @@ public class SchemaBuilderTest {
         validator.validate(workingSource());
 
         boolean thrown = false;
-        StreamSource fails = failingSource();
         try {
-            validator.validate(fails);
-        } catch (Exception e) {
+            validator.validate(failingSource());
+        } catch (final Exception e) {
             thrown = true;
         }
         Assert.assertTrue(thrown, "Should fail to validate");
@@ -124,10 +122,9 @@ public class SchemaBuilderTest {
         validator.validate(workingSource());
 
         boolean thrown = false;
-        StreamSource fails = failingSource();
         try {
-            validator.validate(fails);
-        } catch (Exception e) {
+            validator.validate(failingSource());
+        } catch (final Exception e) {
             thrown = true;
         }
         Assert.assertTrue(thrown, "Should fail to validate");

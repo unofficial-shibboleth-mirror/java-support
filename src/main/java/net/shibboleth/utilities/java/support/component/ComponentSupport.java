@@ -84,9 +84,8 @@ public final class ComponentSupport {
                 throw new DestroyedComponentException("Component '"
                         + StringSupport.trimOrNull(((IdentifiedComponent) component).getId())
                         + "' has already been destroyed and can no longer be used.");
-            } else {
-                throw new DestroyedComponentException("Component has already been destroyed and can no longer be used");
             }
+            throw new DestroyedComponentException("Component has already been destroyed and can no longer be used");
         }
 
     }
@@ -107,10 +106,8 @@ public final class ComponentSupport {
                 throw new UninitializedComponentException("Component '"
                         + StringSupport.trimOrNull(((IdentifiedComponent) component).getId())
                         + "' has not yet been initialized and cannot be used.");
-            } else {
-                throw new UninitializedComponentException(
-                        "Component has not yet been initialized and cannot be used.");
             }
+            throw new UninitializedComponentException("Component has not yet been initialized and cannot be used.");
         }
     }
 
@@ -130,10 +127,9 @@ public final class ComponentSupport {
                 throw new UnmodifiableComponentException("Component '"
                         + StringSupport.trimOrNull(((IdentifiedComponent) component).getId())
                         + "' has already been initialized and can no longer be modified");
-            } else {
-                throw new UnmodifiableComponentException(
-                        "Component has already been initialized and can no longer be modified");
             }
+            throw new UnmodifiableComponentException(
+                    "Component has already been initialized and can no longer be modified");
         }
     }
 }

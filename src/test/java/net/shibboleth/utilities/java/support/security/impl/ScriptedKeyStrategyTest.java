@@ -67,15 +67,14 @@ public class ScriptedKeyStrategyTest {
     
     @Test(expectedExceptions=ComponentInitializationException.class)
     public void testNoScript() throws ComponentInitializationException {
-        final ScriptedKeyStrategy strategy = new ScriptedKeyStrategy();
-        strategy.initialize();
+        new ScriptedKeyStrategy().initialize();
     }
     
     @Test(expectedExceptions=ComponentInitializationException.class)
     public void testScriptFailure() throws ComponentInitializationException, ScriptException {
-        final ScriptedKeyStrategy strategy = new ScriptedKeyStrategy();
-        strategy.setKeyScript(new EvaluableScript("null"));
-        strategy.initialize();
+        final ScriptedKeyStrategy estrategy = new ScriptedKeyStrategy();
+        estrategy.setKeyScript(new EvaluableScript("null"));
+        estrategy.initialize();
     }
     
     @Test public void testScriptedKeystoreKeyStrategy() throws Exception {

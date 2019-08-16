@@ -345,10 +345,9 @@ public final class AttributeSupport {
         final String[] valueComponents = attributeValue.split(":");
         if (valueComponents.length == 1) {
             return QNameSupport.constructQName(attribute.lookupNamespaceURI(null), valueComponents[0], null);
-        } else {
-            return QNameSupport.constructQName(attribute.lookupNamespaceURI(valueComponents[0]), valueComponents[1],
-                    valueComponents[0]);
         }
+        return QNameSupport.constructQName(attribute.lookupNamespaceURI(valueComponents[0]), valueComponents[1],
+                valueComponents[0]);
     }
 
     /**

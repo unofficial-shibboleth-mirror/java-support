@@ -89,11 +89,11 @@ public class CriterionPredicateRegistry<T> {
                 log.error("Error instantiating new Predicate instance", e);
                 throw new ResolverException("Could not create new Predicate instance", e);
             }
-        } else {
-            log.debug("Registry did not locate Predicate implementation registered for Criterion class {}", 
-                    criterion.getClass().getName());
-            return null;
         }
+        
+        log.debug("Registry did not locate Predicate implementation registered for Criterion class {}", 
+                criterion.getClass().getName());
+        return null;
     }
     
 

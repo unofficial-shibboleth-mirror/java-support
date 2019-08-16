@@ -78,9 +78,8 @@ public class BasicURLComparator implements URIComparator {
             
             if (isCaseInsensitive()) {
                 return uri1Canon.equalsIgnoreCase(uri2Canon);
-            } else {
-                return uri1Canon.equals(uri2Canon);
             }
+            return uri1Canon.equals(uri2Canon);
         }
     }
 

@@ -102,9 +102,8 @@ public final class ResolverSupport {
         if (predicates == null || predicates.isEmpty()) {
             if (onEmptyPredicatesReturnEmpty) {
                 return Collections.emptySet();
-            } else {
-                return candidates;
             }
+            return candidates;
         }
         
         final Predicate<T> predicate;

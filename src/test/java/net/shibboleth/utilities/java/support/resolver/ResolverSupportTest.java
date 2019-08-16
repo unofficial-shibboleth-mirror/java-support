@@ -72,16 +72,14 @@ public class ResolverSupportTest {
         Set<Foo> resultSet;
         
         //Null candidates
-        result = ResolverSupport.getFilteredIterable(null,
-                Sets.<Predicate<Foo>>newHashSet(new EvaluableTestFooCriterion(true)),
+        result = ResolverSupport.getFilteredIterable(null, Sets.newHashSet(new EvaluableTestFooCriterion(true)),
                 false, false);
         Assert.assertNotNull(result);
         resultSet = Sets.newHashSet(result);
         Assert.assertEquals(resultSet.size(), 0);
         
         //Empty candidates
-        result = ResolverSupport.getFilteredIterable(Sets.<Foo>newHashSet(),
-                Sets.<Predicate<Foo>>newHashSet(new EvaluableTestFooCriterion(true)),
+        result = ResolverSupport.getFilteredIterable(Sets.newHashSet(), Sets.newHashSet(new EvaluableTestFooCriterion(true)),
                 false, false);
         Assert.assertNotNull(result);
         resultSet = Sets.newHashSet(result);
@@ -90,8 +88,8 @@ public class ResolverSupportTest {
         // Single predicate tests
         
         // predicate = true
-        result = ResolverSupport.getFilteredIterable(Sets.<Foo>newHashSet(foo1, foo2), 
-                Sets.<Predicate<Foo>>newHashSet(new EvaluableTestFooCriterion(true)),
+        result = ResolverSupport.getFilteredIterable(Sets.newHashSet(foo1, foo2),
+                Sets.newHashSet(new EvaluableTestFooCriterion(true)),
                 false, false);
         Assert.assertNotNull(result);
         resultSet = Sets.newHashSet(result);
@@ -100,8 +98,8 @@ public class ResolverSupportTest {
         Assert.assertTrue(resultSet.contains(foo2));
         
         // predicate = false
-        result = ResolverSupport.getFilteredIterable(Sets.<Foo>newHashSet(foo1, foo2), 
-                Sets.<Predicate<Foo>>newHashSet(new EvaluableTestFooCriterion(false)),
+        result = ResolverSupport.getFilteredIterable(Sets.newHashSet(foo1, foo2), 
+                Sets.newHashSet(new EvaluableTestFooCriterion(false)),
                 false, false);
         Assert.assertNotNull(result);
         resultSet = Sets.newHashSet(result);
@@ -110,8 +108,8 @@ public class ResolverSupportTest {
         // Multiple predicate tests
         
         // satisfyAny = false, predicates all true
-        result = ResolverSupport.getFilteredIterable(Sets.<Foo>newHashSet(foo1, foo2), 
-                Sets.<Predicate<Foo>>newHashSet(new EvaluableTestFooCriterion(true), new EvaluableTestFooCriterion(true)),
+        result = ResolverSupport.getFilteredIterable(Sets.newHashSet(foo1, foo2), 
+                Sets.newHashSet(new EvaluableTestFooCriterion(true), new EvaluableTestFooCriterion(true)),
                 false, false);
         Assert.assertNotNull(result);
         resultSet = Sets.newHashSet(result);
@@ -120,16 +118,16 @@ public class ResolverSupportTest {
         Assert.assertTrue(resultSet.contains(foo2));
         
         // satisfyAny = false, predicates true + false
-        result = ResolverSupport.getFilteredIterable(Sets.<Foo>newHashSet(foo1, foo2), 
-                Sets.<Predicate<Foo>>newHashSet(new EvaluableTestFooCriterion(true), new EvaluableTestFooCriterion(false)),
+        result = ResolverSupport.getFilteredIterable(Sets.newHashSet(foo1, foo2), 
+                Sets.newHashSet(new EvaluableTestFooCriterion(true), new EvaluableTestFooCriterion(false)),
                 false, false);
         Assert.assertNotNull(result);
         resultSet = Sets.newHashSet(result);
         Assert.assertEquals(resultSet.size(), 0);
         
         // satisfyAny = true, predicates true + false
-        result = ResolverSupport.getFilteredIterable(Sets.<Foo>newHashSet(foo1, foo2), 
-                Sets.<Predicate<Foo>>newHashSet(new EvaluableTestFooCriterion(true), new EvaluableTestFooCriterion(false)),
+        result = ResolverSupport.getFilteredIterable(Sets.newHashSet(foo1, foo2), 
+                Sets.newHashSet(new EvaluableTestFooCriterion(true), new EvaluableTestFooCriterion(false)),
                 true, false);
         Assert.assertNotNull(result);
         resultSet = Sets.newHashSet(result);
@@ -140,9 +138,7 @@ public class ResolverSupportTest {
         // Empty predicates tests
         
         // onEmptyPredicatesReturnEmpty = false
-        result = ResolverSupport.getFilteredIterable(Sets.<Foo>newHashSet(foo1, foo2), 
-                Sets.<Predicate<Foo>>newHashSet(),
-                false, false);
+        result = ResolverSupport.getFilteredIterable(Sets.newHashSet(foo1, foo2), Sets.newHashSet(), false, false);
         Assert.assertNotNull(result);
         resultSet = Sets.newHashSet(result);
         Assert.assertEquals(resultSet.size(), 2);
@@ -150,9 +146,7 @@ public class ResolverSupportTest {
         Assert.assertTrue(resultSet.contains(foo2));
         
         // onEmptyPredicatesReturnEmpty = false, predicates = null
-        result = ResolverSupport.getFilteredIterable(Sets.<Foo>newHashSet(foo1, foo2), 
-                null,
-                false, false);
+        result = ResolverSupport.getFilteredIterable(Sets.newHashSet(foo1, foo2), null, false, false);
         Assert.assertNotNull(result);
         resultSet = Sets.newHashSet(result);
         Assert.assertEquals(resultSet.size(), 2);
@@ -160,17 +154,13 @@ public class ResolverSupportTest {
         Assert.assertTrue(resultSet.contains(foo2));
         
         // onEmptyPredicatesReturnEmpty = true
-        result = ResolverSupport.getFilteredIterable(Sets.<Foo>newHashSet(foo1, foo2), 
-                Sets.<Predicate<Foo>>newHashSet(),
-                false, true);
+        result = ResolverSupport.getFilteredIterable(Sets.newHashSet(foo1, foo2), Sets.newHashSet(), false, true);
         Assert.assertNotNull(result);
         resultSet = Sets.newHashSet(result);
         Assert.assertEquals(resultSet.size(), 0);
         
         // onEmptyPredicatesReturnEmpty = true, predicates = null
-        result = ResolverSupport.getFilteredIterable(Sets.<Foo>newHashSet(foo1, foo2), 
-                null,
-                false, true);
+        result = ResolverSupport.getFilteredIterable(Sets.newHashSet(foo1, foo2), null, false, true);
         Assert.assertNotNull(result);
         resultSet = Sets.newHashSet(result);
         Assert.assertEquals(resultSet.size(), 0);

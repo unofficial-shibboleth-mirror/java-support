@@ -102,10 +102,9 @@ public class TestSupport {
         if (components[0].equals("1")) {
             // Handle 1.6, 1.7, 1.8
             return Integer.parseInt(components[1]);
-        } else {
-            // e.g., 9, 9.0.1, 10+43
-            return Integer.parseInt(components[0]);
         }
+        // e.g., 9, 9.0.1, 10+43
+        return Integer.parseInt(components[0]);
     }
 
     /**

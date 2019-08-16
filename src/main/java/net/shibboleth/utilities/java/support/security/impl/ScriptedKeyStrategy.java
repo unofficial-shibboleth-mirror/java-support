@@ -222,9 +222,8 @@ public class ScriptedKeyStrategy extends AbstractInitializableComponent implemen
         synchronized(this) {
             if (defaultKey != null) {
                 return new Pair<>(currentAlias, defaultKey);
-            } else {
-                throw new KeyException("Default key unavailable");
             }
+            throw new KeyException("Default key unavailable");
         }
     }
     

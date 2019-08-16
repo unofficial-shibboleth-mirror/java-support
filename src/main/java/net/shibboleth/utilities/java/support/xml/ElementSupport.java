@@ -361,11 +361,7 @@ public final class ElementSupport {
             child = child.getNextSibling();
         }
 
-        if (child != null) {
-            return (Element) child;
-        } else {
-            return null;
-        }
+        return child != null ? (Element) child : null;
     }
 
     /**
@@ -415,11 +411,7 @@ public final class ElementSupport {
             sib = sib.getNextSibling();
         }
 
-        if (sib != null) {
-            return (Element) sib;
-        } else {
-            return null;
-        }
+        return sib != null ? (Element) sib : null;
     }
 
     /**

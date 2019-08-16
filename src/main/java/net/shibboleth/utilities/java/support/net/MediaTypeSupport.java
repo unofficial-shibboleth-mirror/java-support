@@ -77,18 +77,17 @@ public final class MediaTypeSupport {
                     }
                 }
                 return false;
-            } else {
-                final MediaType mediaType = MediaType.parse(contentTypeValue).withoutParameters();
-                final Set<MediaType> validTypesWithoutParameters = new HashSet<>();
-                validTypesWithoutParameters.addAll(Collections2.filter(
-                        Collections2.transform(validTypes, STRIP_PARAMS::apply), 
-                        Predicates.notNull()));
-                return validTypesWithoutParameters.contains(mediaType);
             }
-        } else {
-            return noContentTypeIsValid;
+            
+            final MediaType mediaType = MediaType.parse(contentTypeValue).withoutParameters();
+            final Set<MediaType> validTypesWithoutParameters = new HashSet<>();
+            validTypesWithoutParameters.addAll(Collections2.filter(
+                    Collections2.transform(validTypes, STRIP_PARAMS::apply), 
+                    Predicates.notNull()));
+            return validTypesWithoutParameters.contains(mediaType);
         }
         
+        return noContentTypeIsValid;
     }
 
 }

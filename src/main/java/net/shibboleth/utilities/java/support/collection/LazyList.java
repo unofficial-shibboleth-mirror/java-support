@@ -46,10 +46,10 @@ public class LazyList<ElementType> implements List<ElementType>, Serializable {
         if (delegate.isEmpty()) {
             delegate = Collections.singletonList(item);
             return true;
-        } else {
-            delegate = buildList();
-            return delegate.add(item);
         }
+        
+        delegate = buildList();
+        return delegate.add(item);
     }
 
     /** {@inheritDoc} */

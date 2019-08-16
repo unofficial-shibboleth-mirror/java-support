@@ -247,19 +247,18 @@ class ContextHandlingHttpClient extends CloseableHttpClient {
             final Throwable t = errors.get(0);
             if (IOException.class.isInstance(t)) {
                 return IOException.class.cast(t);
-            } else {
-                return new IOException(
-                        String.format("Context handler threw non-IOException Throwable in stage '%s'", stage), t);
             }
-        } else {
-            final IOException e = new IOException(
-                    String.format("Multiple context handlers in stage '%s' reported error, see suppressed list", 
-                            stage));
-            for (final Throwable t : errors) {
-                e.addSuppressed(t);
-            }
-            return e;
+            return new IOException(
+                    String.format("Context handler threw non-IOException Throwable in stage '%s'", stage), t);
         }
+        
+        final IOException e = new IOException(
+                String.format("Multiple context handlers in stage '%s' reported error, see suppressed list", 
+                        stage));
+        for (final Throwable t : errors) {
+            e.addSuppressed(t);
+        }
+        return e;
     }
     
     /**

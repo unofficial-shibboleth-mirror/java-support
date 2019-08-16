@@ -85,9 +85,9 @@ public final class HttpServletSupport {
 
         if (request.getPathInfo() == null) {
             return servletPath;
-        } else {
-            return servletPath + request.getPathInfo();
         }
+        
+        return servletPath + request.getPathInfo();
     }
 
     /**

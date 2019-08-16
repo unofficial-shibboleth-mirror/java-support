@@ -30,11 +30,7 @@ public class StripMediaTypeParametersFunction implements Function<MediaType, Med
 
     /** {@inheritDoc} */
     @Nullable public MediaType apply(@Nullable final MediaType input) {
-        if (input == null) {
-            return null;
-        } else {
-            return input.withoutParameters();
-        }
+        return input != null ? input.withoutParameters() : null;
     }
 
 }

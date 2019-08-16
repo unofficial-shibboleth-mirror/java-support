@@ -82,9 +82,8 @@ public final class QNameSupport {
 
         if (trimmedPrefix == null) {
             return new QName(StringSupport.trimOrNull(namespaceURI), trimmedLocalName);
-        } else {
-            return new QName(StringSupport.trimOrNull(namespaceURI), trimmedLocalName, trimmedPrefix);
         }
+        return new QName(StringSupport.trimOrNull(namespaceURI), trimmedLocalName, trimmedPrefix);
     }
 
     /**

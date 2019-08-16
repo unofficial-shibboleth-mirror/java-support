@@ -228,9 +228,8 @@ public class ValueTypeIndexedMap<KeyType, ValueType> implements Map<KeyType, Val
         }
         if (index.containsKey(key)) {
             return Collections.unmodifiableMap((Map<KeyType, SubType>) index.get(key));
-        } else {
-            return Collections.emptyMap();
         }
+        return Collections.emptyMap();
     }
 
     /** {@inheritDoc} */

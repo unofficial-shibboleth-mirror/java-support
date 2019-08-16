@@ -83,10 +83,10 @@ public class LazyMap<KeyType, ValueType> implements Map<KeyType, ValueType>, Ser
         if (delegate.isEmpty()) {
             delegate = Collections.singletonMap(key, value);
             return null;
-        } else {
-            delegate = buildMap();
-            return delegate.put(key, value);
         }
+        
+        delegate = buildMap();
+        return delegate.put(key, value);
     }
 
     /** {@inheritDoc} */

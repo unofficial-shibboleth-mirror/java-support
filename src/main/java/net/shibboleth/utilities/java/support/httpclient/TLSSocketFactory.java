@@ -278,9 +278,9 @@ public class TLSSocketFactory implements LayeredConnectionSocketFactory {
             sslsock.startHandshake();
             verifyHostname(sslsock, host.getHostName(), context);
             return sock;
-        } else {
-            return createLayeredSocket(sock, host.getHostName(), remoteAddress.getPort(), context);
         }
+        
+        return createLayeredSocket(sock, host.getHostName(), remoteAddress.getPort(), context);
     }
     // Checkstyle: ParameterNumber ON
 

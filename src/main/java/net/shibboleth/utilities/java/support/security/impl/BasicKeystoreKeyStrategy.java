@@ -294,9 +294,8 @@ public class BasicKeystoreKeyStrategy extends AbstractInitializableComponent imp
         synchronized(this) {
             if (defaultKey != null) {
                 return new Pair<>(currentAlias, defaultKey);
-            } else {
-                throw new KeyException("Passwords not supplied, keystore is locked");
             }
+            throw new KeyException("Passwords not supplied, keystore is locked");
         }
     }
     

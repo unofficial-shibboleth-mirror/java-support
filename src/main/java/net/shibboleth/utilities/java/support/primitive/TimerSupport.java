@@ -109,8 +109,8 @@ public final class TimerSupport {
         
         if (additionalData != null) {
             return String.format("Timer for %s (%s)", baseName, additionalData);
-        } else {
-            return String.format("Timer for %s", baseName);
         }
+        
+        return String.format("Timer for %s", baseName);
     }
 }

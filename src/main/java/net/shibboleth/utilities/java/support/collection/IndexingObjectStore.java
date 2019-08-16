@@ -116,11 +116,7 @@ public class IndexingObjectStore<T> {
         readLock.lock();
         try {
             final Integer index = indexStore.get(instance);
-            if (index == null) {
-                return false;
-            } else {
-                return objectStore.containsKey(index.toString());
-            }
+            return index != null ? objectStore.containsKey(index.toString()) : false;
         } finally {
             readLock.unlock();
         }

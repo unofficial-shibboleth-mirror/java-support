@@ -85,9 +85,9 @@ public class EvaluableScriptTest {
 
         theFile = File.createTempFile("EvaluableScriptTest", ".js");
 
-        final FileWriter s = new FileWriter(theFile);
-        s.write(TEST_SIMPLE_SCRIPT, 0, TEST_SIMPLE_SCRIPT.length());
-        s.close();
+        try (final FileWriter s = new FileWriter(theFile)) {
+            s.write(TEST_SIMPLE_SCRIPT, 0, TEST_SIMPLE_SCRIPT.length());
+        }
 
         Assert.assertEquals((new EvaluableScript(SCRIPT_LANGUAGE, theFile)).getScriptLanguage(), SCRIPT_LANGUAGE);
         

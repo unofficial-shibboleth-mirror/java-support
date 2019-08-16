@@ -107,9 +107,8 @@ public class RandomIdentifierGenerationStrategy implements IdentifierGenerationS
         try {
             if (xmlSafe) {
                 return "_" + StringUtils.newStringUsAscii(encoder.encode(buf));
-            } else {
-                return StringUtils.newStringUsAscii(encoder.encode(buf));
             }
+            return StringUtils.newStringUsAscii(encoder.encode(buf));
         } catch (final EncoderException e) {
             throw new RuntimeException(e);
         }

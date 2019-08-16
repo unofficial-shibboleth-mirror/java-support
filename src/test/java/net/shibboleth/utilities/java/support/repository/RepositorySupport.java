@@ -63,9 +63,8 @@ public final class RepositorySupport {
         
         if (https) {
             return String.format("https://test.shibboleth.net/git/view/?p=%s.git&a=blob_plain&f=%s&hb=master", repo, path);    
-        } else {
-            return String.format("http://git.shibboleth.net/view/?p=%s.git&a=blob_plain&f=%s&hb=master", repo, path);    
         }
+        return String.format("http://git.shibboleth.net/view/?p=%s.git&a=blob_plain&f=%s&hb=master", repo, path);
         
     }
 

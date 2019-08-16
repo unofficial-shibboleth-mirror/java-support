@@ -38,8 +38,7 @@ public class Type4UUIDIdentifierGenerationStrategy implements IdentifierGenerati
     @Nonnull @NotEmpty public String generateIdentifier(final boolean xmlSafe) {
         if (xmlSafe) {
             return "_" + UUID.randomUUID().toString();
-        } else {
-            return UUID.randomUUID().toString();
         }
+        return UUID.randomUUID().toString();
     }
 }

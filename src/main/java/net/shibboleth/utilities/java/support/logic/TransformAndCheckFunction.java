@@ -74,9 +74,9 @@ public class TransformAndCheckFunction<T> implements Function<T, Optional<? exte
 
         if (failOnConstraintViolation) {
             throw new IllegalArgumentException(input + " does not meet constraint");
-        } else {
-            return Optional.absent();
         }
+        
+        return Optional.absent();
     }
 
     /** {@inheritDoc} */

@@ -62,13 +62,14 @@ public final class ObjectSupport {
     @Nullable public static <T> T firstNonNull(@Nullable final T ... objects) {
         if (objects == null) {
             return null;
-        } else {
-            for (final T obj : objects) {
-                if (obj != null) {
-                    return obj;
-                }
+        }
+        
+        for (final T obj : objects) {
+            if (obj != null) {
+                return obj;
             }
         }
+        
         return null;
     }
 }

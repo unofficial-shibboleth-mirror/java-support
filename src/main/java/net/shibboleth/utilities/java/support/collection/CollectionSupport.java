@@ -58,9 +58,8 @@ public final class CollectionSupport {
             @Nullable final Collection<? extends T> source) {
         if (source != null) {
             return ImmutableList.copyOf(source);
-        } else {
-            return Collections.emptyList();
         }
+        return Collections.emptyList();
     }
 
     /**
@@ -77,9 +76,8 @@ public final class CollectionSupport {
             @Nullable final Collection<? extends T> source) {
         if (source != null) {
             return ImmutableSet.copyOf(source);
-        } else {
-            return Collections.emptySet();
         }
+        return Collections.emptySet();
     }    
 
     /**
@@ -97,9 +95,8 @@ public final class CollectionSupport {
             @Nullable final Map<? extends K, ? extends V> source) {
         if (source != null) {
             return ImmutableMap.copyOf(source);
-        } else {
-            return Collections.emptyMap();
         }
+        return Collections.emptyMap();
     }    
     
 

@@ -176,9 +176,8 @@ public class EvaluableScript {
     @Nullable public Object eval(@Nonnull final Bindings scriptBindings) throws ScriptException {
         if (compiledScript != null) {
             return compiledScript.eval(scriptBindings);
-        } else {
-            return scriptEngine.eval(script, scriptBindings);
         }
+        return scriptEngine.eval(script, scriptBindings);
     }
 
     /**
@@ -193,9 +192,8 @@ public class EvaluableScript {
     @Nullable public Object eval(@Nonnull final ScriptContext scriptContext) throws ScriptException {
         if (compiledScript != null) {
             return compiledScript.eval(scriptContext);
-        } else {
-            return scriptEngine.eval(script, scriptContext);
         }
+        return scriptEngine.eval(script, scriptContext);
     }
 
     /**
