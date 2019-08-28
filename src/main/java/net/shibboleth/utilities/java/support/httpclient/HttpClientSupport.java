@@ -24,8 +24,6 @@ import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -43,8 +41,6 @@ import org.apache.http.ParseException;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.conn.socket.LayeredConnectionSocketFactory;
 import org.apache.http.conn.ssl.AllowAllHostnameVerifier;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.ssl.SSLContexts;
 import org.apache.http.conn.ssl.StrictHostnameVerifier;
 import org.apache.http.entity.ContentType;
 import org.apache.http.protocol.HTTP;
@@ -53,8 +49,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 /**
  * Support class for using {@link org.apache.http.client.HttpClient} and related components.
@@ -93,54 +87,6 @@ public final class HttpClientSupport {
             .setTrustManagers(Collections.<TrustManager>singletonList(buildNoTrustX509TrustManager()))
             .setHostnameVerifier(new AllowAllHostnameVerifier())
             .build();
-    }
-    
-    /**
-     * Build an instance of {@link SSLConnectionSocketFactory} which uses
-     * the standard HttpClient default {@link SSLContext} and which uses
-     * a strict hostname verifier {@link SSLConnectionSocketFactory#STRICT_HOSTNAME_VERIFIER}.
-     * 
-     * @return a new instance of HttpClient SSL connection socket factory
-     * 
-     * @deprecated use instead {@link #buildStrictTLSSocketFactory()}
-     */
-    @Deprecated
-    @Nonnull public static SSLConnectionSocketFactory buildStrictSSLConnectionSocketFactory() {
-        DeprecationSupport.warnOnce(ObjectType.METHOD,
-                "net.shibboleth.utilities.java.support.httpclient.HttpClientSupport" +
-                        ".buildStrictSSLConnectionSocketFactory", null, "buildStrictTLSSocketFactory");
-
-        return new SSLConnectionSocketFactory(
-                SSLContexts.createDefault(), 
-                SSLConnectionSocketFactory.STRICT_HOSTNAME_VERIFIER);
-    }
-    
-     /**
-     * Build an instance of {@link SSLConnectionSocketFactory} which accepts all peer certificates
-     * and performs no hostname verification.
-     * 
-     * @return a new instance of HttpClient SSL connection socket factory
-     * 
-     * @deprecated use instead {@link #buildNoTrustTLSSocketFactory()}
-     */
-    @Deprecated
-    @Nonnull public static SSLConnectionSocketFactory buildNoTrustSSLConnectionSocketFactory() {
-        DeprecationSupport.warnOnce(ObjectType.METHOD,
-                "net.shibboleth.utilities.java.support.httpclient.HttpClientSupport" +
-                        ".buildNoTrustSSLConnectionSocketFactory", null, "buildNoTrustTLSSocketFactory");
-        
-        final X509TrustManager noTrustManager = buildNoTrustX509TrustManager();
-
-        try {
-            final SSLContext sslcontext = SSLContext.getInstance("TLS");
-            sslcontext.init(null, new TrustManager[] {noTrustManager}, null);
-            return new SSLConnectionSocketFactory(sslcontext, SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-        } catch (final NoSuchAlgorithmException e) {
-            throw new RuntimeException("TLS SSLContext type is required to be supported by the JVM but is not", e);
-        } catch (final KeyManagementException e) {
-            throw new RuntimeException("Somehow the trust everything trust manager didn't trust everything", e);
-        }
-        
     }
     
     /**
