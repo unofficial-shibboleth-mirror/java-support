@@ -21,6 +21,10 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.BitSet;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /** Represents a range of IP addresses. */
@@ -30,13 +34,13 @@ public class IPRange {
     private final int addressLength;
 
     /** The IP network address for the range. */
-    private final BitSet network;
+    @Nonnull private final BitSet network;
     
     /** The IP host address, if a host address rather than a network address was specified. */
-    private final BitSet host;
+    @Nullable private final BitSet host;
 
     /** The netmask for the range. */
-    private BitSet mask;
+    @Nonnull private BitSet mask;
 
     /**
      * Constructor.
@@ -44,8 +48,10 @@ public class IPRange {
      * @param address address to base the range on; may be the network address or the
      *                address of a host within the network
      * @param maskSize the number of bits in the netmask
+     * 
+     * @throws IllegalArgumentException if the address or mask are invalid
      */
-    public IPRange(final InetAddress address, final int maskSize) {
+    public IPRange(@Nonnull final InetAddress address, final int maskSize) throws IllegalArgumentException {
         this(address.getAddress(), maskSize);
     }
 
@@ -55,8 +61,10 @@ public class IPRange {
      * @param address address to base the range on; may be the network address or the
      *                address of a host within the network
      * @param maskSize the number of bits in the netmask
+     * 
+     * @throws IllegalArgumentException if the address or mask are invalid
      */
-    public IPRange(final byte[] address, final int maskSize) {
+    public IPRange(@Nonnull final byte[] address, final int maskSize) throws IllegalArgumentException {
         addressLength = address.length * 8;
         if (addressLength != 32 && addressLength != 128) {
             throw new IllegalArgumentException("address was neither an IPv4 or IPv6 address");
@@ -86,7 +94,7 @@ public class IPRange {
      * 
      * @return network address as an {@link InetAddress}
      */
-    public InetAddress getNetworkAddress() {
+    @Nullable public InetAddress getNetworkAddress() {
         return toInetAddress(network);
     }
     
@@ -97,18 +105,18 @@ public class IPRange {
      * 
      * @return host address as an {@link InetAddress}, or null
      */
-    public InetAddress getHostAddress() {
+    @Nullable public InetAddress getHostAddress() {
         return toInetAddress(host);
     }
     
     /**
      * Validate an IPv4 address for use as the base of a CIDR block.
      * 
-     * Throws IllegalArgumentException if validation fails.
-     * 
      * @param address the address to validate
+     * 
+     * @throws IllegalArgumentException if expression cannot be parsed
      */
-    private static void validateV4Address(final String address) {
+    private static void validateV4Address(@Nonnull @NotEmpty final String address) throws IllegalArgumentException {
         final String[] components = address.split("\\.");
         if (components.length != 4) {
             throw new IllegalArgumentException("IPv4 address should have four components");
@@ -124,14 +132,14 @@ public class IPRange {
     /**
      * Validate an IPv6 address for use as the base of a CIDR block.
      * 
-     * Just check that any non-empty components are valid hexadecimal integers
-     * in the right range; leave most of the hard work to the {@link InetAddress} parser. 
-     * 
-     * Throws IllegalArgumentException if validation fails.
+     * <p>Just checks that any non-empty components are valid hexadecimal integers
+     * in the right range; leaves most of the hard work to the {@link InetAddress} parser.</p> 
      * 
      * @param address the address to validate
+     * 
+     * @throws IllegalArgumentException if expression cannot be parsed
      */
-    private static void validateV6Address(final String address) {
+    private static void validateV6Address(@Nonnull @NotEmpty final String address) throws IllegalArgumentException {
         final String[] components = address.split(":");
         for (final String component : components) {
             if (component.length() != 0) {
@@ -146,11 +154,11 @@ public class IPRange {
     /**
      * Validate an IP address for use as the base of a CIDR block.
      * 
-     * Throws IllegalArgumentException if validation fails.
-     * 
      * @param address the address to validate
+     * 
+     * @throws IllegalArgumentException if expression cannot be parsed
      */
-    private static void validateIPAddress(final String address) {
+    private static void validateIPAddress(@Nonnull @NotEmpty final String address) throws IllegalArgumentException {
         // any colons mean a V6 address, otherwise V4
         if (address.indexOf(':') >= 0) {
             validateV6Address(address);
@@ -165,8 +173,11 @@ public class IPRange {
      * @param cidrBlock the CIDR block definition
      * 
      * @return the resultant IP range
+     * 
+     * @throws IllegalArgumentException if expression cannot be parsed
      */
-    public static IPRange parseCIDRBlock(final String cidrBlock) {
+    @Nonnull public static IPRange parseCIDRBlock(@Nonnull @NotEmpty final String cidrBlock)
+            throws IllegalArgumentException {
         final String block = StringSupport.trimOrNull(cidrBlock);
         if (block == null) {
             throw new IllegalArgumentException("CIDR block definition can not be null or empty");
@@ -195,7 +206,7 @@ public class IPRange {
      * 
      * @return true if the address is in the range, false it not
      */
-    public boolean contains(final InetAddress address) {
+    public boolean contains(@Nonnull final InetAddress address) {
         return contains(address.getAddress());
     }
 
@@ -206,7 +217,7 @@ public class IPRange {
      * 
      * @return true if the address is in the range, false it not
      */
-    public boolean contains(final byte[] address) {
+    public boolean contains(@Nonnull final byte[] address) {
         if (address.length * 8 != addressLength) {
             return false;
         }
@@ -226,7 +237,7 @@ public class IPRange {
      * 
      * @return the BitSet
      */
-    protected BitSet toBitSet(final byte[] bytes) {
+    @Nonnull protected BitSet toBitSet(@Nonnull final byte[] bytes) {
         final BitSet bits = new BitSet(bytes.length * 8);
 
         for (int i = 0; i < bytes.length * 8; i++) {
@@ -246,7 +257,7 @@ public class IPRange {
      * @param bits {@link BitSet} representing an address
      * @return array of bytes representing the same address
      */
-    private byte[] toByteArray(final BitSet bits) {
+    @Nonnull private byte[] toByteArray(@Nonnull final BitSet bits) {
         final byte[] bytes = new byte[addressLength / 8];
         for (int i = 0; i < addressLength; i++) {
             if (bits.get(i)) {
@@ -260,13 +271,13 @@ public class IPRange {
      * Convert a {@link BitSet} representing an address into an
      * equivalent {@link InetAddress}.
      * 
-     * Returns null for either a null {@link BitSet} or for any
-     * problems encountered by {@link InetAddress}.
+     * <p>Returns null for either a null {@link BitSet} or for any
+     * problems encountered by {@link InetAddress}.</p>
      * 
      * @param bits {@link BitSet} representing an address
      * @return {@link InetAddress} representing the same address
      */
-    private InetAddress toInetAddress(final BitSet bits) {
+    @Nullable private InetAddress toInetAddress(@Nullable final BitSet bits) {
         if (bits == null) {
             return null;
         }
