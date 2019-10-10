@@ -256,10 +256,6 @@ public class SelfSignedCertificateGenerator {
 
     /** Validates the settings. */
     protected void validate() {
-        if (args.keySize > 2048) {
-            log.warn("Key size is greater than 2048, this may cause problems with some JVMs");
-        }
-
         if (args.hostname == null || args.hostname.length() == 0) {
             throw new IllegalArgumentException("A non-empty hostname is required");
         }
