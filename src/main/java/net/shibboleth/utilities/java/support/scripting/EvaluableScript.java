@@ -32,9 +32,11 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.resource.Resource;
 
 import com.google.common.io.Files;
 
@@ -61,7 +63,8 @@ public class EvaluableScript {
      * 
      * @throws ScriptException thrown if the scripting engine supports compilation and the script does not compile
      */
-    public EvaluableScript(@Nonnull @NotEmpty final String engineName, @Nonnull @NotEmpty final String scriptSource)
+    public EvaluableScript(@ParameterName(name="engineName") @Nonnull @NotEmpty final String engineName,
+            @ParameterName(name="scriptSource") @Nonnull @NotEmpty final String scriptSource)
             throws ScriptException {
         scriptLanguage =
                 Constraint.isNotNull(StringSupport.trimOrNull(engineName),
@@ -78,10 +81,53 @@ public class EvaluableScript {
      * 
      * @throws ScriptException thrown if the scripting engine supports compilation and the script does not compile
      */
-    public EvaluableScript(@Nonnull @NotEmpty final String scriptSource) throws ScriptException {
+    public EvaluableScript(@ParameterName(name="scriptSource") @Nonnull @NotEmpty final String scriptSource)
+            throws ScriptException {
         this("javascript", scriptSource);
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param engineName the JSR-223 scripting engine name
+     * @param scriptSource the script source
+     * 
+     * @throws ScriptException thrown if the script source file can not be read or the scripting engine supports
+     *             compilation and the script does not compile
+     *             
+     * @since 8.0.0
+     */
+    public EvaluableScript(@ParameterName(name="engineName") @Nonnull @NotEmpty final String engineName,
+            @ParameterName(name="scriptSource") @Nonnull final Resource scriptSource)
+            throws ScriptException {
+        scriptLanguage = Constraint.isNotNull(StringSupport.trimOrNull(engineName),
+                "Scripting language can not be null or empty");
+        
+        try (final InputStream in =
+                Constraint.isNotNull(scriptSource, "Script source can not be null or empty").getInputStream()) {
+            script = StringSupport.inputStreamToString(in, null);
+        } catch (final IOException e) {
+            throw new ScriptException(e);
+        }
+
+        initialize();
+    }
+
+    /**
+     * Constructor.
+     * 
+     * @param scriptSource the script source
+     * 
+     * @throws ScriptException thrown if the script source file can not be read or the scripting engine supports
+     *             compilation and the script does not compile
+     *             
+     * @since 8.0.0
+     */
+    public EvaluableScript(@ParameterName(name="scriptSource") @Nonnull final Resource scriptSource)
+            throws ScriptException {
+        this("javascript", scriptSource);
+    }
+    
     /**
      * Constructor. The provided stream is <strong>not</strong> closed.
      * 
@@ -90,10 +136,9 @@ public class EvaluableScript {
      * 
      * @throws ScriptException thrown if the script source file can not be read or the scripting engine supports
      *             compilation and the script does not compile
-     * 
-     * 
      */
-    public EvaluableScript(@Nonnull @NotEmpty final String engineName, @Nonnull final InputStream scriptSource)
+    public EvaluableScript(@ParameterName(name="engineName") @Nonnull @NotEmpty final String engineName,
+            @ParameterName(name="scriptSource") @Nonnull final InputStream scriptSource)
             throws ScriptException {
         scriptLanguage =
                 Constraint.isNotNull(StringSupport.trimOrNull(engineName),
@@ -107,6 +152,21 @@ public class EvaluableScript {
 
         initialize();
     }
+    
+    /**
+     * Constructor. The provided stream is <strong>not</strong> closed.
+     * 
+     * @param scriptSource the script source
+     * 
+     * @throws ScriptException thrown if the script source file can not be read or the scripting engine supports
+     *             compilation and the script does not compile
+     * 
+     * @since 8.0.0
+     */
+    public EvaluableScript(@ParameterName(name="scriptSource") @Nonnull final InputStream scriptSource)
+            throws ScriptException {
+        this("javascript", scriptSource);
+    }
 
     /**
      * Constructor.
@@ -117,7 +177,8 @@ public class EvaluableScript {
      * @throws ScriptException thrown if the script source file can not be read or the scripting engine supports
      *             compilation and the script does not compile
      */
-    public EvaluableScript(@Nonnull @NotEmpty final String engineName, @Nonnull final File scriptSource)
+    public EvaluableScript(@ParameterName(name="engineName") @Nonnull @NotEmpty final String engineName,
+            @ParameterName(name="scriptSource") @Nonnull final File scriptSource)
             throws ScriptException {
         scriptLanguage =
                 Constraint.isNotNull(StringSupport.trimOrNull(engineName),
@@ -145,7 +206,22 @@ public class EvaluableScript {
 
         initialize();
     }
-
+    
+    /**
+     * Constructor.
+     * 
+     * @param scriptSource the script source
+     * 
+     * @throws ScriptException thrown if the script source file can not be read or the scripting engine supports
+     *             compilation and the script does not compile
+     *             
+     * @since 8.0.0
+     */
+    public EvaluableScript(@ParameterName(name="scriptSource") @Nonnull final File scriptSource)
+            throws ScriptException {
+        this("javascript", scriptSource);
+    }
+    
     /**
      * Gets the script source.
      * 
@@ -212,4 +288,5 @@ public class EvaluableScript {
             compiledScript = null;
         }
     }
+    
 }
