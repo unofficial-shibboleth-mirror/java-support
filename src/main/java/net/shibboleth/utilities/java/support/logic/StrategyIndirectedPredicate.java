@@ -25,6 +25,8 @@ import javax.annotation.Nullable;
 
 import com.google.common.base.Predicates;
 
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
+
 /**
  * Generic predicate that checks a candidate {@link Object} returned by a lookup function
  * against an injected predicate.
@@ -46,8 +48,9 @@ public class StrategyIndirectedPredicate<T1,T2> implements Predicate<T1> {
      * @param objectStrategy  lookup strategy for object
      * @param pred the predicate to apply
      */
-    public StrategyIndirectedPredicate(@Nonnull final Function<T1,T2> objectStrategy,
-            @Nonnull final java.util.function.Predicate<T2> pred) {
+    public StrategyIndirectedPredicate(
+            @ParameterName(name="objectStrategy") @Nonnull final Function<T1,T2> objectStrategy,
+            @ParameterName(name="pred") @Nonnull final java.util.function.Predicate<T2> pred) {
         objectLookupStrategy = Constraint.isNotNull(objectStrategy, "Object lookup strategy cannot be null");
         predicate = Constraint.isNotNull(pred, "Predicate cannot be null");
     }
@@ -59,8 +62,9 @@ public class StrategyIndirectedPredicate<T1,T2> implements Predicate<T1> {
      * @param objectStrategy  lookup strategy for object
      * @param collection a collection to test for containment
      */
-    public StrategyIndirectedPredicate(@Nonnull final Function<T1,T2> objectStrategy,
-            @Nonnull final Collection<T2> collection) {
+    public StrategyIndirectedPredicate(
+            @ParameterName(name="objectStrategy") @Nonnull final Function<T1,T2> objectStrategy,
+            @ParameterName(name="collection") @Nonnull final Collection<T2> collection) {
         objectLookupStrategy = Constraint.isNotNull(objectStrategy, "Object lookup strategy cannot be null");
         predicate = Predicates.in(collection);
     }
