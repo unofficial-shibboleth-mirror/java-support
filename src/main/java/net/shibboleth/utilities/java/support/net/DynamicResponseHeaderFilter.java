@@ -19,10 +19,10 @@ package net.shibboleth.utilities.java.support.net;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -38,9 +38,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
-
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.collection.Pair;
@@ -93,7 +90,7 @@ public class DynamicResponseHeaderFilter implements Filter {
     public void setCallbacks(@Nullable @NonnullElements
             final Collection<Function<Pair<HttpServletRequest,HttpServletResponse>,Boolean>> theCallbacks) {
         if (theCallbacks != null) {
-            callbacks = new ArrayList<>(Collections2.filter(theCallbacks, Predicates.notNull()));
+            callbacks = List.copyOf(theCallbacks);
         } else {
             callbacks = Collections.emptyList();
         }
