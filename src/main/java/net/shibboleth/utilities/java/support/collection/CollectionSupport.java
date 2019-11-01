@@ -18,22 +18,12 @@
 package net.shibboleth.utilities.java.support.collection;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-
-import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
-import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /** Helper methods for working with collections of objects. */
@@ -43,62 +33,6 @@ public final class CollectionSupport {
     private CollectionSupport() {
 
     }
-    
-    /**
-     * Builds an immutable list containing the source collection, allowing for a null collection.
-     * 
-     * @param <T> source type
-     * @param source objects to populate into list, or null
-     * 
-     * @return An immutable list containing the source objects
-     * 
-     * @since 8.0.0
-     */
-    @Nonnull @NotLive @Unmodifiable public static <T> List<T> buildImmutableList(
-            @Nullable final Collection<? extends T> source) {
-        if (source != null) {
-            return ImmutableList.copyOf(source);
-        }
-        return Collections.emptyList();
-    }
-
-    /**
-     * Builds an immutable set containing the source collection, allowing for a null collection.
-     * 
-     * @param <T> source type
-     * @param source objects to populate into set, or null
-     * 
-     * @return An immutable set containing the source objects
-     * 
-     * @since 8.0.0
-     */
-    @Nonnull @NotLive @Unmodifiable public static <T> Set<T> buildImmutableSet(
-            @Nullable final Collection<? extends T> source) {
-        if (source != null) {
-            return ImmutableSet.copyOf(source);
-        }
-        return Collections.emptySet();
-    }    
-
-    /**
-     * Builds an immutable set containing the source collection, allowing for a null collection.
-     * 
-     * @param <K> key type
-     * @param <V> value type
-     * @param source objects to populate into map, or null
-     * 
-     * @return An immutable map containing the source objects
-     * 
-     * @since 8.0.0
-     */
-    @Nonnull @NotLive @Unmodifiable public static <K,V> Map<K,V> buildImmutableMap(
-            @Nullable final Map<? extends K, ? extends V> source) {
-        if (source != null) {
-            return ImmutableMap.copyOf(source);
-        }
-        return Collections.emptyMap();
-    }    
-    
 
     /**
      * Adds an element to a collection if it meets the requirements of a given predicate.
