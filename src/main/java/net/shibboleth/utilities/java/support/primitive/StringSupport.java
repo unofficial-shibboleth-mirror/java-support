@@ -176,7 +176,7 @@ public final class StringSupport {
             return Collections.emptySet();
         }
         
-        return values.stream().map(StringSupport::trimOrNull).filter(e->e != null).collect(Collectors.toSet());
+        return values.stream().map(StringSupport::trimOrNull).filter(e->e != null).collect(Collectors.toList());
     }
 
     /** Null/empty preserving conversion from xs:boolean to {@link Boolean}.
