@@ -173,7 +173,7 @@ public final class StringSupport {
     @Nonnull @NonnullElements public static Collection<String> normalizeStringCollection(
             @Nullable @NullableElements final Collection<String> values) {
         if (values == null) {
-            return Collections.emptySet();
+            return Collections.emptyList();
         }
         
         return values.stream().map(StringSupport::trimOrNull).filter(e->e != null).collect(Collectors.toList());
