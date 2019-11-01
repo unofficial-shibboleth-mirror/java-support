@@ -29,18 +29,15 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
-import net.shibboleth.utilities.java.support.logic.TrimOrNullStringFunction;
 
 /** String utility methods. */
 public final class StringSupport {
@@ -179,8 +176,7 @@ public final class StringSupport {
             return Collections.emptySet();
         }
         
-        return Collections2.filter(Collections2.transform(values, TrimOrNullStringFunction.INSTANCE::apply),
-                Predicates.notNull());
+        return values.stream().map(StringSupport::trimOrNull).filter(e->e != null).collect(Collectors.toSet());
     }
 
     /** Null/empty preserving conversion from xs:boolean to {@link Boolean}.
