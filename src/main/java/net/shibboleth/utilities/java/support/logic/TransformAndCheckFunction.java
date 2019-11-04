@@ -18,13 +18,13 @@
 package net.shibboleth.utilities.java.support.logic;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Optional;
 
 /**
  * A {@link Function} that receives an input, runs it through a pre-processor and checks the result against a
@@ -76,7 +76,7 @@ public class TransformAndCheckFunction<T> implements Function<T, Optional<? exte
             throw new IllegalArgumentException(input + " does not meet constraint");
         }
         
-        return Optional.absent();
+        return Optional.empty();
     }
 
     /** {@inheritDoc} */

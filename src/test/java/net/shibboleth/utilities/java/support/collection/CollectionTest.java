@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.function.Function;
 
 import net.shibboleth.utilities.java.support.logic.TransformAndCheckFunction;
@@ -29,7 +30,6 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Functions;
-import com.google.common.base.Optional;
 import com.google.common.base.Predicates;
 
 /**

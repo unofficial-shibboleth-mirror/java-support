@@ -19,11 +19,10 @@ package net.shibboleth.utilities.java.support.logic;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 import org.testng.annotations.Test;
-
-import com.google.common.base.Optional;
 
 /**
  * Test for {@link TransformAndCheckFunction}.
