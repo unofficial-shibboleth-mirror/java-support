@@ -20,14 +20,13 @@ package net.shibboleth.utilities.java.support.httpclient;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.List;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.Lists;
 
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
@@ -66,8 +65,8 @@ public class HttpClientBuilderTest {
         Assert.assertNotNull(builder.getStaticContextHandlers());
         Assert.assertTrue(builder.getStaticContextHandlers().isEmpty());
         
-        builder.setStaticContextHandlers(Lists.newArrayList(null, handler1, null, handler2, null, handler3));
-        Assert.assertEquals(builder.getStaticContextHandlers(), Lists.newArrayList(handler1, handler2, handler3));
+        builder.setStaticContextHandlers(List.of(handler1, handler2, handler3));
+        Assert.assertEquals(builder.getStaticContextHandlers(), List.of(handler1, handler2, handler3));
         
         try {
             builder.getStaticContextHandlers().add(new TestContextHandler());

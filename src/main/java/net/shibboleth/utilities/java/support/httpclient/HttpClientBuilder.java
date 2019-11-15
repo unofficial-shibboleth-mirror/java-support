@@ -20,7 +20,6 @@ package net.shibboleth.utilities.java.support.httpclient;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -42,14 +41,9 @@ import org.apache.http.conn.socket.LayeredConnectionSocketFactory;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.util.CharsetUtils;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
-
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.collection.IterableSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -240,19 +234,19 @@ public class HttpClientBuilder {
     private boolean useSystemProperties;
 
     /** List of request interceptors to add first. */
-    @Nonnull @NonnullElements private List<HttpRequestInterceptor> requestInterceptorsFirst;
+    @Nonnull @NonnullElements @Unmodifiable @NotLive private List<HttpRequestInterceptor> requestInterceptorsFirst;
 
     /** List of request interceptors to add last. */
-    @Nonnull @NonnullElements private List<HttpRequestInterceptor> requestInterceptorsLast;
+    @Nonnull @NonnullElements @Unmodifiable @NotLive private List<HttpRequestInterceptor> requestInterceptorsLast;
 
     /** List of response interceptors to add first. */
-    @Nonnull @NonnullElements private List<HttpResponseInterceptor> responseInterceptorsFirst;
+    @Nonnull @NonnullElements @Unmodifiable @NotLive private List<HttpResponseInterceptor> responseInterceptorsFirst;
 
     /** List of response interceptors to add last. */
-    @Nonnull @NonnullElements private List<HttpResponseInterceptor> responseInterceptorsLast;
+    @Nonnull @NonnullElements @Unmodifiable @NotLive private List<HttpResponseInterceptor> responseInterceptorsLast;
     
     /** List of static context handlers. */
-    @Nonnull @NonnullElements private List<HttpClientContextHandler> staticContextHandlers;
+    @Nonnull @NonnullElements @Unmodifiable @NotLive private List<HttpClientContextHandler> staticContextHandlers;
 
     /** The Apache HttpClientBuilder 4.3+ instance over which to layer this builder. */
     private org.apache.http.impl.client.HttpClientBuilder apacheBuilder;
@@ -863,7 +857,7 @@ public class HttpClientBuilder {
      */
     @Nonnull @NonnullElements @NotLive @Unmodifiable
     public List<HttpRequestInterceptor> getFirstRequestInterceptors() {
-        return ImmutableList.copyOf(requestInterceptorsFirst);
+        return requestInterceptorsFirst;
     }
     
     /**
@@ -871,8 +865,13 @@ public class HttpClientBuilder {
      * 
      * @param interceptors the list of interceptors, may be null
      */
-    public void setFirstRequestInterceptors(@Nullable final List<HttpRequestInterceptor> interceptors) {
-        requestInterceptorsFirst = (List<HttpRequestInterceptor>) normalizeList(interceptors);
+    public void setFirstRequestInterceptors(
+            @Nullable @NonnullElements final List<HttpRequestInterceptor> interceptors) {
+        if (interceptors != null) {
+            requestInterceptorsFirst = List.copyOf(interceptors);
+        } else {
+            requestInterceptorsFirst = Collections.emptyList();
+        }
     }
 
     /**
@@ -882,7 +881,7 @@ public class HttpClientBuilder {
      */
     @Nonnull @NonnullElements @NotLive @Unmodifiable
     public List<HttpRequestInterceptor> getLastRequestInterceptors() {
-        return ImmutableList.copyOf(requestInterceptorsLast);
+        return requestInterceptorsLast;
     }
 
     /**
@@ -890,8 +889,12 @@ public class HttpClientBuilder {
      * 
      * @param interceptors the list of interceptors, may be null
      */
-    public void setLastRequestInterceptors(@Nullable final List<HttpRequestInterceptor> interceptors) {
-        requestInterceptorsLast = normalizeList(interceptors);
+    public void setLastRequestInterceptors(@Nullable @NonnullElements final List<HttpRequestInterceptor> interceptors) {
+        if (interceptors != null) {
+            requestInterceptorsLast = List.copyOf(interceptors);
+        } else {
+            requestInterceptorsLast = Collections.emptyList();
+        }
     }
 
     /**
@@ -901,7 +904,7 @@ public class HttpClientBuilder {
      */
     @Nonnull @NonnullElements @NotLive @Unmodifiable
     public List<HttpResponseInterceptor> getFirstResponseInterceptors() {
-        return ImmutableList.copyOf(responseInterceptorsFirst);
+        return responseInterceptorsFirst;
     }
 
     /**
@@ -909,8 +912,13 @@ public class HttpClientBuilder {
      * 
      * @param interceptors the list of interceptors, may be null
      */
-    public void setFirstResponseInterceptors(@Nullable final List<HttpResponseInterceptor> interceptors) {
-        responseInterceptorsFirst = normalizeList(interceptors);
+    public void setFirstResponseInterceptors(
+            @Nullable @NonnullElements final List<HttpResponseInterceptor> interceptors) {
+        if (interceptors != null) {
+            responseInterceptorsFirst = List.copyOf(interceptors);
+        } else {
+            responseInterceptorsFirst = Collections.emptyList();
+        }
     }
 
     /**
@@ -920,7 +928,7 @@ public class HttpClientBuilder {
      */
     @Nonnull @NonnullElements @NotLive @Unmodifiable
     public List<HttpResponseInterceptor> getLastResponseInterceptors() {
-        return ImmutableList.copyOf(responseInterceptorsLast);
+        return responseInterceptorsLast;
     }
 
     /**
@@ -928,8 +936,13 @@ public class HttpClientBuilder {
      * 
      * @param interceptors the list of interceptors, may be null
      */
-    public void setLastResponseInterceptors(@Nullable final List<HttpResponseInterceptor> interceptors) {
-        responseInterceptorsLast = normalizeList(interceptors);
+    public void setLastResponseInterceptors(
+            @Nullable @NonnullElements final List<HttpResponseInterceptor> interceptors) {
+        if (interceptors != null) {
+            responseInterceptorsLast = List.copyOf(interceptors);
+        } else {
+            responseInterceptorsLast = Collections.emptyList();
+        }
     }
 
     /**
@@ -939,31 +952,19 @@ public class HttpClientBuilder {
      */
     @Nonnull @NonnullElements @NotLive @Unmodifiable
     public List<HttpClientContextHandler> getStaticContextHandlers() {
-        return ImmutableList.copyOf(staticContextHandlers);
+        return staticContextHandlers;
     }
 
     /**
      * Set the list of static {@link HttpClientContextHandler}.
      * 
-     * @param handlers the list of handlers , may be null
+     * @param handlers the list of handlers, may be null
      */
-    public void setStaticContextHandlers(@Nullable final List<HttpClientContextHandler> handlers) {
-        staticContextHandlers = normalizeList(handlers);
-    }
-
-    /**
-     * Normalize and copy the supplied list to remove nulls.
-     * 
-     * @param <T> type of collection to normalize
-     * 
-     * @param items the list of items to normalize
-     * @return copy of input list without nulls
-     */
-    @Nonnull @NonnullElements private <T> List<T> normalizeList(@Nullable final List<T> items) {
-        if (items == null) {
-            return Collections.emptyList();
+    public void setStaticContextHandlers(@Nullable @NonnullElements final List<HttpClientContextHandler> handlers) {
+        if (handlers != null) {
+            staticContextHandlers = List.copyOf(handlers);
         } else {
-            return new ArrayList<>(Collections2.filter(items, Predicates.notNull()));
+            staticContextHandlers = Collections.emptyList();
         }
     }
 
@@ -998,9 +999,8 @@ public class HttpClientBuilder {
         }
 
         if (connectionCloseAfterResponse) {
-            if (!IterableSupport.containsInstance(getFirstRequestInterceptors(), RequestConnectionClose.class)
-                    && !IterableSupport.containsInstance(getLastRequestInterceptors(), RequestConnectionClose.class)) {
-                
+            if (!getFirstRequestInterceptors().stream().anyMatch(RequestConnectionClose.class::isInstance)
+                    && !getLastRequestInterceptors().stream().anyMatch(RequestConnectionClose.class::isInstance)) {
                 builder.addInterceptorLast(new RequestConnectionClose());
             }
         }
@@ -1052,21 +1052,10 @@ public class HttpClientBuilder {
             builder.useSystemProperties();
         }
 
-        for (final HttpRequestInterceptor interceptor : getFirstRequestInterceptors()) {
-            builder.addInterceptorFirst(interceptor);
-        }
-
-        for (final HttpRequestInterceptor interceptor : getLastRequestInterceptors()) {
-            builder.addInterceptorLast(interceptor);
-        }
-
-        for (final HttpResponseInterceptor interceptor : getFirstResponseInterceptors()) {
-            builder.addInterceptorFirst(interceptor);
-        }
-
-        for (final HttpResponseInterceptor interceptor : getLastResponseInterceptors()) {
-            builder.addInterceptorLast(interceptor);
-        }
+        getFirstRequestInterceptors().forEach(builder::addInterceptorFirst);
+        getLastRequestInterceptors().forEach(builder::addInterceptorLast);
+        getFirstResponseInterceptors().forEach(builder::addInterceptorFirst);
+        getLastResponseInterceptors().forEach(builder::addInterceptorLast);
 
         // RequestConfig params
         final RequestConfig.Builder requestConfigBuilder = RequestConfig.custom();
