@@ -17,12 +17,9 @@
 
 package net.shibboleth.utilities.java.support.net;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 import com.google.common.net.MediaType;
 
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -80,11 +77,7 @@ public final class MediaTypeSupport {
             }
             
             final MediaType mediaType = MediaType.parse(contentTypeValue).withoutParameters();
-            final Set<MediaType> validTypesWithoutParameters = new HashSet<>();
-            validTypesWithoutParameters.addAll(Collections2.filter(
-                    Collections2.transform(validTypes, STRIP_PARAMS::apply), 
-                    Predicates.notNull()));
-            return validTypesWithoutParameters.contains(mediaType);
+            return validTypes.stream().map(STRIP_PARAMS).filter(t -> t != null).anyMatch(mediaType::equals);
         }
         
         return noContentTypeIsValid;

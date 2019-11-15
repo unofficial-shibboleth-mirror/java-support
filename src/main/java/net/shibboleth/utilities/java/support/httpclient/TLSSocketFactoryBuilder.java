@@ -23,6 +23,7 @@ import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -33,9 +34,6 @@ import javax.net.ssl.TrustManager;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.apache.http.conn.ssl.X509HostnameVerifier;
-
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 
 /**
  * A builder for instances of {@link TLSSocketFactory} which allows easy specification
@@ -146,7 +144,7 @@ public class TLSSocketFactoryBuilder {
         if (managers == null) {
             keyManagers = null;
         } else {
-            keyManagers = new ArrayList<>(Collections2.filter(managers, Predicates.notNull()));
+            keyManagers = managers.stream().filter(m -> m != null).collect(Collectors.toList());
             if (keyManagers.isEmpty()) {
                 keyManagers = null;
             }
@@ -176,7 +174,7 @@ public class TLSSocketFactoryBuilder {
         if (managers == null) {
             trustManagers = null;
         } else {
-            trustManagers = new ArrayList<>(Collections2.filter(managers, Predicates.notNull()));
+            trustManagers = managers.stream().filter(m -> m != null).collect(Collectors.toList());
             if (trustManagers.isEmpty()) {
                 trustManagers = null;
             }
