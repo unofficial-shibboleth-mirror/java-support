@@ -101,7 +101,7 @@ public final class Constraint {
 
         return number;
     }
-
+    
     /**
      * Checks that the given number is less than a given threshold. If the number is not less than the threshold a
      * {@link ConstraintViolationException} is thrown.
@@ -135,6 +135,86 @@ public final class Constraint {
             throw new ConstraintViolationException(message);
         }
         
+        return number;
+    }
+
+    /**
+     * Checks that the given number is greater than a given threshold. If the number is not greater than the threshold
+     * a {@link ConstraintViolationException} is thrown.
+     *
+     * @param threshold the threshold
+     * @param number the number to be checked
+     * @param message message used in the {@link ConstraintViolationException}
+     *
+     * @return the checked input
+     * 
+     * @since 8.0.0
+     */
+    public static int isGreaterThan(final int threshold, final int number, @Nonnull final String message) {
+        if (number <= threshold) {
+            throw new ConstraintViolationException(message);
+        }
+
+        return number;
+    }
+
+    /**
+     * Checks that the given number is greater than, or equal to, a given threshold. If the number is not greater than,
+     * or equal to, the threshold a {@link ConstraintViolationException} is thrown.
+     * 
+     * @param threshold the threshold
+     * @param number the number to be checked
+     * @param message message used in the {@link ConstraintViolationException}
+     * 
+     * @return the checked input
+     * 
+     * @since 8.0.0
+     */
+    public static int isGreaterThanOrEqual(final int threshold, final int number, @Nonnull final String message) {
+        if (number < threshold) {
+            throw new ConstraintViolationException(message);
+        }
+
+        return number;
+    }
+
+    /**
+     * Checks that the given number is less than a given threshold. If the number is not less than the threshold a
+     * {@link ConstraintViolationException} is thrown.
+     *
+     * @param threshold the threshold
+     * @param number the number to be checked
+     * @param message message used in the {@link ConstraintViolationException}
+     *
+     * @return the checked input
+     * 
+     * @since 8.0.0
+     */
+    public static int isLessThan(final int threshold, final int number, @Nonnull final String message) {
+        if (number >= threshold) {
+            throw new ConstraintViolationException(message);
+        }
+
+        return number;
+    }
+
+    /**
+     * Checks that the given number is less than, or equal to, a given threshold. If the number is not less than, or
+     * equal to, the threshold a {@link ConstraintViolationException} is thrown.
+     *
+     * @param threshold the threshold
+     * @param number the number to be checked
+     * @param message message used in the {@link ConstraintViolationException}
+     *
+     * @return the checked input
+     * 
+     * @since 8.0.0
+     */
+    public static int isLessThanOrEqual(final int threshold, final int number, @Nonnull final String message) {
+        if(number > threshold){
+            throw new ConstraintViolationException(message);
+        }
+
         return number;
     }
 
