@@ -29,7 +29,7 @@ import com.google.common.base.MoreObjects;
 /**
  * A {@link Function} that receives an input, runs it through a pre-processor and checks the result against a
  * constraint. If the constraint matches that value is returned, wrapped in an {@link Optional}. If the constraint is
- * not met and {@link #failOnConstraintViolation} is false then {@link Optional#absent()} is returned. If the constraint
+ * not met and {@link #failOnConstraintViolation} is false then {@link Optional#empty()} is returned. If the constraint
  * is not met and {@link #failOnConstraintViolation} is true then an {@link IllegalArgumentException} is thrown.
  * 
  * @param <T> type of input accepted by this function
