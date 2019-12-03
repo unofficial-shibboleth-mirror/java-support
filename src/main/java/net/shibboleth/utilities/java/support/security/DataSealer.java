@@ -247,7 +247,7 @@ public class DataSealer extends AbstractInitializableComponent {
         } catch (final KeyException e) {
             log.error(e.getMessage());
             throw new DataSealerException("Exception loading key", e);
-        } catch (final GeneralSecurityException | IOException | DecoderException e) {
+        } catch (final GeneralSecurityException | IOException | DecoderException | IllegalArgumentException e) {
             log.error("Exception unwrapping data", e);
             throw new DataSealerException("Exception unwrapping data", e);
         }
