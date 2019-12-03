@@ -34,6 +34,7 @@ public final class ObjectSupport {
      * 
      * @return the hash code for the object of 0 if the given object is null
      */
+    @Deprecated(forRemoval=true)
     public static int hashCode(@Nullable final Object o) {
         if (o == null) {
             return 0;
@@ -59,6 +60,7 @@ public final class ObjectSupport {
      * @return the first non-null argument, or null if all arguments are null
      * 
      */
+    @SafeVarargs
     @Nullable public static <T> T firstNonNull(@Nullable final T ... objects) {
         if (objects == null) {
             return null;
