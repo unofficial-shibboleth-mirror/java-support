@@ -55,8 +55,6 @@ import net.shibboleth.utilities.java.support.net.SameSiteCookieHeaderFilter.Same
 
 /**
  * Tests for {@link SameSiteCookieHeaderFilter}.
- * 
- * TODO: tests depend on a fixed spring-test module expected in 5.2
  */
 public class SameSiteCookieHeaderFilterTest {
 
@@ -98,7 +96,7 @@ public class SameSiteCookieHeaderFilterTest {
     }
     
     /** Test an empty cookie name is not added to the internal map.*/
-    @Test(enabled=false) public void testEmptyCookieNameInitValue() {
+    @Test public void testEmptyCookieNameInitValue() {
         SameSiteCookieHeaderFilter filter = new SameSiteCookieHeaderFilter();
         Map<SameSiteValue,List<String>> cookies = new HashMap<>();
         List<String> noneCookies = Arrays.asList(new String[] {""});
@@ -109,8 +107,7 @@ public class SameSiteCookieHeaderFilterTest {
     }
    
     /** Test the correct number of cookies are added to the internal filter cookie map.*/
-    @Test(enabled=false) public void testInitValues() {
-        
+    @Test public void testInitValues() {
         SameSiteCookieHeaderFilter filter = new SameSiteCookieHeaderFilter();
         Map<SameSiteValue,List<String>> cookies = new HashMap<>();
         List<String> noneCookies = Arrays.asList(new String[] {"JSESSIONID","shib_idp_session","shib_idp_session_ss","existing_same_site"});
@@ -125,8 +122,7 @@ public class SameSiteCookieHeaderFilterTest {
     }
     
     /** Test failure on duplicated cookie names*/
-    @Test(enabled=false,expectedExceptions=IllegalArgumentException.class) public void testDuplicateInitValues() {
-        
+    @Test(expectedExceptions=IllegalArgumentException.class) public void testDuplicateInitValues() {
         SameSiteCookieHeaderFilter filter = new SameSiteCookieHeaderFilter();
         Map<SameSiteValue,List<String>> cookies = new HashMap<>();
         List<String> noneCookies = Arrays.asList(new String[] {"JSESSIONID","shib_idp_session","shib_idp_session_ss","existing_same_site"});
@@ -138,7 +134,7 @@ public class SameSiteCookieHeaderFilterTest {
     
     /** Test empty SameSite cookie map, which should not trigger an exception, and just copy over the
      * existing cookies. */
-    @Test(enabled=false) public void testEmptySameSiteCookieMap() throws IOException, ServletException {
+    @Test public void testEmptySameSiteCookieMap() throws IOException, ServletException {
         
         SameSiteCookieHeaderFilter filter = new SameSiteCookieHeaderFilter();
         filter.setSameSiteCookies(null);
@@ -157,7 +153,7 @@ public class SameSiteCookieHeaderFilterTest {
     
     /** Test empty SameSite cookie map, which should not trigger an exception, and should apply
      * a default. */
-    @Test(enabled=false) public void testEmptySameSiteCookieMapWithDefault() throws IOException, ServletException {
+    @Test public void testEmptySameSiteCookieMapWithDefault() throws IOException, ServletException {
         
         SameSiteCookieHeaderFilter filter = new SameSiteCookieHeaderFilter();
         filter.setSameSiteCookies(null);
@@ -180,7 +176,7 @@ public class SameSiteCookieHeaderFilterTest {
     }
 
     /** Test the samesite filter works correctly with None values when a redirect response is issued. */
-    @Test(enabled=false) public void testRedirectResponseSameSiteNone() throws IOException, ServletException {
+    @Test public void testRedirectResponseSameSiteNone() throws IOException, ServletException {
        
         SameSiteCookieHeaderFilter filter = new SameSiteCookieHeaderFilter();
         Map<SameSiteValue,List<String>> cookies = new HashMap<>();
@@ -201,7 +197,7 @@ public class SameSiteCookieHeaderFilterTest {
     }
 
     /** Test the samesite filter works correctly with None values when a redirect response is issued. */
-    @Test(enabled=false) public void testRedirectResponseSameSiteNoneWithDefault() throws IOException, ServletException {
+    @Test public void testRedirectResponseSameSiteNoneWithDefault() throws IOException, ServletException {
        
         SameSiteCookieHeaderFilter filter = new SameSiteCookieHeaderFilter();
         Map<SameSiteValue,List<String>> cookies = new HashMap<>();
@@ -223,7 +219,7 @@ public class SameSiteCookieHeaderFilterTest {
     }
     
     /** Test the samesite filter works correctly with Lax values when a redirect response is issued. */
-    @Test(enabled=false) public void testRedirectResponseSameSiteLax() throws IOException, ServletException {
+    @Test public void testRedirectResponseSameSiteLax() throws IOException, ServletException {
        
         SameSiteCookieHeaderFilter filter = new SameSiteCookieHeaderFilter();
         Map<SameSiteValue,List<String>> cookies = new HashMap<>();
@@ -245,7 +241,7 @@ public class SameSiteCookieHeaderFilterTest {
     }
     
     /** Test the samesite filter works correctly with Strict values when a redirect response is issued. */
-    @Test(enabled=false) public void testRedirectResponseSameSiteStrict() throws IOException, ServletException {
+    @Test public void testRedirectResponseSameSiteStrict() throws IOException, ServletException {
         
         SameSiteCookieHeaderFilter filter = new SameSiteCookieHeaderFilter();
         Map<SameSiteValue,List<String>> cookies = new HashMap<>();
@@ -267,7 +263,7 @@ public class SameSiteCookieHeaderFilterTest {
     }
 
     /** Test the samesite filter works correctly when an output stream is written to and flushed. */
-    @Test(enabled=false) public void testGetOutputStreamResponse() throws IOException, ServletException {
+    @Test public void testGetOutputStreamResponse() throws IOException, ServletException {
         
         SameSiteCookieHeaderFilter filter = new SameSiteCookieHeaderFilter();
         Map<SameSiteValue,List<String>> cookies = new HashMap<>();
@@ -288,7 +284,7 @@ public class SameSiteCookieHeaderFilterTest {
     }
     
     /** Test the samesite filter works correctly when the response print writer is written to and closed.*/
-    @Test(enabled=false) public void testPrintWriterResponse() throws IOException, ServletException {
+    @Test public void testPrintWriterResponse() throws IOException, ServletException {
         
         SameSiteCookieHeaderFilter filter = new SameSiteCookieHeaderFilter();
         Map<SameSiteValue,List<String>> cookies = new HashMap<>();
