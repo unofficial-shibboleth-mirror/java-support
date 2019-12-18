@@ -26,11 +26,14 @@ import java.net.URL;
 import javax.annotation.Nonnull;
 
 /**
- * An interface representing a data resource. This is API compatible with the spring Resource
- * http://docs.spring.io/spring/docs/2.5.x/api/org/springframework/core/io/Resource.html but allows Resource consuming
- * code to not require Spring.<br/>
- * Shibboleth components only implement this interface if they also implement the Spring Resource interface. Refer to
- * the Spring documentation to implement other versions of this in a spring free environment.
+ * An interface representing a data resource.
+ *
+ * <p>This is API-compatible with the
+ * <a href="http://docs.spring.io/spring/docs/2.5.x/api/org/springframework/core/io/Resource.html">Spring
+ * <code>Resource</code></a> but allows <code>Resource</code>-consuming code to not require Spring.</p>
+ *
+ * <p>Shibboleth components only implement this interface if they also implement the Spring <code>Resource</code>
+ * interface. Refer to the Spring documentation to implement other versions of this in a Spring-free environment.</p>
  * */
 public interface Resource {
 

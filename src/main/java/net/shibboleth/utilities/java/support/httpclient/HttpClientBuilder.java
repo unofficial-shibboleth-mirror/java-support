@@ -136,10 +136,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
  * </li>
  * 
  * </ul>
- * 
- * </p>
- * 
- * */
+ */
 public class HttpClientBuilder {
 
     /** Local IP address used when establishing connections. Default value: system default local address */

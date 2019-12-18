@@ -16,9 +16,9 @@
  */
 
 /**
- * Service support for Shibboleth projects.<br/>
- * A service is something reloads instances of serviceable components.
- * 
+ * Service support for Shibboleth projects.
+ *
+ * <p>A service is something that reloads instances of serviceable components.</p>
  */
 
 package net.shibboleth.utilities.java.support.service;

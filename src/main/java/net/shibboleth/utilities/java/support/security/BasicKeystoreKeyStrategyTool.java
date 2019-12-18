@@ -211,7 +211,7 @@ public class BasicKeystoreKeyStrategyTool {
      * 
      * @param args  command line arguments
      * 
-     * @throws Exception 
+     * @throws Exception if something goes wrong
      */
     public static void main(@Nonnull final String[] args) throws Exception {
     
@@ -234,7 +234,7 @@ public class BasicKeystoreKeyStrategyTool {
         /**
          * Constructor.
          *
-         * @param optionName 
+         * @param optionName name of the option
          */
         public FileConverter(final String optionName) {
             super(optionName);

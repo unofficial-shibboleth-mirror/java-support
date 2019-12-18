@@ -182,11 +182,12 @@ public final class URISupport {
     
     /**
      * Create a file: URI from an absolute path, dealing with the Windows, non leading "/" issue.
-     * <br/>
-     * Windows absolute paths have a habit of starting with a "DosDeviceName" (such as <code>C:\absolute\path</code>
+     *
+     * <p>Windows absolute paths have a habit of starting with a "DosDeviceName" (such as <code>C:\absolute\path</code>
      * if we blindly convert that to a file URI by prepending "file://", then we end up with a URI which has "C:" as 
      * the network segment.  So if we need to have an absolute file path based URI (JAAS is the example) we call this
-     * method which hides the hideous implementation
+     * method which hides the hideous implementation.</p>
+     *
      * @param path the absolute file path to convert
      * @return a suitable URI
      * @throws URISyntaxException if the URI contructor fails

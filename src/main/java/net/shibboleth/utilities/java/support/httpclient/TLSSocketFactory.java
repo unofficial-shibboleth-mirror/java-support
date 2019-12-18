@@ -56,13 +56,14 @@ import org.slf4j.LoggerFactory;
  * <p>
  * This class is functionally modeled on {@link org.apache.http.conn.ssl.SSLConnectionSocketFactory},
  * but provides better support for subclassing, as well as specific additional features:
+ * </p>
+ *
  * <ul>
  *   <li>Factory hostname verifier defaults to {@link StrictHostnameVerifier} rather than 
  *       {@link BrowserCompatHostnameVerifier}</li>
  *   <li>Per-request specification of enabled TLS protocols and cipher suites via {@link HttpContext} attributes.</li>
  *   <li>Per-request specification of hostname verifier via {@link HttpContext} attribute.</li>
  * </ul>
- * </p> 
  */
 @ThreadSafe
 public class TLSSocketFactory implements LayeredConnectionSocketFactory {

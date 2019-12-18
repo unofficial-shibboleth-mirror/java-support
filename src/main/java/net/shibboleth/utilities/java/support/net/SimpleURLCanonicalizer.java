@@ -33,16 +33,11 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 /**
  * This class performs simple canonicalization of a URL as follows:
  * 
- * <p>
  * <ul>
  *   <li>The scheme is lower-cased.</li>
  *   <li>The hostname is lower-cased</li>
  *   <li>The port is removed if it is the default port registered for the scheme</li>
  * </ul>
- * </p>
- * 
- * <p>
- * </p>
  */
 public final class SimpleURLCanonicalizer {
     

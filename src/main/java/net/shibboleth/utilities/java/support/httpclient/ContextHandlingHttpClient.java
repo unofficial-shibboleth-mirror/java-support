@@ -55,6 +55,8 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
  * 
  * <p>
  * The order of execution is:
+ * </p>
+ * 
  * <ol>
  * <li>Static handlers supplied via the constructor, in original list order</li>
  * <li>Dynamic handlers from the context attribute {@link HttpClientSupport#CONTEXT_KEY_DYNAMIC_CONTEXT_HANDLERS},
@@ -64,7 +66,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
  *     in reverse list order</li>
  * <li>Static handlers supplied via the constructor, in reverse list order</li>
  * </ol>
- * </p>
  */
 class ContextHandlingHttpClient extends CloseableHttpClient {
     

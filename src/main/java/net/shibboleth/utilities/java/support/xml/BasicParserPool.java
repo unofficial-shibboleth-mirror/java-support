@@ -680,14 +680,13 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
      * Build the default set of parser features to use.
      * 
      * <p>These will be overriden by a call to {@link #setBuilderFeatures(Map)}.</p>
-     * 
-     * <p>
-     * The default features set are:
+     *
+     * <p>The default features set are:</p>
+     *
      * <ul>
      * <li>{@link javax.xml.XMLConstants#FEATURE_SECURE_PROCESSING} = true</li>
      * <li>http://apache.org/xml/features/disallow-doctype-decl = true</li>
      * </ul>
-     * </p>
      * 
      * @return the default features map
      */

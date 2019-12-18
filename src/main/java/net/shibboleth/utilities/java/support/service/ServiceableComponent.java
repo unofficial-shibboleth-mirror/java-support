@@ -24,8 +24,8 @@ import javax.annotation.Nonnull;
  * 
  * The idea is that the attribute resolver will be
  * <code>
- * public class AttributeResolver extends AbstractServiceableComponent<AttributeResolver> implements
- *  AttributeResolver, ServiceableComponent<ServiceableComponent>.
+ * public class AttributeResolver extends AbstractServiceableComponent&lt;AttributeResolver&gt; implements
+ *  AttributeResolver, ServiceableComponent&lt;ServiceableComponent&gt;.
  *  </code>
  *  AbstractServiceableComponent will do all the work around reload and synchronization.
  *  
@@ -43,8 +43,11 @@ public interface ServiceableComponent<T> {
     
     /**
      * This function takes a lock on the component which guarantees that it will not be disposed until the unpin call
-     * is made.<br/> This method is typically <em>only</em> used during initialization of the component.<br/> 
-     * <em>Every call to {@link #pinComponent()} must be matched by a call to {@link #unpinComponent()}</em>. 
+     * is made.
+     * 
+     * <p>This method is typically <em>only</em> used during initialization of the component.</p>
+     * 
+     * <p><em>Every call to {@link #pinComponent()} must be matched by a call to {@link #unpinComponent()}</em>.</p>
      */
     void pinComponent();
 
@@ -56,8 +59,9 @@ public interface ServiceableComponent<T> {
 
     /**
      * This call will wait for all transient operations to complete and then
-     * calls dispose on the components.  <br/>Implementations should avoid calling
-     * this with locks held.
+     * calls dispose on the components.
+     *
+     * <p>Implementations should avoid calling this with locks held.</p>
      */
     void unloadComponent();
 }

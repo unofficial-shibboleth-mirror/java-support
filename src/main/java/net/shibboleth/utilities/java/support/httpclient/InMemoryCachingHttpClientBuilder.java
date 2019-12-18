@@ -38,6 +38,7 @@ import org.apache.http.impl.client.cache.HeapResourceFactory;
  * <p>
  * When using the single-arg constructor variant to wrap an existing instance of
  * {@link CachingHttpClientBuilder}, there are several caveats of which to be aware:
+ * </p>
  * 
  * <ul>
  * 
@@ -62,8 +63,6 @@ import org.apache.http.impl.client.cache.HeapResourceFactory;
  * </li>
  * 
  * </ul>
- * 
- * </p>
  */
 public class InMemoryCachingHttpClientBuilder extends HttpClientBuilder {
 

@@ -39,7 +39,9 @@ public final class MediaTypeSupport {
      * Validate the specified Content-Type. 
      * 
      * <p>
-     * 2 strategies are supported for evaluating a content type:
+     * Two strategies are supported for evaluating a content type:
+     * </p>
+     *
      * <ol>
      * <li>
      * If isOneOfStrategy is true, then the {@link MediaType} parsed from the content type value is compared to each 
@@ -53,7 +55,6 @@ public final class MediaTypeSupport {
      * should be passed as valid types; wildcards should not be used.
      * </li>
      * </ol>
-     * </p>
      * 
      * @param contentType the contentType to be validated
      * @param validTypes the set of valid media types

@@ -218,8 +218,9 @@ public class URLBuilder {
 
     /**
      * Gets the query string parameters for the URL. Params may be added and removed through the {@link List} interface.
-     * <br/>
-     * A note on the use of nulls in the {@link Pair}.
+     *
+     * <p>A note on the use of nulls in the {@link Pair}:</p>
+     *
      * <ul><li>A null {@link Pair#getFirst()} is generated from a URL segment such as {@code ?=foo}.
      * Such pairs are ignored by {@link #buildURL()}.</li>
      * <li> A null {@link Pair#getSecond()} is generated from a URL segment such as {@code ?foo=&bar=fred} and

@@ -38,9 +38,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Base class for {@link ReloadableService}. This base class will use a background thread that will perform a periodic
- * check, via {@link #shouldReload()}, and, if required, invoke the services {@link #reload()} method. <br/>
+ * check, via {@link #shouldReload()}, and, if required, invoke the service's {@link #reload()} method.
  * 
- * This class does <em>not</em> deal with any synchronization. That is left to implementing classes.
+ * <p>This class does <em>not</em> deal with any synchronization; that is left to implementing classes.</p>
  * 
  * @param <T> The sort of service this implements.
  */
@@ -262,7 +262,7 @@ public abstract class AbstractReloadableService<T> extends AbstractIdentifiableI
     /**
      * Return a string which is to be prepended to all log messages.
      * 
-     * @return "Service '<definitionID>' :"
+     * @return "Service '&lt;definitionID&gt;' :"
      */
     @Nonnull @NotEmpty protected String getLogPrefix() {
         // local cache of cached entry to allow unsynchronized clearing of per class cache.

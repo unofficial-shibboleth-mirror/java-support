@@ -112,7 +112,9 @@ public final class HttpServletSupport {
      * Validate the Content-Type of the specified request.
      * 
      * <p>
-     * 2 strategies are supported for evaluating the request's parsed content type:
+     * Two strategies are supported for evaluating the request's parsed content type:
+     * </p>
+     *
      * <ol>
      * <li>
      * If isOneOfStrategy is true, then the {@link MediaType} parsed from the request is compared to each 
@@ -126,7 +128,6 @@ public final class HttpServletSupport {
      * should be passed as valid types; wildcards should not be used.
      * </li>
      * </ol>
-     * </p>
      * 
      * @param request the request to be validated
      * @param validTypes the set of valid media types

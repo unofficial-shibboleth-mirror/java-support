@@ -35,14 +35,13 @@ public final class TimerSupport {
     /**
      * Produce the name which should be used for a {@link Timer} owned by the specified object.
      * 
-     * <p>The base name will constructed as follows:
+     * <p>The base name will be constructed as follows:</p>
      * <ul>
      *  <li>if target is instance of {@link IdentifiedComponent},
      *  use {@link IdentifiedComponent#getId()} if non-empty</li>
      *  <li>use {@link #toString()} if non-empty</li>
      *  <li>use serialized class name</li>
      * </ul>
-     * </p>
      * 
      * @param obj the target object instance to evaluate
      * @return an appropriate name for a Timer owned by the specified object
@@ -54,14 +53,13 @@ public final class TimerSupport {
     /**
      * Produce the name which should be used for a {@link Timer} owned by the specified object.
      * 
-     * <p>The base name will constructed as follows:
+     * <p>The base name will be constructed as follows:</p>
      * <ul>
      *  <li>if target is instance of {@link IdentifiedComponent},
      *  use {@link IdentifiedComponent#getId()} if non-empty</li>
      *  <li>use {@link #toString()} if non-empty</li>
      *  <li>use serialized class name</li>
      * </ul>
-     * </p>
      * 
      * @param obj the target object instance to evaluate
      * @param additionalData additional qualifying data to include in the name

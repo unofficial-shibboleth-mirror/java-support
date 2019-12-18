@@ -60,6 +60,7 @@ import org.slf4j.LoggerFactory;
  * <p>
  * When using the single-arg constructor variant to wrap an existing instance of
  * {@link CachingHttpClientBuilder}, there are several caveats of which to be aware:
+ * </p>
  * 
  * <ul>
  * 
@@ -84,8 +85,6 @@ import org.slf4j.LoggerFactory;
  * </li>
  * 
  * </ul>
- * 
- * </p>
  */
 public class FileCachingHttpClientBuilder extends HttpClientBuilder {
 
