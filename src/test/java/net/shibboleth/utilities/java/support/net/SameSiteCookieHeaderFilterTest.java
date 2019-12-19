@@ -22,7 +22,6 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.net.HttpCookie;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -90,16 +89,17 @@ public class SameSiteCookieHeaderFilterTest {
     }
     
     /** Test a null init value, which should not trigger an exception.*/
-    @Test(enabled=false) public void testNullInitValues() {
+    @Test public void testNullInitValues() {
         SameSiteCookieHeaderFilter filter = new SameSiteCookieHeaderFilter();
         filter.setSameSiteCookies(null);
+        filter.setDefaultValue(null);
     }
     
     /** Test an empty cookie name is not added to the internal map.*/
     @Test public void testEmptyCookieNameInitValue() {
         SameSiteCookieHeaderFilter filter = new SameSiteCookieHeaderFilter();
         Map<SameSiteValue,List<String>> cookies = new HashMap<>();
-        List<String> noneCookies = Arrays.asList(new String[] {""});
+        List<String> noneCookies = List.of(new String[] {""});
         cookies.put(SameSiteValue.None, noneCookies);
         filter.setSameSiteCookies(cookies);
         
@@ -110,9 +110,9 @@ public class SameSiteCookieHeaderFilterTest {
     @Test public void testInitValues() {
         SameSiteCookieHeaderFilter filter = new SameSiteCookieHeaderFilter();
         Map<SameSiteValue,List<String>> cookies = new HashMap<>();
-        List<String> noneCookies = Arrays.asList(new String[] {"JSESSIONID","shib_idp_session","shib_idp_session_ss","existing_same_site"});
-        List<String> laxCookies = Arrays.asList(new String[] {"another-cookie-lax"});
-        List<String> strictCookies = Arrays.asList(new String[] {"another-cookie-strict"});
+        List<String> noneCookies = List.of(new String[] {"JSESSIONID","shib_idp_session","shib_idp_session_ss","existing_same_site"});
+        List<String> laxCookies = List.of(new String[] {"another-cookie-lax"});
+        List<String> strictCookies = List.of(new String[] {"another-cookie-strict"});
         cookies.put(SameSiteValue.None, noneCookies);
         cookies.put(SameSiteValue.Lax, laxCookies);
         cookies.put(SameSiteValue.Strict, strictCookies);
@@ -125,8 +125,8 @@ public class SameSiteCookieHeaderFilterTest {
     @Test(expectedExceptions=IllegalArgumentException.class) public void testDuplicateInitValues() {
         SameSiteCookieHeaderFilter filter = new SameSiteCookieHeaderFilter();
         Map<SameSiteValue,List<String>> cookies = new HashMap<>();
-        List<String> noneCookies = Arrays.asList(new String[] {"JSESSIONID","shib_idp_session","shib_idp_session_ss","existing_same_site"});
-        List<String> laxCookies = Arrays.asList(new String[] {"JSESSIONID"});
+        List<String> noneCookies = List.of(new String[] {"JSESSIONID","shib_idp_session","shib_idp_session_ss","existing_same_site"});
+        List<String> laxCookies = List.of(new String[] {"JSESSIONID"});
         cookies.put(SameSiteValue.None, noneCookies);
         cookies.put(SameSiteValue.Lax, laxCookies);
         filter.setSameSiteCookies(cookies);
@@ -150,7 +150,27 @@ public class SameSiteCookieHeaderFilterTest {
         
         Assert.assertEquals(headers.size(), 5);
     }
-    
+
+    /** Test empty SameSite cookie map and Null default, which should not trigger an exception, and just copy over the
+     * existing cookies. */
+    @Test public void testEmptySameSiteCookieMapAndNullDefault() throws IOException, ServletException {
+        
+        SameSiteCookieHeaderFilter filter = new SameSiteCookieHeaderFilter();
+        filter.setSameSiteCookies(null);
+        filter.setDefaultValue(SameSiteValue.Null);
+        
+        Servlet redirectServlet = new TestRedirectServlet();
+        MockFilterChain mockRedirectChain = new MockFilterChain(redirectServlet, filter);
+
+        mockRedirectChain.doFilter(request, response);
+
+        Assert.assertTrue(mockRedirectChain.getResponse() instanceof MockHttpServletResponse);
+        
+        final Collection<String> headers = response.getHeaders(HttpHeaders.SET_COOKIE); 
+        
+        Assert.assertEquals(headers.size(), 5);
+    }
+
     /** Test empty SameSite cookie map, which should not trigger an exception, and should apply
      * a default. */
     @Test public void testEmptySameSiteCookieMapWithDefault() throws IOException, ServletException {
@@ -171,7 +191,7 @@ public class SameSiteCookieHeaderFilterTest {
         Assert.assertEquals(headers.size(), 5);
         testExpectedHeadersInResponse(SameSiteValue.Strict.getValue(),
                 (MockHttpServletResponse)mockRedirectChain.getResponse(), 
-                Arrays.asList(new String[] {"JSESSIONID","shib_idp_session","shib_idp_session_ss", "ignore_copy_over"}),
+                List.of(new String[] {"JSESSIONID","shib_idp_session","shib_idp_session_ss", "ignore_copy_over"}),
                 Collections.emptyList(), 5);
     }
 
@@ -180,7 +200,7 @@ public class SameSiteCookieHeaderFilterTest {
        
         SameSiteCookieHeaderFilter filter = new SameSiteCookieHeaderFilter();
         Map<SameSiteValue,List<String>> cookies = new HashMap<>();
-        List<String> noneCookies = Arrays.asList(new String[] {"JSESSIONID","shib_idp_session","shib_idp_session_ss","existing_same_site"});
+        List<String> noneCookies = List.of(new String[] {"JSESSIONID","shib_idp_session","shib_idp_session_ss","existing_same_site"});
         cookies.put(SameSiteValue.None, noneCookies);
         filter.setSameSiteCookies(cookies);
 
@@ -192,8 +212,8 @@ public class SameSiteCookieHeaderFilterTest {
         Assert.assertTrue(mockRedirectChain.getResponse() instanceof MockHttpServletResponse);
         
         testExpectedHeadersInResponse("None",(MockHttpServletResponse)mockRedirectChain.getResponse(), 
-                Arrays.asList(new String[] {"JSESSIONID","shib_idp_session","shib_idp_session_ss","existing_same_site"}),
-                Arrays.asList(new String[] {"ignore_copy_over"}),5);
+                List.of(new String[] {"JSESSIONID","shib_idp_session","shib_idp_session_ss","existing_same_site"}),
+                List.of(new String[] {"ignore_copy_over"}),5);
     }
 
     /** Test the samesite filter works correctly with None values when a redirect response is issued. */
@@ -201,7 +221,7 @@ public class SameSiteCookieHeaderFilterTest {
        
         SameSiteCookieHeaderFilter filter = new SameSiteCookieHeaderFilter();
         Map<SameSiteValue,List<String>> cookies = new HashMap<>();
-        List<String> noneCookies = Arrays.asList(new String[] {"shib_idp_session","shib_idp_session_ss","existing_same_site"});
+        List<String> noneCookies = List.of(new String[] {"shib_idp_session","shib_idp_session_ss","existing_same_site"});
         cookies.put(SameSiteValue.None, noneCookies);
         filter.setSameSiteCookies(cookies);
         filter.setDefaultValue(SameSiteValue.None);
@@ -214,7 +234,7 @@ public class SameSiteCookieHeaderFilterTest {
         Assert.assertTrue(mockRedirectChain.getResponse() instanceof MockHttpServletResponse);
         
         testExpectedHeadersInResponse("None",(MockHttpServletResponse)mockRedirectChain.getResponse(), 
-                Arrays.asList(new String[] {"JSESSIONID","shib_idp_session","shib_idp_session_ss","existing_same_site","ignore_copy_over"}),
+                List.of(new String[] {"JSESSIONID","shib_idp_session","shib_idp_session_ss","existing_same_site","ignore_copy_over"}),
                 Collections.emptyList(), 5);
     }
     
@@ -223,7 +243,7 @@ public class SameSiteCookieHeaderFilterTest {
        
         SameSiteCookieHeaderFilter filter = new SameSiteCookieHeaderFilter();
         Map<SameSiteValue,List<String>> cookies = new HashMap<>();
-        List<String> noneCookies = Arrays.asList(new String[] {"JSESSIONID","shib_idp_session","shib_idp_session_ss"});
+        List<String> noneCookies = List.of(new String[] {"JSESSIONID","shib_idp_session","shib_idp_session_ss"});
         cookies.put(SameSiteValue.Lax, noneCookies);
         filter.setSameSiteCookies(cookies);
         
@@ -236,8 +256,8 @@ public class SameSiteCookieHeaderFilterTest {
         
         //as "existing_same_site" is None, ignore it here.
         testExpectedHeadersInResponse("Lax",(MockHttpServletResponse)mockRedirectChain.getResponse(), 
-                Arrays.asList(new String[] {"JSESSIONID","shib_idp_session","shib_idp_session_ss"}),
-                Arrays.asList(new String[] {"ignore_copy_over"}),5);
+                List.of(new String[] {"JSESSIONID","shib_idp_session","shib_idp_session_ss"}),
+                List.of(new String[] {"ignore_copy_over"}),5);
     }
     
     /** Test the samesite filter works correctly with Strict values when a redirect response is issued. */
@@ -245,7 +265,7 @@ public class SameSiteCookieHeaderFilterTest {
         
         SameSiteCookieHeaderFilter filter = new SameSiteCookieHeaderFilter();
         Map<SameSiteValue,List<String>> cookies = new HashMap<>();
-        List<String> noneCookies = Arrays.asList(new String[] {"JSESSIONID","shib_idp_session","shib_idp_session_ss"});
+        List<String> noneCookies = List.of(new String[] {"JSESSIONID","shib_idp_session","shib_idp_session_ss"});
         cookies.put(SameSiteValue.Strict, noneCookies);
         filter.setSameSiteCookies(cookies);
 
@@ -258,8 +278,8 @@ public class SameSiteCookieHeaderFilterTest {
         
         //as "existing_same_site" is None, ignore it here.
         testExpectedHeadersInResponse("Strict",(MockHttpServletResponse)mockRedirectChain.getResponse(), 
-                Arrays.asList(new String[] {"JSESSIONID","shib_idp_session","shib_idp_session_ss"}),
-                Arrays.asList(new String[] {"ignore_copy_over"}),5);
+                List.of(new String[] {"JSESSIONID","shib_idp_session","shib_idp_session_ss"}),
+                List.of(new String[] {"ignore_copy_over"}),5);
     }
 
     /** Test the samesite filter works correctly when an output stream is written to and flushed. */
@@ -267,7 +287,7 @@ public class SameSiteCookieHeaderFilterTest {
         
         SameSiteCookieHeaderFilter filter = new SameSiteCookieHeaderFilter();
         Map<SameSiteValue,List<String>> cookies = new HashMap<>();
-        List<String> noneCookies = Arrays.asList(new String[] {"JSESSIONID","shib_idp_session","shib_idp_session_ss","existing_same_site"});
+        List<String> noneCookies = List.of(new String[] {"JSESSIONID","shib_idp_session","shib_idp_session_ss","existing_same_site"});
         cookies.put(SameSiteValue.None, noneCookies);
         filter.setSameSiteCookies(cookies);
 
@@ -279,8 +299,8 @@ public class SameSiteCookieHeaderFilterTest {
         Assert.assertTrue(mockRedirectChain.getResponse() instanceof MockHttpServletResponse);
         
         testExpectedHeadersInResponse("None",(MockHttpServletResponse)mockRedirectChain.getResponse(), 
-                Arrays.asList(new String[] {"JSESSIONID","shib_idp_session","shib_idp_session_ss","existing_same_site"}),
-                Arrays.asList(new String[] {"ignore_copy_over"}),5);
+                List.of(new String[] {"JSESSIONID","shib_idp_session","shib_idp_session_ss","existing_same_site"}),
+                List.of(new String[] {"ignore_copy_over"}),5);
     }
     
     /** Test the samesite filter works correctly when the response print writer is written to and closed.*/
@@ -288,7 +308,7 @@ public class SameSiteCookieHeaderFilterTest {
         
         SameSiteCookieHeaderFilter filter = new SameSiteCookieHeaderFilter();
         Map<SameSiteValue,List<String>> cookies = new HashMap<>();
-        List<String> noneCookies = Arrays.asList(new String[] {"JSESSIONID","shib_idp_session","shib_idp_session_ss","existing_same_site"});
+        List<String> noneCookies = List.of(new String[] {"JSESSIONID","shib_idp_session","shib_idp_session_ss","existing_same_site"});
         cookies.put(SameSiteValue.None, noneCookies);
         filter.setSameSiteCookies(cookies);
 
@@ -300,8 +320,8 @@ public class SameSiteCookieHeaderFilterTest {
         Assert.assertTrue(mockRedirectChain.getResponse() instanceof MockHttpServletResponse);
         
         testExpectedHeadersInResponse("None",(MockHttpServletResponse)mockRedirectChain.getResponse(), 
-                Arrays.asList(new String[] {"JSESSIONID","shib_idp_session","shib_idp_session_ss","existing_same_site"}),
-                Arrays.asList(new String[] {"ignore_copy_over"}),5);
+                List.of(new String[] {"JSESSIONID","shib_idp_session","shib_idp_session_ss","existing_same_site"}),
+                List.of(new String[] {"ignore_copy_over"}),5);
     }
     
     /**

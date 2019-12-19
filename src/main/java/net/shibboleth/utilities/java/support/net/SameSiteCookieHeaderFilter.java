@@ -88,7 +88,11 @@ public class SameSiteCookieHeaderFilter implements Filter {
         /**
          * Send the cookie for 'same-site' and 'cross-site' requests.
          */
-        None("None");
+        None("None"),
+        /**
+         * Specify nothing.
+         */
+        Null("Null");
         
         /** The same-site attribute value.*/
         @Nonnull @NotEmpty private String value;
@@ -239,12 +243,13 @@ public class SameSiteCookieHeaderFilter implements Filter {
             appendSameSite();
             return super.getOutputStream();
         }
-        
+
+// Checkstyle: CyclomaticComplexity OFF
         /** 
          * Add the SameSite attribute to those cookies configured in the {@code sameSiteCookies} map iff 
          * they do not already contain the same-site flag. All other cookies are copied over to the response
          * without modification.
-         * */
+         */
         private void appendSameSite() {
             
             final Collection<String> cookieheaders = response.getHeaders(HttpHeaders.SET_COOKIE);
@@ -272,13 +277,22 @@ public class SameSiteCookieHeaderFilter implements Filter {
                 
                 final SameSiteValue sameSiteValue = sameSiteCookies.get(parsedCookies.get(0).getName());
                 if (sameSiteValue != null) {
-                    appendSameSiteAttribute(cookieHeader, sameSiteValue.getValue(), firstHeader);
-                } else if (defaultValue != null) {
+                    if (sameSiteValue != SameSiteValue.Null) {
+                        appendSameSiteAttribute(cookieHeader, sameSiteValue.getValue(), firstHeader);
+                    } else {
+                        // Copy it over unaltered.
+                        if (firstHeader) {
+                            response.setHeader(HttpHeaders.SET_COOKIE, cookieHeader);
+                        } else {
+                            response.addHeader(HttpHeaders.SET_COOKIE, cookieHeader);
+                        }
+                    }
+                } else if (defaultValue != null && defaultValue != SameSiteValue.Null) {
                     appendSameSiteAttribute(cookieHeader, defaultValue.getValue(), firstHeader);
                 } else {
                     // Copy it over unaltered.
-                    if (firstHeader) {                      
-                        response.setHeader(HttpHeaders.SET_COOKIE, cookieHeader);                        
+                    if (firstHeader) {
+                        response.setHeader(HttpHeaders.SET_COOKIE, cookieHeader);
                     } else {
                         response.addHeader(HttpHeaders.SET_COOKIE, cookieHeader);
                     }
@@ -287,6 +301,7 @@ public class SameSiteCookieHeaderFilter implements Filter {
                 
             }
         }
+// Checkstyle: CyclomaticComplexity ON
         
         /**
          * Append the SameSite cookie attribute with the specified samesite-value to the {@code cookieHeader} 
