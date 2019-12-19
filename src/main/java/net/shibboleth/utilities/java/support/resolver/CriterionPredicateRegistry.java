@@ -86,7 +86,7 @@ public class CriterionPredicateRegistry<T> {
 
             } catch (final SecurityException | InstantiationException | IllegalAccessException 
                     | IllegalArgumentException | InvocationTargetException | NoSuchMethodException e) {
-                log.error("Error instantiating new Predicate instance", e);
+                log.error("Error instantiating new Predicate instance: {}", e.getMessage());
                 throw new ResolverException("Could not create new Predicate instance", e);
             }
         }

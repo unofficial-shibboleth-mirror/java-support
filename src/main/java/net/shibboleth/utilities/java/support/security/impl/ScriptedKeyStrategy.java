@@ -178,7 +178,7 @@ public class ScriptedKeyStrategy extends AbstractInitializableComponent implemen
             updateDefaultKey();
     
         } catch (final KeyException e) {
-            log.error("Error loading default key", e);
+            log.error("Error loading default key: {}", e.getMessage());
             throw new ComponentInitializationException("Exception loading the default key", e);
         }
 

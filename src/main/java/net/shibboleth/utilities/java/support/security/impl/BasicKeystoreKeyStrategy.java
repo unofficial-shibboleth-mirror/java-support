@@ -248,7 +248,7 @@ public class BasicKeystoreKeyStrategy extends AbstractInitializableComponent imp
             updateDefaultKey();
     
         } catch (final KeyException e) {
-            log.error("Error loading default key from base name '{}'", keyAlias, e);
+            log.error("Error loading default key from base name '{}' {}", keyAlias, e.getMessage());
             throw new ComponentInitializationException("Exception loading the default key", e);
         }
 
@@ -327,7 +327,7 @@ public class BasicKeystoreKeyStrategy extends AbstractInitializableComponent imp
             return (SecretKey) loadedKey;
         } catch (final KeyStoreException | NoSuchAlgorithmException | CertificateException
                     | IOException | UnrecoverableKeyException e) {
-            log.error("Error loading key named '{}'", name, e);
+            log.error("Error loading key named '{}': {}", name, e.getMessage());
             throw new KeyException(e);
         }
     }
@@ -373,7 +373,7 @@ public class BasicKeystoreKeyStrategy extends AbstractInitializableComponent imp
                 log.info("Default key updated to {}", currentAlias);
                 
             } catch (final IOException e) {
-                log.error("IOException updating key version", e);
+                log.error("IOException updating key version: {}", e.getMessage());
                 throw new KeyException(e);
             }
         }

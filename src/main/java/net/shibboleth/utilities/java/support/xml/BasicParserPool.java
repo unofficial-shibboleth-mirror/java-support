@@ -590,7 +590,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
 
             return builder;
         } catch (final ParserConfigurationException e) {
-            log.debug("Unable to create new document builder", e);
+            log.debug("Unable to create new document builder: {}", e.getMessage());
             throw new XMLParserException("Unable to create new document builder", e);
         }
     }
