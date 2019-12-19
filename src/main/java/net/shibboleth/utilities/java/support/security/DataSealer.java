@@ -248,7 +248,7 @@ public class DataSealer extends AbstractInitializableComponent {
             log.error(e.getMessage());
             throw new DataSealerException("Exception loading key", e);
         } catch (final GeneralSecurityException | IOException | DecoderException | IllegalArgumentException e) {
-            log.error("Exception unwrapping data", e);
+            log.error("Exception unwrapping data: {}", e.getMessage());
             throw new DataSealerException("Exception unwrapping data", e);
         }
     }
@@ -369,7 +369,7 @@ public class DataSealer extends AbstractInitializableComponent {
             return new String(encoder.encode(finalByteStream.toByteArray()), StandardCharsets.UTF_8);
 
         } catch (final Exception e) {
-            log.error("Exception wrapping data", e);
+            log.error("Exception wrapping data: {}", e.getMessage());
             throw new DataSealerException("Exception wrapping data", e);
         }
 
@@ -415,7 +415,7 @@ public class DataSealer extends AbstractInitializableComponent {
             decrypted = new String(plaintext, StandardCharsets.UTF_8);
             
         } catch (final IllegalStateException | GeneralSecurityException e) {
-            log.error("Round trip encryption/decryption test unsuccessful", e);
+            log.error("Round trip encryption/decryption test unsuccessful: {}", e.getMessage());
             throw new DataSealerException("Round trip encryption/decryption test unsuccessful", e);
         }
 
