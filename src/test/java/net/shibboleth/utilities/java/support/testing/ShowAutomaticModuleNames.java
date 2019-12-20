@@ -75,6 +75,7 @@ public class ShowAutomaticModuleNames {
      *
      * @param jarFile <code>.jar</code> file to process
      * @return the automatic module name, or <code>null</code>
+     * @throws TerminationException if something goes wrong
      */
     @Nullable
     private String getAutomaticModuleName(@Nonnull JarFile jarFile) throws TerminationException {
@@ -92,8 +93,8 @@ public class ShowAutomaticModuleNames {
      * Process all of the <code>.jar</code> files in a given directory, and present
      * the results in a readable way.
      *
-     * @param directory
-     * @throws TerminationException
+     * @param directory directory to process
+     * @throws TerminationException if something goes wrong
      */
     private void runDirectory(@Nonnull final File directory) throws TerminationException {
         System.out.println("Processing directory: " + directory.getAbsolutePath());

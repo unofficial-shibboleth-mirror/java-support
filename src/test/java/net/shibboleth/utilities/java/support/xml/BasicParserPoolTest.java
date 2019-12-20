@@ -582,14 +582,13 @@ public class BasicParserPoolTest {
      * Test issue reported in JXT-46 - a parser should not be checked into the pool multiple times
      * via the auto-checkin mechanism by the proxy finalize().
      * 
-     * @throws XMLParserException 
-     * @throws ComponentInitializationException 
-     * @throws InterruptedException 
+     * @throws XMLParserException if something bad happens
+     * @throws ComponentInitializationException if something bad happens
      */
     @Test
     public void testFinalize() throws XMLParserException, ComponentInitializationException {
-BasicParserPool pool = new BasicParserPool();
-pool.initialize();
+        BasicParserPool pool = new BasicParserPool();
+        pool.initialize();
         Assert.assertEquals(0, pool.getPoolSize());
         
         // Check out and return a builder
@@ -631,8 +630,8 @@ pool.initialize();
     /**
      * Test for caller (illegally) returning a builder multiple times to pool.
      * 
-     * @throws XMLParserException
-     * @throws ComponentInitializationException 
+     * @throws XMLParserException if something bad happens
+     * @throws ComponentInitializationException if something bad happens
      */
     @Test
     public void testExplicitMultipleReturn() throws XMLParserException, ComponentInitializationException {
@@ -660,11 +659,9 @@ pool.initialize();
     /**
      * Test for a caller illegally using a parser proxy after it has been returned. 
      * 
-     * @throws XMLParserException 
-     * @throws URISyntaxException 
-     * @throws ComponentInitializationException 
-     * @throws IOException 
-     * 
+     * @throws XMLParserException if something bad happens
+     * @throws URISyntaxException if something bad happens
+     * @throws ComponentInitializationException if something bad happens
      */
     @Test
     public void testParserUseAfterReturn() throws XMLParserException, URISyntaxException, ComponentInitializationException {
@@ -738,8 +735,8 @@ pool.initialize();
     /**
      * Test that only maxPoolSize parsers are ever cached.
      * 
-     * @throws XMLParserException
-     * @throws ComponentInitializationException 
+     * @throws XMLParserException if something bad happens
+     * @throws ComponentInitializationException if something bad happens
      */
     @Test
     public void testMaxPoolSize() throws XMLParserException, ComponentInitializationException {

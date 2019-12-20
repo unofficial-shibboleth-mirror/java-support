@@ -32,7 +32,7 @@ public class URLBuilderTest {
     
     /**
      * Test with scheme and host.
-     * @throws MalformedURLException 
+     * @throws MalformedURLException if the URL is malformed
      */
     @Test
     public void testURLBuilder1() throws MalformedURLException{
@@ -52,7 +52,7 @@ public class URLBuilderTest {
     
     /**
      * Test with scheme, host, and path.
-     * @throws MalformedURLException 
+     * @throws MalformedURLException if the URL is malformed
      */
     @Test
     public void testURLBuilder2() throws MalformedURLException{
@@ -72,7 +72,7 @@ public class URLBuilderTest {
     
     /**
      * Test with scheme, host, port, path, and query params.
-     * @throws MalformedURLException 
+     * @throws MalformedURLException if the URL is malformed
      */
     @Test
     public void testURLBuilder3() throws MalformedURLException{
@@ -92,7 +92,7 @@ public class URLBuilderTest {
     
     /**
      * Test with some odd values.
-     * @throws MalformedURLException 
+     * @throws MalformedURLException if the URL is malformed
      */
     @Test
     public void testValues() throws MalformedURLException{
@@ -116,7 +116,7 @@ public class URLBuilderTest {
     
     /**
      * Test with scheme, host, and fragment.
-     * @throws MalformedURLException 
+     * @throws MalformedURLException if the URL is malformed
      */
     @Test
     public void testURLBuilder4() throws MalformedURLException{
@@ -136,7 +136,7 @@ public class URLBuilderTest {
 
     /**
      * Test with scheme, host, port, path, query params, and anchor.
-     * @throws MalformedURLException 
+     * @throws MalformedURLException if the URL is malformed
      */
     @Test
     public void testURLBuilder5() throws MalformedURLException{
@@ -156,7 +156,7 @@ public class URLBuilderTest {
     
     /**
      * Test with scheme, username, password, and host.
-     * @throws MalformedURLException 
+     * @throws MalformedURLException if the URL is malformed
      */
     @Test
     public void testURLBuilder6() throws MalformedURLException{
@@ -176,7 +176,7 @@ public class URLBuilderTest {
     
     /**
      * Test with scheme, username, and host.
-     * @throws MalformedURLException 
+     * @throws MalformedURLException if the URL is malformed
      */
     @Test
     public void testURLBuilder7() throws MalformedURLException{

@@ -25,7 +25,11 @@ import org.testng.annotations.Test;
  */
 public class AbstractInitializableComponentTest {
 
-    /** Tests initializing the component. */
+    /**
+     * Tests initializing the component.
+     * 
+     * @throws Exception if something bad happens
+     */
     @Test public void testInitialization() throws Exception {
         MockComponent component = new MockComponent();
         Assert.assertFalse(component.isInitialized());

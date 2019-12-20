@@ -48,9 +48,12 @@ public final class TestResourceConverter implements net.shibboleth.utilities.jav
     }
 
     /**
-     * Return a {@link Resource} that does all the work of the provided {@link Resource}<br/>
+     * Return a {@link Resource} that does all the work of the provided {@link Resource}.
+     * 
+     * <p>
      * If the input implements {@link Resource} then it is cast to the output, other a shim class is
      * generated.
+     * </p>
      * 
      * @param springResource the input
      * @return a {@link Resource} which reflects what the Spring one does

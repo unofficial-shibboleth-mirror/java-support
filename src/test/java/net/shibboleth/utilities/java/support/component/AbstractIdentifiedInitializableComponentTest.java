@@ -25,7 +25,11 @@ import org.testng.annotations.Test;
 /** Test for {@link AbstractIdentifiedInitializableComponent}. */
 public class AbstractIdentifiedInitializableComponentTest {
 
-    /** Test setting and retrieving the component's ID. */
+    /**
+     * Test setting and retrieving the component's ID.
+     * 
+     * @throws Exception if something bad happens
+     */
     @Test public void testId() throws Exception {
         MockComponent component = new MockComponent();
         Assert.assertNull(component.getId());
@@ -65,7 +69,11 @@ public class AbstractIdentifiedInitializableComponentTest {
         }
     }
 
-    /** Tests initializing the component. */
+    /**
+     * Tests initializing the component.
+     * 
+     * @throws Exception if something bad happens
+     */
     @Test public void testInitialization() throws Exception {
         MockComponent component = new MockComponent();
         Assert.assertFalse(component.isInitialized());

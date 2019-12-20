@@ -132,8 +132,13 @@ public class SameSiteCookieHeaderFilterTest {
         filter.setSameSiteCookies(cookies);
     }
     
-    /** Test empty SameSite cookie map, which should not trigger an exception, and just copy over the
-     * existing cookies. */
+    /**
+     * Test empty SameSite cookie map, which should not trigger an exception, and just copy over the
+     * existing cookies.
+     * 
+     * @throws IOException if something bad happens
+     * @throws ServletException if something bad happens
+     */
     @Test public void testEmptySameSiteCookieMap() throws IOException, ServletException {
         
         SameSiteCookieHeaderFilter filter = new SameSiteCookieHeaderFilter();
@@ -151,8 +156,13 @@ public class SameSiteCookieHeaderFilterTest {
         Assert.assertEquals(headers.size(), 5);
     }
 
-    /** Test empty SameSite cookie map and Null default, which should not trigger an exception, and just copy over the
-     * existing cookies. */
+    /**
+     * Test empty SameSite cookie map and Null default, which should not trigger an exception, and just copy over the
+     * existing cookies.
+     * 
+     * @throws IOException if something bad happens
+     * @throws ServletException if something bad happens
+     */
     @Test public void testEmptySameSiteCookieMapAndNullDefault() throws IOException, ServletException {
         
         SameSiteCookieHeaderFilter filter = new SameSiteCookieHeaderFilter();
@@ -171,8 +181,13 @@ public class SameSiteCookieHeaderFilterTest {
         Assert.assertEquals(headers.size(), 5);
     }
 
-    /** Test empty SameSite cookie map, which should not trigger an exception, and should apply
-     * a default. */
+    /**
+     * Test empty SameSite cookie map, which should not trigger an exception, and should apply
+     * a default.
+     * 
+     * @throws IOException if something bad happens
+     * @throws ServletException if something bad happens
+     */
     @Test public void testEmptySameSiteCookieMapWithDefault() throws IOException, ServletException {
         
         SameSiteCookieHeaderFilter filter = new SameSiteCookieHeaderFilter();
@@ -195,7 +210,12 @@ public class SameSiteCookieHeaderFilterTest {
                 Collections.emptyList(), 5);
     }
 
-    /** Test the samesite filter works correctly with None values when a redirect response is issued. */
+    /**
+     * Test the samesite filter works correctly with None values when a redirect response is issued.
+     * 
+     * @throws IOException if something bad happens
+     * @throws ServletException if something bad happens
+     */
     @Test public void testRedirectResponseSameSiteNone() throws IOException, ServletException {
        
         SameSiteCookieHeaderFilter filter = new SameSiteCookieHeaderFilter();
@@ -216,7 +236,12 @@ public class SameSiteCookieHeaderFilterTest {
                 List.of(new String[] {"ignore_copy_over"}),5);
     }
 
-    /** Test the samesite filter works correctly with None values when a redirect response is issued. */
+    /**
+     * Test the samesite filter works correctly with None values when a redirect response is issued.
+     * 
+     * @throws IOException if something bad happens
+     * @throws ServletException if something bad happens
+     */
     @Test public void testRedirectResponseSameSiteNoneWithDefault() throws IOException, ServletException {
        
         SameSiteCookieHeaderFilter filter = new SameSiteCookieHeaderFilter();
@@ -238,7 +263,12 @@ public class SameSiteCookieHeaderFilterTest {
                 Collections.emptyList(), 5);
     }
     
-    /** Test the samesite filter works correctly with Lax values when a redirect response is issued. */
+    /**
+     * Test the samesite filter works correctly with Lax values when a redirect response is issued.
+     * 
+     * @throws IOException if something bad happens
+     * @throws ServletException if something bad happens
+     */
     @Test public void testRedirectResponseSameSiteLax() throws IOException, ServletException {
        
         SameSiteCookieHeaderFilter filter = new SameSiteCookieHeaderFilter();
@@ -260,7 +290,12 @@ public class SameSiteCookieHeaderFilterTest {
                 List.of(new String[] {"ignore_copy_over"}),5);
     }
     
-    /** Test the samesite filter works correctly with Strict values when a redirect response is issued. */
+    /**
+     * Test the samesite filter works correctly with Strict values when a redirect response is issued.
+     * 
+     * @throws IOException if something bad happens
+     * @throws ServletException if something bad happens
+     */
     @Test public void testRedirectResponseSameSiteStrict() throws IOException, ServletException {
         
         SameSiteCookieHeaderFilter filter = new SameSiteCookieHeaderFilter();
@@ -282,7 +317,12 @@ public class SameSiteCookieHeaderFilterTest {
                 List.of(new String[] {"ignore_copy_over"}),5);
     }
 
-    /** Test the samesite filter works correctly when an output stream is written to and flushed. */
+    /**
+     * Test the samesite filter works correctly when an output stream is written to and flushed.
+     * 
+     * @throws IOException if something bad happens
+     * @throws ServletException if something bad happens
+     */
     @Test public void testGetOutputStreamResponse() throws IOException, ServletException {
         
         SameSiteCookieHeaderFilter filter = new SameSiteCookieHeaderFilter();
@@ -303,7 +343,12 @@ public class SameSiteCookieHeaderFilterTest {
                 List.of(new String[] {"ignore_copy_over"}),5);
     }
     
-    /** Test the samesite filter works correctly when the response print writer is written to and closed.*/
+    /**
+     * Test the samesite filter works correctly when the response print writer is written to and closed.
+     * 
+     * @throws IOException if something bad happens
+     * @throws ServletException if something bad happens
+     */
     @Test public void testPrintWriterResponse() throws IOException, ServletException {
         
         SameSiteCookieHeaderFilter filter = new SameSiteCookieHeaderFilter();

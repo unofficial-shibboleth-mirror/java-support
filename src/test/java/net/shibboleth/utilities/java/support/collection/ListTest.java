@@ -35,7 +35,9 @@ public class ListTest {
         testListIterator(new ArrayList<String>());
     }
     /**
-     * Test those things that distinguish the {@link List} API from the {@link java.util.Collection} one. 
+     * Test those things that distinguish the {@link List} API from the {@link java.util.Collection} one.
+     * 
+     * @param list list to test
      */
     public static void testListFunctions(List<String> list) {
         boolean thrown = false;

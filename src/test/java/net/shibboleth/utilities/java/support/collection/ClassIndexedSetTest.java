@@ -290,7 +290,7 @@ public class ClassIndexedSetTest {
         /**
          * Constructor.
          * 
-         * @param newData
+         * @param newData data to store
          */
         public A(String newData) {
             super(newData);
@@ -303,7 +303,7 @@ public class ClassIndexedSetTest {
         /**
          * Constructor.
          * 
-         * @param newData
+         * @param newData data to store
          */
         public B(String newData) {
             super(newData);
@@ -316,7 +316,7 @@ public class ClassIndexedSetTest {
         /**
          * Constructor.
          * 
-         * @param newData
+         * @param newData data to store
          */
         public C(String newData) {
             super(newData);
@@ -329,7 +329,7 @@ public class ClassIndexedSetTest {
         /**
          * Constructor.
          * 
-         * @param newData
+         * @param newData data to store
          */
         public D(String newData) {
             super(newData);

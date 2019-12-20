@@ -63,7 +63,7 @@ public class SecureRandomIdentifierGenerationStrategyTest {
      * Test generateIdentifier by generating a large number of identifiers and seeing whether each one is a valid XML
      * ID, and that they are all different.
      * 
-     * @throws NoSuchAlgorithmException
+     * @throws NoSuchAlgorithmException if the SHA1PRNG algorithm is not available
      */
     @Test public void testConstructorWithSecureRandom() throws NoSuchAlgorithmException {
         final Pattern ncNamePattern = Pattern.compile("^[a-zA-Z_][a-zA-Z0-9_\\-\\.]+$");
