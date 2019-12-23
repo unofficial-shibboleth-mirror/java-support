@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -41,6 +42,7 @@ import javax.servlet.http.HttpServletResponseWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Predicates;
 import com.google.common.net.HttpHeaders;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -116,6 +118,9 @@ public class SameSiteCookieHeaderFilter implements Filter {
         }
         
     }
+
+    /** Condition on filter running. */
+    @Nonnull private Predicate<ServletRequest> activationCondition;
     
     /** Optional default value to apply. */
     @Nullable private SameSiteValue defaultValue;
@@ -126,6 +131,18 @@ public class SameSiteCookieHeaderFilter implements Filter {
     /** Constructor. */
     public SameSiteCookieHeaderFilter() {
         sameSiteCookies = Collections.emptyMap();
+        activationCondition = Predicates.alwaysTrue();
+    }
+    
+    /**
+     * Set a condition on execution of the filter.
+     * 
+     * <p>This is typically for conditional User-Agent detection to deal with the Apple bug.</p>
+     * 
+     * @param condition condition to set
+     */
+    public void setActivationCondition(@Nonnull final Predicate<ServletRequest> condition) {
+        activationCondition = Constraint.isNotNull(condition, "Activation condition cannot be null"); 
     }
     
     /**
@@ -182,6 +199,12 @@ public class SameSiteCookieHeaderFilter implements Filter {
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain)
             throws IOException, ServletException {
 
+        if (!activationCondition.test(request)) {
+            log.trace("Filter not active for request");
+            chain.doFilter(request, response);
+            return;
+        }
+        
         if (!(response instanceof HttpServletResponse)) {
             throw new ServletException("Response is not an instance of HttpServletResponse");
         }
