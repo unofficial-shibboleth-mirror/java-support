@@ -77,9 +77,22 @@ public final class Base32Support {
      * @param data Base32 encoded data
      * 
      * @return the decoded data
+     * 
+     * @throws DecodingException when an {@link Exception} is thrown from
+     *                              the underlying decoder, or the output is null.
      */
-    @Nonnull public static byte[] decode(@Nonnull final String data) {
-        Constraint.isNotNull(data, "Base32 encoded data cannot be null");
-        return Constraint.isNotNull(CHUNKED_ENCODER.decode(data), "Decoded data was null");
+    @Nonnull public static byte[] decode(@Nonnull final String data) throws DecodingException {
+        Constraint.isNotNull(data, "Base32 encoded data can not be null");
+        try {
+            final byte[] decoded = CHUNKED_ENCODER.decode(data);
+            //TODO: can this ever be null, do we need to check for null?
+            if (null == decoded) {
+                throw new DecodingException("Base32 decoded data was null");
+            }          
+            return decoded;
+        } catch (final Exception e) {
+          //wrap any exception on invalid input with our own.
+            throw new DecodingException("Unable to Base32 decode input data, input invalid",e);
+        }
     }
 }

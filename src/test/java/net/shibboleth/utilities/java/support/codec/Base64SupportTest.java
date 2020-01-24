@@ -23,6 +23,8 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
+
 /** {@link Base64Support} unit test. */
 public class Base64SupportTest {
 
@@ -52,6 +54,20 @@ public class Base64SupportTest {
     private final static String UNCHUNCKED_ENCODED_BYTES = "FPucA9l+";
     
     private final static String URLSAFE_UNCHUNCKED_ENCODED_BYTES = "FPucA9l-";
+   
+    
+    /** 
+     * Invalid base64 string as it has invalid trailing digits.
+     * Correctly fails with commons-codec 1.14 and greater.
+     * @see <a href="https://issues.apache.org/jira/browse/CODEC-270">CODEC-270</a>
+     */
+    private final static String INVALID_BASE64_TRAILING = "AB==";
+    
+    /** Invalid base64, should not produce a result.*/
+    private final static String INVALID_BASE64 = "ZE=";
+    
+    /** Empty string.*/
+    private final static String EMPTY_STRING = "";
     
 
     @BeforeClass
@@ -59,28 +75,97 @@ public class Base64SupportTest {
         PLAIN_BYTES = Hex.decodeHex("14fb9c03d97e".toCharArray());
     }
     
-    /** Test Base64 encoding content. */
-    @Test public void testEncode() {
+    /** Test Base64 encoding content. 
+     * 
+     * @throws EncodingException on encoding failure
+     */
+    @Test public void testEncode() throws EncodingException {
         Assert.assertEquals(Base64Support.encode(PLAIN_TEXT.getBytes(), false), UNCHUNCKED_ENCODED_TEXT);
         Assert.assertEquals(Base64Support.encode(PLAIN_TEXT.getBytes(), true), CHUNCKED_ENCODED_TEXT);
         Assert.assertEquals(Base64Support.encode(PLAIN_BYTES, false), UNCHUNCKED_ENCODED_BYTES);
     }
+    
+    /** 
+     * Test encoding an empty byte array produces an empty string and does not throw any exceptions.
+     * 
+     * @throws EncodingException on encoding failure. Should not happen.
+     */
+    @Test public void testEncodeEmptyByteArray() throws EncodingException {
+        final String encoded = Base64Support.encode(new byte[0], false);
+        Assert.assertNotNull(encoded);
+        Assert.assertEquals(encoded, EMPTY_STRING);
+    }
+    
+    /**
+     * Test a null byte array argument violates the method contract and throws a {@link ConstraintViolationException}.
+     * 
+     * @throws DecodingException on decoding failure.
+     */
+    @Test(expectedExceptions = ConstraintViolationException.class) public void testEncodeNullInput() 
+            throws DecodingException {
+        Base64Support.decode(null);
+    }
 
-    /** Test Base64 decoding content. */
-    @Test public void testDecode() {
+    /** Test Base64 decoding content. 
+     *  
+     * @throws DecodingException on decoding failure.
+     */
+    @Test public void testDecode() throws DecodingException {
         Assert.assertEquals(new String(Base64Support.decode(UNCHUNCKED_ENCODED_TEXT)), PLAIN_TEXT);
         Assert.assertEquals(new String(Base64Support.decode(CHUNCKED_ENCODED_TEXT)), PLAIN_TEXT);
         Assert.assertEquals(Base64Support.decode(UNCHUNCKED_ENCODED_BYTES), PLAIN_BYTES);
     }
     
-    /** Test Base64 encoding content. */
-    @Test public void testEncodeURLSafe() {
+    /**
+     * Test that an invalid base64 input string does not return a response, 
+     * instead throwing a {@link DecodingException}.
+     *  
+     * @throws DecodingException on decoding failure. 
+     */
+    @Test(expectedExceptions = DecodingException.class) public void testDecodeInvalidInput() 
+            throws DecodingException {
+        Base64Support.decode(INVALID_BASE64);
+        
+    }
+    
+    /**
+     * Test that an empty input produces a byte array of 0 length. 
+     * 
+     * @throws DecodingException on decoding failure. 
+     */
+    @Test public void testEmptyDecodedOutput() throws DecodingException {
+        byte[] decoded = Base64Support.decode(EMPTY_STRING);
+        Assert.assertNotNull(decoded);
+        Assert.assertTrue(decoded.length==0);
+    }
+    
+    /**
+     * Test that when the last encoded character (before the paddings if any) is a valid base 64 alphabet 
+     * but not a possible value, a {@link DecodingException} is thrown.
+     * 
+     * @throws DecodingException on decoding failure.
+     */
+    @Test(expectedExceptions = DecodingException.class) public void testDecodeInvalidTrailingBitsInput() 
+            throws DecodingException {
+        Base64Support.decode(INVALID_BASE64_TRAILING);
+        
+    }
+    
+    /** 
+     * Test Base64 encoding content. 
+     * 
+     * @throws EncodingException thrown if failure to base64 encode
+     */
+    @Test public void testEncodeURLSafe() throws EncodingException {
         Assert.assertEquals(Base64Support.encodeURLSafe(PLAIN_TEXT.getBytes()), URLSAFE_UNCHUNCKED_ENCODED_TEXT);
         Assert.assertEquals(Base64Support.encodeURLSafe(PLAIN_BYTES), URLSAFE_UNCHUNCKED_ENCODED_BYTES);
     }
 
-    /** Test Base64 decoding content. */
-    @Test public void testDecodeURLSafe() {
+    /** Test Base64 decoding content. 
+     *  
+     * @throws DecodingException on decoding failure.
+     */
+    @Test public void testDecodeURLSafe() throws DecodingException {
         Assert.assertEquals(new String(Base64Support.decodeURLSafe(URLSAFE_UNCHUNCKED_ENCODED_TEXT)), PLAIN_TEXT);
         Assert.assertEquals(Base64Support.decodeURLSafe(URLSAFE_UNCHUNCKED_ENCODED_BYTES), PLAIN_BYTES);
     }

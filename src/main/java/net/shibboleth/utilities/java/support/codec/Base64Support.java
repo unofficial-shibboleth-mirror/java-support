@@ -17,6 +17,8 @@
 
 package net.shibboleth.utilities.java.support.codec;
 
+import java.util.Optional;
+
 import javax.annotation.Nonnull;
 
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -77,10 +79,23 @@ public final class Base64Support {
      * @param data Base64 encoded data
      * 
      * @return the decoded data
+     * 
+     * @throws DecodingException when any {@link Exception} is thrown from
+     *                              the underlying decoder, or the output is null.
      */
-    @Nonnull public static byte[] decode(@Nonnull final String data) {
+    @Nonnull public static byte[] decode(@Nonnull final String data) throws DecodingException{
         Constraint.isNotNull(data, "Base64 encoded data can not be null");
-        return Constraint.isNotNull(CHUNKED_ENCODER.decode(data), "Decoded data was null");
+        try {
+            final byte[] decoded = CHUNKED_ENCODER.decode(data);
+            //TODO: can this ever be null, do we need to check for null?
+            if (null == decoded) {
+                throw new DecodingException("Base64 decoded data was null");
+            }          
+            return decoded;
+        } catch (final Exception e) {
+            //wrap any exception on invalid input with our own.
+            throw new DecodingException("Unable to base64 decode data: "+e.getMessage(),e);
+        }
     }
     
     /**
@@ -112,8 +127,10 @@ public final class Base64Support {
      * @param data Base64URL encoded data
      * 
      * @return the decoded data
+     * 
+     * @throws DecodingException if unable to decode the input data.
      */
-    @Nonnull public static byte[] decodeURLSafe(@Nonnull final String data) {
+    @Nonnull public static byte[] decodeURLSafe(@Nonnull final String data) throws DecodingException {
         String s = Constraint.isNotNull(data, "Base64URL encoded data can not be null");
         s = s.replace('-', '+');
         s = s.replace('_', '/');
