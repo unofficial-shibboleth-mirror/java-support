@@ -19,11 +19,19 @@ package net.shibboleth.utilities.java.support.codec;
 
 import org.testng.annotations.Test;
 
+import junit.framework.Assert;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 /** {@link Base32Support} unit test. */
 public class Base32SupportTest {
 
+    
+    /** A plain text string to be encoded. */
+    private final static String PLAIN_TEXT = "test data";
+    
+    /** Base32 encoded version of <code>PLAIN_TEXT</code>. */
+    private final static String ENCODED_TEXT = "ORSXG5BAMRQXIYI=";
+                       
     /** 
      * Invalid base32 string as it has invalid trailing digits.
      * Correctly fails with commons-codec 1.14 and greater.
@@ -64,6 +72,15 @@ public class Base32SupportTest {
     @Test(expectedExceptions = ConstraintViolationException.class) public void testEncodeNullInput() 
             throws EncodingException {
         Base32Support.encode(null, false);
+    }
+    
+    /**
+     * Test encoding a byte array works.
+     * 
+     * @throws EncodingException if there is an issue encoding the byte array, should not happen.
+     */
+    @Test public void testEncode() throws EncodingException {        
+        Assert.assertEquals(ENCODED_TEXT,  Base32Support.encode(PLAIN_TEXT.getBytes(), false));
     }
   
 }

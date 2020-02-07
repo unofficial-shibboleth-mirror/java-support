@@ -59,16 +59,28 @@ public final class Base32Support {
      * @param chunked whether the encoded data should be chunked or not
      * 
      * @return the base32 encoded data
+     * @throws EncodingException when any {@link Exception} is thrown from the underlying encoder, 
+     *                                  or the output is null.
      */
-    @Nonnull public static String encode(@Nonnull final byte[] data, final boolean chunked) {
+    @Nonnull public static String encode(@Nonnull final byte[] data, final boolean chunked) throws EncodingException {
         Constraint.isNotNull(data, "Binary data to be encoded can not be null");
-        if (chunked) {
-            return Constraint.isNotNull(StringSupport.trim(CHUNKED_ENCODER.encodeToString(data)),
-                    "Encoded data was null");
-        }
         
-        return Constraint.isNotNull(StringSupport.trim(UNCHUNKED_ENCODER.encodeToString(data)),
-                "Encoded data was null");
+        try {
+            String encoded = null;
+            if (chunked) {
+                encoded = StringSupport.trim(CHUNKED_ENCODER.encodeToString(data));
+            } else {
+                encoded = StringSupport.trim(UNCHUNKED_ENCODER.encodeToString(data));
+            }
+            //TODO: can this ever be null, do we need to check for null?
+            if (null == encoded) {
+                throw new EncodingException("Base32 encoded string was null");
+            }        
+            return encoded;
+        } catch (final Exception e) {
+            //wrap any exception on invalid input with our own.
+            throw new EncodingException("Unable to base32 encode data: "+e.getMessage(),e);
+        }
     }
 
     /**

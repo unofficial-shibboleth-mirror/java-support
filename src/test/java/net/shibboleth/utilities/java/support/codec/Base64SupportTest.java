@@ -99,9 +99,19 @@ public class Base64SupportTest {
     /**
      * Test a null byte array argument violates the method contract and throws a {@link ConstraintViolationException}.
      * 
-     * @throws DecodingException on decoding failure.
+     * @throws EncodingException on encoding failure.
      */
     @Test(expectedExceptions = ConstraintViolationException.class) public void testEncodeNullInput() 
+            throws EncodingException {
+        Base64Support.encode(null,false);
+    }
+    
+    /**
+     * Test a null string argument violates the method contract and throws a {@link ConstraintViolationException}.
+     * 
+     * @throws DecodingException on decoding failure.
+     */
+    @Test(expectedExceptions = ConstraintViolationException.class) public void testDecodeNullInput() 
             throws DecodingException {
         Base64Support.decode(null);
     }

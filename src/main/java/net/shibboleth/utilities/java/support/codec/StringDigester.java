@@ -178,7 +178,13 @@ public class StringDigester implements Function<String,String> {
         
         switch(outputFormat) {
             case BASE64:
-                output = Base64Support.encode(digestedBytes, false);
+                try {
+                    output = Base64Support.encode(digestedBytes, false);
+                } catch (final EncodingException e) {
+                    //unlikely to happen.
+                    log.warn("Could not base64 encode digest bytes, no data returned",e);
+                    return null;
+                }
                 break;
             case HEX_LOWER:
                 output = new String(Hex.encodeHex(digestedBytes, true));

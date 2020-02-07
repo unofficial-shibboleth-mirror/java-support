@@ -17,8 +17,6 @@
 
 package net.shibboleth.utilities.java.support.codec;
 
-import java.util.Optional;
-
 import javax.annotation.Nonnull;
 
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -61,16 +59,28 @@ public final class Base64Support {
      * @param chunked whether the encoded data should be chunked or not
      * 
      * @return the base64 encoded data
+     * @throws EncodingException when any {@link Exception} is thrown from the underlying encoder, 
+     *                                  or the output is null.
      */
-    @Nonnull public static String encode(@Nonnull final byte[] data, final boolean chunked) {
+    @Nonnull public static String encode(@Nonnull final byte[] data, final boolean chunked) throws EncodingException{
         Constraint.isNotNull(data, "Binary data to be encoded can not be null");
-        if (chunked) {
-            return Constraint.isNotNull(StringSupport.trim(CHUNKED_ENCODER.encodeToString(data)),
-                    "Encoded data was null");
-        }
         
-        return Constraint.isNotNull(StringSupport.trim(UNCHUNKED_ENCODER.encodeToString(data)),
-                "Encoded data was null");
+        try {
+            String encoded = null;
+            if (chunked) {
+                encoded = StringSupport.trim(CHUNKED_ENCODER.encodeToString(data));
+            } else {
+                encoded = StringSupport.trim(UNCHUNKED_ENCODER.encodeToString(data));
+            }
+            //TODO: can this ever be null, do we need to check for null?
+            if (null == encoded) {
+                throw new EncodingException("Base64 encoded string was null");
+            }        
+            return encoded;
+        } catch (final Exception e) {
+            //wrap any exception on invalid input with our own.
+            throw new EncodingException("Unable to base64 encode data: "+e.getMessage(),e);
+        }
     }
 
     /**
@@ -108,8 +118,9 @@ public final class Base64Support {
      * @param data data to encode
      * 
      * @return the base64url encoded data
+     * @throws EncodingException if the input data can not be encoded as a base64 string.
      */
-    @Nonnull public static String encodeURLSafe(@Nonnull final byte[] data) {
+    @Nonnull public static String encodeURLSafe(@Nonnull final byte[] data) throws EncodingException {
         String s = encode(data, false);
         s = s.split("=")[0];
         s = s.replace('+', '-');
