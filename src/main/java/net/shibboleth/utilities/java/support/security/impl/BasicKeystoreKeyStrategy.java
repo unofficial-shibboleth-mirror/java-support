@@ -314,17 +314,19 @@ public class BasicKeystoreKeyStrategy extends AbstractInitializableComponent imp
         
         try {
             final KeyStore ks = KeyStore.getInstance(keystoreType);
-            ks.load(keystoreResource.getInputStream(), keystorePassword.toCharArray());
+            try (final InputStream ksResourceStream = keystoreResource.getInputStream()) {
+                ks.load(ksResourceStream, keystorePassword.toCharArray());
 
-            final Key loadedKey = ks.getKey(name, keyPassword.toCharArray());
-            if (loadedKey == null) {
-                log.info("Key '{}' not found", name);
-                throw new KeyNotFoundException("Key was not present in keystore");
-            } else if (!(loadedKey instanceof SecretKey)) {
-                log.error("Key '{}' is not a symmetric key", name);
-                throw new KeyException("Key was of incorrect type");
+                final Key loadedKey = ks.getKey(name, keyPassword.toCharArray());
+                if (loadedKey == null) {
+                    log.info("Key '{}' not found", name);
+                    throw new KeyNotFoundException("Key was not present in keystore");
+                } else if (!(loadedKey instanceof SecretKey)) {
+                    log.error("Key '{}' is not a symmetric key", name);
+                    throw new KeyException("Key was of incorrect type");
+                }
+                return (SecretKey) loadedKey;
             }
-            return (SecretKey) loadedKey;
         } catch (final KeyStoreException | NoSuchAlgorithmException | CertificateException
                     | IOException | UnrecoverableKeyException e) {
             log.error("Error loading key named '{}': {}", name, e.getMessage());

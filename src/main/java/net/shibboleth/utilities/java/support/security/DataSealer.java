@@ -204,38 +204,39 @@ public class DataSealer extends AbstractInitializableComponent {
         try {
             final byte[] in = decoder.decode(wrapped.getBytes(StandardCharsets.UTF_8));
 
-            final ByteArrayInputStream inputByteStream = new ByteArrayInputStream(in);
-            final DataInputStream inputDataStream = new DataInputStream(inputByteStream);
-            
-            // Extract alias of key, and load if necessary.
-            final String keyAlias = inputDataStream.readUTF();
-            log.trace("Data was encrypted by key named '{}'", keyAlias);
-            if (keyUsed != null) {
-                keyUsed.append(keyAlias);
+            // Note: we don't technically need try-with-resources here b/c BAIS close() is a no-op
+            // and DIS close() just calls close() on the wrapped stream. But do for consistency.
+            try (final DataInputStream inputDataStream = new DataInputStream(new ByteArrayInputStream(in)) ){
+                // Extract alias of key, and load if necessary.
+                final String keyAlias = inputDataStream.readUTF();
+                log.trace("Data was encrypted by key named '{}'", keyAlias);
+                if (keyUsed != null) {
+                    keyUsed.append(keyAlias);
+                }
+                final SecretKey key = keyStrategy.getKey(keyAlias);
+
+                final Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+
+                // Load the IV.
+                final int ivSize = cipher.getBlockSize();
+                final byte[] iv = new byte[ivSize];
+                inputDataStream.readFully(iv);
+
+                final GCMParameterSpec params = new GCMParameterSpec(128, iv);
+                cipher.init(Cipher.DECRYPT_MODE, key, params);
+                cipher.updateAAD(keyAlias.getBytes());
+
+                // Data can't be any bigger than the original minus IV.
+                final byte[] data = new byte[in.length - ivSize];
+                final int dataSize = inputDataStream.read(data);
+
+                final byte[] plaintext = new byte[cipher.getOutputSize(dataSize)];
+                final int outputLen = cipher.update(data, 0, dataSize, plaintext, 0);
+                cipher.doFinal(plaintext, outputLen);
+
+                // Pass the plaintext into the subroutine for processing.
+                return extractAndCheckDecryptedData(plaintext);
             }
-            final SecretKey key = keyStrategy.getKey(keyAlias);
-            
-            final Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
-            
-            // Load the IV.
-            final int ivSize = cipher.getBlockSize();
-            final byte[] iv = new byte[ivSize];
-            inputDataStream.readFully(iv);
-            
-            final GCMParameterSpec params = new GCMParameterSpec(128, iv);
-            cipher.init(Cipher.DECRYPT_MODE, key, params);
-            cipher.updateAAD(keyAlias.getBytes());
-            
-            // Data can't be any bigger than the original minus IV.
-            final byte[] data = new byte[in.length - ivSize];
-            final int dataSize = inputDataStream.read(data);
-            
-            final byte[] plaintext = new byte[cipher.getOutputSize(dataSize)];
-            final int outputLen = cipher.update(data, 0, dataSize, plaintext, 0);
-            cipher.doFinal(plaintext, outputLen);
-            
-            // Pass the plaintext into the subroutine for processing.
-            return extractAndCheckDecryptedData(plaintext);
 
         } catch (final KeyNotFoundException e) {
             if (keyUsed != null) {
@@ -264,10 +265,8 @@ public class DataSealer extends AbstractInitializableComponent {
     @Nonnull private String extractAndCheckDecryptedData(@Nonnull @NotEmpty final byte[] decryptedBytes)
             throws DataSealerException {
         
-        try {
-            final ByteArrayInputStream byteStream = new ByteArrayInputStream(decryptedBytes);
-            final GZIPInputStream compressedData = new GZIPInputStream(byteStream);
-            final DataInputStream dataInputStream = new DataInputStream(compressedData);
+        try (final DataInputStream dataInputStream =
+                new DataInputStream(new GZIPInputStream(new ByteArrayInputStream(decryptedBytes)))) {
 
             final long decodedExpirationTime = dataInputStream.readLong();
             if (System.currentTimeMillis() > decodedExpirationTime) {
@@ -332,41 +331,44 @@ public class DataSealer extends AbstractInitializableComponent {
             cipher.init(Cipher.ENCRYPT_MODE, defaultKey.getSecond(), params);
             cipher.updateAAD(defaultKey.getFirst().getBytes());
 
-            final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-            final GZIPOutputStream compressedStream = new GZIPOutputStream(byteStream);
-            final DataOutputStream dataStream = new DataOutputStream(compressedStream);
+            try (final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+                    final GZIPOutputStream compressedStream = new GZIPOutputStream(byteStream);
+                    final DataOutputStream dataStream = new DataOutputStream(compressedStream)) {
 
-            dataStream.writeLong(exp.toEpochMilli());
-            
-            int count = 0;
-            int start = 0;
-            final int dataLength = data.length();
-            while (start < dataLength) {
-                dataStream.writeUTF(data.substring(start, start + Math.min(dataLength - start, CHUNK_SIZE)));
-                start += Math.min(dataLength - start, CHUNK_SIZE);
-                log.trace("Wrote chunk #{} to output stream", ++count);
+                dataStream.writeLong(exp.toEpochMilli());
+
+                int count = 0;
+                int start = 0;
+                final int dataLength = data.length();
+                while (start < dataLength) {
+                    dataStream.writeUTF(data.substring(start, start + Math.min(dataLength - start, CHUNK_SIZE)));
+                    start += Math.min(dataLength - start, CHUNK_SIZE);
+                    log.trace("Wrote chunk #{} to output stream", ++count);
+                }
+
+                dataStream.flush();
+                compressedStream.flush();
+                compressedStream.finish();
+                byteStream.flush();
+
+                final byte[] plaintext = byteStream.toByteArray();
+
+                final byte[] encryptedData = new byte[cipher.getOutputSize(plaintext.length)];
+                int outputLen = cipher.update(plaintext, 0, plaintext.length, encryptedData, 0);
+                outputLen += cipher.doFinal(encryptedData, outputLen);
+
+                try (final ByteArrayOutputStream finalByteStream = new ByteArrayOutputStream();
+                        final DataOutputStream finalDataStream = new DataOutputStream(finalByteStream)) {
+
+                    finalDataStream.writeUTF(defaultKey.getFirst());
+                    finalDataStream.write(iv);
+                    finalDataStream.write(encryptedData, 0, outputLen);
+                    finalDataStream.flush();
+                    finalByteStream.flush();
+
+                    return new String(encoder.encode(finalByteStream.toByteArray()), StandardCharsets.UTF_8);
+                }
             }
-
-            dataStream.flush();
-            compressedStream.flush();
-            compressedStream.finish();
-            byteStream.flush();
-
-            final byte[] plaintext = byteStream.toByteArray();
-            
-            final byte[] encryptedData = new byte[cipher.getOutputSize(plaintext.length)];
-            int outputLen = cipher.update(plaintext, 0, plaintext.length, encryptedData, 0);
-            outputLen += cipher.doFinal(encryptedData, outputLen);
-
-            final ByteArrayOutputStream finalByteStream = new ByteArrayOutputStream();
-            final DataOutputStream finalDataStream = new DataOutputStream(finalByteStream);
-            finalDataStream.writeUTF(defaultKey.getFirst());
-            finalDataStream.write(iv);
-            finalDataStream.write(encryptedData, 0, outputLen);
-            finalDataStream.flush();
-            finalByteStream.flush();
-
-            return new String(encoder.encode(finalByteStream.toByteArray()), StandardCharsets.UTF_8);
 
         } catch (final Exception e) {
             log.error("Exception wrapping data: {}", e.getMessage());
