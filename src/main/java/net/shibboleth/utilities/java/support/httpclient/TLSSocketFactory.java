@@ -27,6 +27,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.net.SocketFactory;
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;
@@ -40,9 +41,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import org.apache.http.HttpHost;
 import org.apache.http.conn.socket.LayeredConnectionSocketFactory;
 import org.apache.http.conn.ssl.AllowAllHostnameVerifier;
-import org.apache.http.conn.ssl.BrowserCompatHostnameVerifier;
 import org.apache.http.conn.ssl.StrictHostnameVerifier;
-import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.Args;
 import org.slf4j.Logger;
@@ -89,14 +88,10 @@ public class TLSSocketFactory implements LayeredConnectionSocketFactory {
     @Nonnull @NotEmpty public static final String SSLV2 = "SSLv2";
 
     /** Hostname verifier which passes all hostnames. */
-    @Nonnull public static final X509HostnameVerifier ALLOW_ALL_HOSTNAME_VERIFIER = new AllowAllHostnameVerifier();
-
-    /** Hostname verifier which implements a policy similar to most browsers. */
-    @Nonnull public static final X509HostnameVerifier BROWSER_COMPATIBLE_HOSTNAME_VERIFIER =
-            new BrowserCompatHostnameVerifier();
+    @Nonnull public static final HostnameVerifier ALLOW_ALL_HOSTNAME_VERIFIER = new AllowAllHostnameVerifier();
 
     /** Hostname verifier which implements a strict policy. */
-    @Nonnull public static final X509HostnameVerifier STRICT_HOSTNAME_VERIFIER = new StrictHostnameVerifier();
+    @Nonnull public static final HostnameVerifier STRICT_HOSTNAME_VERIFIER = new StrictHostnameVerifier();
     
     /** Logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(TLSSocketFactory.class);
@@ -105,7 +100,7 @@ public class TLSSocketFactory implements LayeredConnectionSocketFactory {
     @Nonnull private final SSLSocketFactory socketfactory;
     
     /** Hostname verifier. */
-    @Nonnull private final X509HostnameVerifier hostnameVerifier;
+    @Nonnull private final HostnameVerifier hostnameVerifier;
     
     /** Factory-wide supported protocols. */
     private final String[] supportedProtocols;
@@ -131,7 +126,7 @@ public class TLSSocketFactory implements LayeredConnectionSocketFactory {
      */
     public TLSSocketFactory(
             @Nonnull final SSLContext sslContext, 
-            @Nullable final X509HostnameVerifier verifier) {
+            @Nullable final HostnameVerifier verifier) {
         this(Constraint.isNotNull(sslContext, "SSL context cannot be null").getSocketFactory(), null, null, verifier);
     }
 
@@ -147,7 +142,7 @@ public class TLSSocketFactory implements LayeredConnectionSocketFactory {
             @Nonnull final SSLContext sslContext,
             @Nullable final String[] protocols,
             @Nullable final String[] cipherSuites,
-            @Nullable final X509HostnameVerifier verifier) {
+            @Nullable final HostnameVerifier verifier) {
         this(Constraint.isNotNull(sslContext, "SSL context cannot be null").getSocketFactory(),
                 protocols, cipherSuites, verifier);
     }
@@ -160,7 +155,7 @@ public class TLSSocketFactory implements LayeredConnectionSocketFactory {
      */
     public TLSSocketFactory(
             @Nonnull final SSLSocketFactory factory, 
-            @Nullable final X509HostnameVerifier verifier) {
+            @Nullable final HostnameVerifier verifier) {
         this(factory, null, null, verifier);
     }
 
@@ -176,7 +171,7 @@ public class TLSSocketFactory implements LayeredConnectionSocketFactory {
             @Nonnull final SSLSocketFactory factory,
             @Nullable final String[] protocols,
             @Nullable final String[] cipherSuites,
-            @Nullable final X509HostnameVerifier verifier) {
+            @Nullable final HostnameVerifier verifier) {
         socketfactory = Constraint.isNotNull(factory, "SSL socket factory cannot be null");
         supportedProtocols = protocols;
         supportedCipherSuites = cipherSuites;
@@ -197,7 +192,7 @@ public class TLSSocketFactory implements LayeredConnectionSocketFactory {
      * 
      * @return the hostname verifier
      */
-    @Nonnull protected X509HostnameVerifier getHostnameVerifier() {
+    @Nonnull protected HostnameVerifier getHostnameVerifier() {
         return hostnameVerifier;
     }
 
@@ -396,24 +391,16 @@ public class TLSSocketFactory implements LayeredConnectionSocketFactory {
     protected void verifyHostname(@Nonnull final SSLSocket sslsock, @Nonnull final String hostname, 
             @Nullable final HttpContext context) throws IOException {
         
-        try {
-            X509HostnameVerifier verifier = null;
+            HostnameVerifier verifier = null;
             if (context != null) {
-                verifier = (X509HostnameVerifier) context.getAttribute(CONTEXT_KEY_HOSTNAME_VERIFIER);
+                verifier = (HostnameVerifier) context.getAttribute(CONTEXT_KEY_HOSTNAME_VERIFIER);
             }
             if (verifier == null) {
                 verifier = getHostnameVerifier(); 
             }
-            verifier.verify(hostname, sslsock);
-        } catch (final IOException iox) {
-            // close the socket before re-throwing the exception
-            try {
-                sslsock.close();
-            } catch (final Exception x) {
-                /*ignore*/
+            if (! verifier.verify(hostname, sslsock.getSession())) {
+                throw new SSLPeerUnverifiedException("TLS hostname verification failed for hostname: " + hostname);
             }
-            throw iox;
-        }
     }
 
 }

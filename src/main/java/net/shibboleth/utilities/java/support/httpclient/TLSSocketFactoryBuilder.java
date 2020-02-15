@@ -27,13 +27,12 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
-import org.apache.http.conn.ssl.X509HostnameVerifier;
 
 /**
  * A builder for instances of {@link TLSSocketFactory} which allows easy specification
@@ -45,7 +44,7 @@ public class TLSSocketFactoryBuilder {
     private static final String DEFAULT_CONTEXT_PROTOCOL = "TLS";
     
     /** The default hostname verifier used by the socket factory. */
-    private static final X509HostnameVerifier DEFAULT_HOSTNAME_VERIFIER = 
+    private static final HostnameVerifier DEFAULT_HOSTNAME_VERIFIER = 
             TLSSocketFactory.STRICT_HOSTNAME_VERIFIER;
     
     /** The protocol used when obtaining the SSLContext instance. */
@@ -64,7 +63,7 @@ public class TLSSocketFactoryBuilder {
     private SecureRandom secureRandom;
     
     /** The hostname verifier used by the socket factory. */
-    private X509HostnameVerifier hostnameVerifier;
+    private HostnameVerifier hostnameVerifier;
     
     /** The SSL/TLS protocols enabled on sockets produced by the socket factory. */
     private List<String> enabledProtocols;
@@ -206,13 +205,13 @@ public class TLSSocketFactoryBuilder {
     }
     
     /**
-     * Get the {@link X509HostnameVerifier} instance used by the socket factory.
+     * Get the {@link HostnameVerifier} instance used by the socket factory.
      * 
      * <p>If not specified, defaults to {@link TLSSocketFactory#STRICT_HOSTNAME_VERIFIER}.
      * 
      * @return the hostname verifier, or null
      */
-    @Nullable public X509HostnameVerifier getHostnameVerifier() {
+    @Nullable public HostnameVerifier getHostnameVerifier() {
         return hostnameVerifier;
     }
 
@@ -225,7 +224,7 @@ public class TLSSocketFactoryBuilder {
      * 
      * @return this builder instance
      */
-    public TLSSocketFactoryBuilder setHostnameVerifier(@Nullable final X509HostnameVerifier verifier) {
+    public TLSSocketFactoryBuilder setHostnameVerifier(@Nullable final HostnameVerifier verifier) {
         hostnameVerifier = verifier;
         return this;
     }
@@ -285,7 +284,7 @@ public class TLSSocketFactoryBuilder {
      * @return a new socket factory instance
      */
     @Nonnull public TLSSocketFactory build() {
-        X509HostnameVerifier verifier = hostnameVerifier;
+        HostnameVerifier verifier = hostnameVerifier;
         if (verifier == null) {
             verifier = DEFAULT_HOSTNAME_VERIFIER;
         }

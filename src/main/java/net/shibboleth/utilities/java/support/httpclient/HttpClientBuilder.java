@@ -97,7 +97,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
  * <ul>
  * <li><code>SSLSocketFactory</code> ({@link org.apache.http.conn.socket.LayeredConnectionSocketFactory})</li>
  * <li>{@link javax.net.ssl.SSLContext}</li>
- * <li>{@link org.apache.http.conn.ssl.X509HostnameVerifier}</li>
+ * <li>{@link javax.net.ssl.HostnameVerifier}</li>
  * <li>{@link org.apache.http.config.SocketConfig}</li>
  * <li>{@link ConnectionConfig}</li>
  * <li><code>maxConnTotal</code></li>
@@ -131,7 +131,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
  * 
  * <ul>
  * <li>{@link javax.net.ssl.SSLContext}</li>
- * <li>{@link org.apache.http.conn.ssl.X509HostnameVerifier}</li>
+ * <li>{@link javax.net.ssl.HostnameVerifier}</li>
  * </ul>
  * </li>
  * 
