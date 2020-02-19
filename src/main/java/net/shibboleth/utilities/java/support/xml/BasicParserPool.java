@@ -863,11 +863,5 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
             }
         }
 
-        /** {@inheritDoc} */
-        @Override
-        protected void finalize() throws Throwable {
-            super.finalize();
-            owningPool.returnBuilder(this);
-        }
     }
 }

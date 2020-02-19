@@ -578,54 +578,6 @@ public class BasicParserPoolTest {
             basicParserPool.returnBuilder(builders[i]);
         }
     }
-    /**
-     * Test issue reported in JXT-46 - a parser should not be checked into the pool multiple times
-     * via the auto-checkin mechanism by the proxy finalize().
-     * 
-     * @throws XMLParserException if something bad happens
-     * @throws ComponentInitializationException if something bad happens
-     */
-    @Test
-    public void testFinalize() throws XMLParserException, ComponentInitializationException {
-        BasicParserPool pool = new BasicParserPool();
-        pool.initialize();
-        Assert.assertEquals(0, pool.getPoolSize());
-        
-        // Check out and return a builder
-        DocumentBuilder builder = pool.getBuilder();
-        pool.returnBuilder(builder);
-        
-        Assert.assertEquals(1, pool.getPoolSize());
-        
-        // Get rid of any references to the first builder we got, so that it will be GCed
-        //builder = null;
-        // Do explicit GC and sleep a little make sure proxy finalize() gets called
-        //System.out.println("Garbage collection and sleep");
-        //System.gc();
-        //Thread.sleep(3000);
-        //System.out.println("Done sleeping");
-        
-        // Rather than relying on forcing GC behavior in the test as above, which was in initial debugging this problem,
-        // explicitly invoke finalize() to simulate.
-        // (which we can do b/c it's protected access *and* we're in the same package)
-        try {
-            ((DocumentBuilderProxy)builder).finalize();
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-        
-        Assert.assertEquals(1, pool.getPoolSize());
-        
-        
-        // Both of these would have been the same instance pre-bug fix.
-        DocumentBuilder builder1 = ((DocumentBuilderProxy) pool.getBuilder()).getProxiedBuilder();
-        Assert.assertNotNull(builder1);
-        DocumentBuilder builder2 = ((DocumentBuilderProxy) pool.getBuilder()).getProxiedBuilder();
-        Assert.assertNotNull(builder2);
-        Assert.assertFalse(builder1.equals(builder2));
-        
-    }
-    
     
     /**
      * Test for caller (illegally) returning a builder multiple times to pool.
