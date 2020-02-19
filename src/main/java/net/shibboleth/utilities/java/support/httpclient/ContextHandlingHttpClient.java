@@ -31,9 +31,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpRequestWrapper;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.slf4j.Logger;
@@ -100,21 +98,27 @@ class ContextHandlingHttpClient extends CloseableHttpClient {
     }
 
     /** {@inheritDoc} */
-    public HttpParams getParams() {
+    @Deprecated
+    @Override
+    public org.apache.http.params.HttpParams getParams() {
         return httpClient.getParams();
     }
 
     /** {@inheritDoc} */
-    public ClientConnectionManager getConnectionManager() {
+    @Deprecated
+    @Override
+    public org.apache.http.conn.ClientConnectionManager getConnectionManager() {
         return httpClient.getConnectionManager();
     }
     
     /** {@inheritDoc} */
+    @Override
     public void close() throws IOException {
         httpClient.close();
     }
 
     /** {@inheritDoc} */
+    @Override
     protected CloseableHttpResponse doExecute(final HttpHost target, final HttpRequest request, 
             final HttpContext context) throws IOException, ClientProtocolException {
         

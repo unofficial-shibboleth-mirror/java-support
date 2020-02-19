@@ -33,10 +33,8 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicHttpResponse;
-import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpContext;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
@@ -1867,12 +1865,16 @@ public class ContextHandlingHttpClientTest {
         }
 
         /** {@inheritDoc} */
-        public HttpParams getParams() {
+        @Deprecated
+        @Override
+        public org.apache.http.params.HttpParams getParams() {
             return null;
         }
 
         /** {@inheritDoc} */
-        public ClientConnectionManager getConnectionManager() {
+        @Deprecated
+        @Override
+        public org.apache.http.conn.ClientConnectionManager getConnectionManager() {
             return null;
         }
         

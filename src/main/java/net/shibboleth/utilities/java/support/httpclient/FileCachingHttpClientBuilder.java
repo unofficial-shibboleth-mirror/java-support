@@ -39,13 +39,11 @@ import org.apache.http.HttpRequest;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.cache.CacheConfig;
 import org.apache.http.impl.client.cache.CachingHttpClientBuilder;
 import org.apache.http.impl.client.cache.FileResourceFactory;
 import org.apache.http.impl.client.cache.ManagedHttpCacheStorage;
-import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -313,20 +311,25 @@ public class FileCachingHttpClientBuilder extends HttpClientBuilder {
         }
 
         /** {@inheritDoc} */
-        @Deprecated public HttpParams getParams() {
+        @Override
+        @Deprecated
+        public org.apache.http.params.HttpParams getParams() {
             ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
             ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
             return httpClient.getParams();
         }
         
         /** {@inheritDoc} */
-        @Deprecated public ClientConnectionManager getConnectionManager() {
+        @Override
+        @Deprecated
+        public org.apache.http.conn.ClientConnectionManager getConnectionManager() {
             ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
             ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
             return httpClient.getConnectionManager();
         }
 
         /** {@inheritDoc} */
+        @Override
         public void close() throws IOException {
             ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
             ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
@@ -334,16 +337,19 @@ public class FileCachingHttpClientBuilder extends HttpClientBuilder {
         }
 
         /** {@inheritDoc} */
+        @Override
         public boolean isInitialized() {
             return initialized;
         }
 
         /** {@inheritDoc} */
+        @Override
         public boolean isDestroyed() {
             return destroyed;
         }
 
         /** {@inheritDoc} */
+        @Override
         public void initialize() throws ComponentInitializationException {
             timer = new Timer(TimerSupport.getTimerName(this), true);
             maintenanceTask = new StorageMaintenanceTask(storage);
