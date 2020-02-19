@@ -362,7 +362,8 @@ public class SelfSignedCertificateGenerator {
         final SelfSignedCertificateGenerator generator = new SelfSignedCertificateGenerator();
 
         // Parse command line.
-        final JCommander jc = new JCommander(generator.args, args);
+        final JCommander jc = new JCommander(generator.args);
+        jc.parse(args);
         if (generator.args.help) {
             jc.setProgramName("SelfSignedCertificateGenerator");
             jc.usage();

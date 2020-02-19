@@ -218,7 +218,8 @@ public class BasicKeystoreKeyStrategyTool {
         final BasicKeystoreKeyStrategyTool tool = new BasicKeystoreKeyStrategyTool();
 
         // Parse command line.
-        final JCommander jc = new JCommander(tool.args, args);
+        final JCommander jc = new JCommander(tool.args);
+        jc.parse(args);
         if (tool.args.help) {
             jc.setProgramName("BasicKeystoreKeyStrategyTool");
             jc.usage();
