@@ -40,8 +40,9 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.apache.http.HttpHost;
 import org.apache.http.conn.socket.LayeredConnectionSocketFactory;
-import org.apache.http.conn.ssl.AllowAllHostnameVerifier;
-import org.apache.http.conn.ssl.StrictHostnameVerifier;
+import org.apache.http.conn.ssl.DefaultHostnameVerifier;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.util.PublicSuffixMatcher;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.Args;
 import org.slf4j.Logger;
@@ -58,8 +59,8 @@ import org.slf4j.LoggerFactory;
  * </p>
  *
  * <ul>
- *   <li>Factory hostname verifier defaults to {@link StrictHostnameVerifier} rather than 
- *       {@link BrowserCompatHostnameVerifier}</li>
+ *   <li>Factory hostname verifier defaults to {@link DefaultHostnameVerifier} without a
+ *   configured {@link PublicSuffixMatcher}.</li>
  *   <li>Per-request specification of enabled TLS protocols and cipher suites via {@link HttpContext} attributes.</li>
  *   <li>Per-request specification of hostname verifier via {@link HttpContext} attribute.</li>
  * </ul>
@@ -88,10 +89,10 @@ public class TLSSocketFactory implements LayeredConnectionSocketFactory {
     @Nonnull @NotEmpty public static final String SSLV2 = "SSLv2";
 
     /** Hostname verifier which passes all hostnames. */
-    @Nonnull public static final HostnameVerifier ALLOW_ALL_HOSTNAME_VERIFIER = new AllowAllHostnameVerifier();
+    @Nonnull public static final HostnameVerifier ALLOW_ALL_HOSTNAME_VERIFIER = new NoopHostnameVerifier();
 
     /** Hostname verifier which implements a strict policy. */
-    @Nonnull public static final HostnameVerifier STRICT_HOSTNAME_VERIFIER = new StrictHostnameVerifier();
+    @Nonnull public static final HostnameVerifier STRICT_HOSTNAME_VERIFIER = new DefaultHostnameVerifier();
     
     /** Logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(TLSSocketFactory.class);

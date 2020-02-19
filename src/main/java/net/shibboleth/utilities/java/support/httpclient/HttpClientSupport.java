@@ -40,8 +40,8 @@ import org.apache.http.HttpEntity;
 import org.apache.http.ParseException;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.conn.socket.LayeredConnectionSocketFactory;
-import org.apache.http.conn.ssl.AllowAllHostnameVerifier;
-import org.apache.http.conn.ssl.StrictHostnameVerifier;
+import org.apache.http.conn.ssl.DefaultHostnameVerifier;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.entity.ContentType;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.CharArrayBuffer;
@@ -72,7 +72,7 @@ public final class HttpClientSupport {
      */
     @Nonnull public static LayeredConnectionSocketFactory buildStrictTLSSocketFactory() {
         return new TLSSocketFactoryBuilder()
-            .setHostnameVerifier(new StrictHostnameVerifier())
+            .setHostnameVerifier(new DefaultHostnameVerifier())
             .build();
     }
     
@@ -85,7 +85,7 @@ public final class HttpClientSupport {
     @Nonnull public static LayeredConnectionSocketFactory buildNoTrustTLSSocketFactory() {
         return new TLSSocketFactoryBuilder()
             .setTrustManagers(Collections.<TrustManager>singletonList(buildNoTrustX509TrustManager()))
-            .setHostnameVerifier(new AllowAllHostnameVerifier())
+            .setHostnameVerifier(new NoopHostnameVerifier())
             .build();
     }
     
