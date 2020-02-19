@@ -41,6 +41,7 @@ public class ObjectSupportTest {
        Assert.assertNull(ObjectSupport.firstNonNull());
     }
 
+    @SuppressWarnings("removal")
     @Test public void testHashCode() {
         ComplexClass c1 = new ComplexClass(Integer.valueOf(1), Double.valueOf(3.4), "String!");
         ComplexClass c2 = new ComplexClass("String3", Integer.valueOf(1243), Boolean.valueOf(false));
