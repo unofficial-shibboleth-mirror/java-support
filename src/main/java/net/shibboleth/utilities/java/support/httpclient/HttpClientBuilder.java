@@ -513,7 +513,7 @@ public class HttpClientBuilder {
      * 
      * @deprecated use {@link #isConnectionStaleCheck()}
      */
-    @Deprecated
+    @Deprecated(forRemoval=true)
     public boolean isConnectionStalecheck() {
         return isConnectionStaleCheck();
     }
@@ -528,7 +528,7 @@ public class HttpClientBuilder {
      * 
      * @deprecated use {@link #setConnectionStaleCheck(boolean)}
      */
-    @Deprecated
+    @Deprecated(forRemoval=true)
     public void setConnectionStalecheck(final boolean check) {
         setConnectionStaleCheck(check);
     }
@@ -538,8 +538,11 @@ public class HttpClientBuilder {
      * 
      * @return whether reused connections are checked if they are closed before being used by the client
      * 
+     * @deprecated use a custom-configured connection pool manger.
+     *     See {@link org.apache.http.impl.conn.PoolingHttpClientConnectionManager#setValidateAfterInactivity(int)}
      * 
      */
+    @Deprecated(forRemoval=true)
     public boolean isConnectionStaleCheck() {
         return connectionStaleCheck;
     }
@@ -551,7 +554,11 @@ public class HttpClientBuilder {
      * appropriate.
      * 
      * @param check whether reused connections are checked if they are closed before being used by the client
+     * 
+     * @deprecated use a custom-configured connection pool manger.
+     *     See {@link org.apache.http.impl.conn.PoolingHttpClientConnectionManager#setValidateAfterInactivity(int)}
      */
+    @Deprecated(forRemoval=true)
     public void setConnectionStaleCheck(final boolean check) {
         connectionStaleCheck = check;
     }
@@ -984,6 +991,7 @@ public class HttpClientBuilder {
      * @throws Exception if there is a problem decorating the Apache builder
      */
     // Checkstyle: CyclomaticComplexity|MethodLength OFF
+    @SuppressWarnings("deprecation")
     protected void decorateApacheBuilder() throws Exception {
         final org.apache.http.impl.client.HttpClientBuilder builder = getApacheBuilder();
         
@@ -1073,6 +1081,8 @@ public class HttpClientBuilder {
             requestConfigBuilder.setConnectionRequestTimeout((int) connectionRequestTimeout.toMillis());
         }
         
+        // TODO: When we remove the deprecated 'connectionStaleCheck' when we move to HC 5,
+        // be sure to also remove the @SuppressWarnings("deprecation") on this method.
         requestConfigBuilder.setStaleConnectionCheckEnabled(connectionStaleCheck);
 
         requestConfigBuilder.setRedirectsEnabled(httpFollowRedirects);
