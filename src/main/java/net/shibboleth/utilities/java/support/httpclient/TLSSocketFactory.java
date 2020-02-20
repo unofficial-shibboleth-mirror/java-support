@@ -76,7 +76,7 @@ public class TLSSocketFactory implements LayeredConnectionSocketFactory {
      * Must be an instance of {@link List}&lt;{@link String}&gt;. */
     @Nonnull @NotEmpty public static final String CONTEXT_KEY_TLS_CIPHER_SUITES = "javasupport.TLSCipherSuites";
     
-    /** HttpContext key for an instance of {@link X509HostnameVerifier}. */
+    /** HttpContext key for an instance of {@link javax.net.ssl.HostnameVerifier}. */
     @Nonnull @NotEmpty public static final String CONTEXT_KEY_HOSTNAME_VERIFIER = "javasupport.HostnameVerifier";
 
     /** Protocol: TLS. */

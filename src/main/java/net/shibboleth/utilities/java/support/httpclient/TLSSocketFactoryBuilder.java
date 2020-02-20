@@ -216,7 +216,7 @@ public class TLSSocketFactoryBuilder {
     }
 
     /**
-     * Set the {@link X509HostnameVerifier} instance used by the socket factory.
+     * Set the {@link javax.net.ssl.HostnameVerifier} instance used by the socket factory.
      * 
      * <p>If not specified, defaults to {@link TLSSocketFactory#STRICT_HOSTNAME_VERIFIER}.
      * 
