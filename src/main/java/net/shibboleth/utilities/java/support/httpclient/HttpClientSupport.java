@@ -157,8 +157,26 @@ public final class HttpClientSupport {
      */
     public static void addDynamicContextHandlerFirst(@Nonnull final HttpClientContext context,
             @Nonnull final HttpClientContextHandler handler) {
+        addDynamicContextHandlerFirst(context, handler, false);
+    }
+
+    /**
+     * Add the specified instance of {@link HttpClientContextHandler}
+     * to the {@link HttpClientContext} in the first handler list position.
+     *
+     * @param context the client context
+     * @param handler the handler to add
+     * @param uniqueType whether to only add the handler if an instance of its (exact) class is not already present
+     */
+    public static void addDynamicContextHandlerFirst(@Nonnull final HttpClientContext context,
+            @Nonnull final HttpClientContextHandler handler, final boolean uniqueType) {
         Constraint.isNotNull(handler, "HttpClientContextHandler was null");
-        getDynamicContextHandlerList(context).add(0, handler);
+        final List<HttpClientContextHandler> list = getDynamicContextHandlerList(context);
+        if (list.contains(handler)
+                || (uniqueType && list.stream().anyMatch(h -> handler.getClass().equals(h.getClass())))) {
+            return;
+        }
+        list.add(0, handler);
     }
 
     /**
@@ -170,8 +188,26 @@ public final class HttpClientSupport {
      */
     public static void addDynamicContextHandlerLast(@Nonnull final HttpClientContext context,
             @Nonnull final HttpClientContextHandler handler) {
+        addDynamicContextHandlerLast(context, handler, false);
+    }
+
+    /**
+     * Add the specified instance of {@link HttpClientContextHandler}
+     * to the {@link HttpClientContext} in the last handler list position.
+     *
+     * @param context the client context
+     * @param handler the handler to add
+     * @param uniqueType whether to only add the handler if an instance of its (exact) class is not already present
+     */
+    public static void addDynamicContextHandlerLast(@Nonnull final HttpClientContext context,
+            @Nonnull final HttpClientContextHandler handler, final boolean uniqueType) {
         Constraint.isNotNull(handler, "HttpClientContextHandler was null");
-        getDynamicContextHandlerList(context).add(handler);
+        final List<HttpClientContextHandler> list = getDynamicContextHandlerList(context);
+        if (list.contains(handler)
+                || (uniqueType && list.stream().anyMatch(h -> handler.getClass().equals(h.getClass())))) {
+            return;
+        }
+        list.add(handler);
     }
 
 // Checkstyle: CyclomaticComplexity OFF

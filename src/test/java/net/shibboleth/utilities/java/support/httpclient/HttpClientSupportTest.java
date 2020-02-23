@@ -28,6 +28,7 @@ import com.google.common.collect.Lists;
 
 public class HttpClientSupportTest {
 
+
     @Test
     public void testAddDynamicContextHandlerFirst() {
         HttpClientContext context = HttpClientContext.create();
@@ -54,6 +55,76 @@ public class HttpClientSupportTest {
         HttpClientSupport.addDynamicContextHandlerLast(context, three);
         
         Assert.assertEquals(HttpClientSupport.getDynamicContextHandlerList(context), Lists.newArrayList(one, two, three));
+    }
+    
+    @Test
+    public void testAddDynamicContextHandlerFirstUniqueInstances() {
+        HttpClientContext context = HttpClientContext.create();
+        HttpClientContextHandler one = new TestContextHandler();
+        HttpClientContextHandler two = new TestContextHandler();
+        HttpClientContextHandler three = new TestContextHandler();
+        
+        HttpClientSupport.addDynamicContextHandlerFirst(context, one);
+        HttpClientSupport.addDynamicContextHandlerFirst(context, one);
+        HttpClientSupport.addDynamicContextHandlerFirst(context, two);
+        HttpClientSupport.addDynamicContextHandlerFirst(context, one);
+        HttpClientSupport.addDynamicContextHandlerFirst(context, two);
+        HttpClientSupport.addDynamicContextHandlerFirst(context, three);
+        HttpClientSupport.addDynamicContextHandlerFirst(context, two);
+        HttpClientSupport.addDynamicContextHandlerFirst(context, three);
+        HttpClientSupport.addDynamicContextHandlerFirst(context, two);
+        HttpClientSupport.addDynamicContextHandlerFirst(context, one);
+        
+        Assert.assertEquals(HttpClientSupport.getDynamicContextHandlerList(context), Lists.newArrayList(three, two, one));
+    }
+     
+    @Test
+    public void testAddDynamicContextHandlerLastUniqueInstances() {
+        HttpClientContext context = HttpClientContext.create();
+        HttpClientContextHandler one = new TestContextHandler();
+        HttpClientContextHandler two = new TestContextHandler();
+        HttpClientContextHandler three = new TestContextHandler();
+        
+        HttpClientSupport.addDynamicContextHandlerLast(context, one);
+        HttpClientSupport.addDynamicContextHandlerLast(context, one);
+        HttpClientSupport.addDynamicContextHandlerLast(context, two);
+        HttpClientSupport.addDynamicContextHandlerLast(context, one);
+        HttpClientSupport.addDynamicContextHandlerLast(context, two);
+        HttpClientSupport.addDynamicContextHandlerLast(context, three);
+        HttpClientSupport.addDynamicContextHandlerLast(context, two);
+        HttpClientSupport.addDynamicContextHandlerLast(context, three);
+        HttpClientSupport.addDynamicContextHandlerLast(context, two);
+        HttpClientSupport.addDynamicContextHandlerLast(context, one);
+        
+        Assert.assertEquals(HttpClientSupport.getDynamicContextHandlerList(context), Lists.newArrayList(one, two, three));
+    }
+    
+    @Test
+    public void testAddDynamicContextHandlerFirstUniqueType() {
+        HttpClientContext context = HttpClientContext.create();
+        HttpClientContextHandler one = new TestContextHandler();
+        HttpClientContextHandler two = new TestContextHandler();
+        HttpClientContextHandler three = new TestContextHandler();
+        
+        HttpClientSupport.addDynamicContextHandlerFirst(context, one, true);
+        HttpClientSupport.addDynamicContextHandlerFirst(context, two, true);
+        HttpClientSupport.addDynamicContextHandlerFirst(context, three, true);
+        
+        Assert.assertEquals(HttpClientSupport.getDynamicContextHandlerList(context), Lists.newArrayList(one));
+    }
+     
+    @Test
+    public void testAddDynamicContextHandlerLastUniqueType() {
+        HttpClientContext context = HttpClientContext.create();
+        HttpClientContextHandler one = new TestContextHandler();
+        HttpClientContextHandler two = new TestContextHandler();
+        HttpClientContextHandler three = new TestContextHandler();
+        
+        HttpClientSupport.addDynamicContextHandlerLast(context, one, true);
+        HttpClientSupport.addDynamicContextHandlerLast(context, two, true);
+        HttpClientSupport.addDynamicContextHandlerLast(context, three, true);
+        
+        Assert.assertEquals(HttpClientSupport.getDynamicContextHandlerList(context), Lists.newArrayList(one));
     }
      
     
