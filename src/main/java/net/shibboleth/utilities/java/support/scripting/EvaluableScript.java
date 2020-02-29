@@ -41,7 +41,7 @@ import net.shibboleth.utilities.java.support.resource.Resource;
 import com.google.common.io.Files;
 
 /** This is a helper class that takes care of reading in, optionally compiling, and evaluating a script. */
-public class EvaluableScript {
+public final class EvaluableScript {
 
     /** The scripting language. */
     @Nonnull @NotEmpty private final String scriptLanguage;
