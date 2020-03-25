@@ -34,6 +34,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
 /** Tests for {@link EvaluableScript}.*/
+@SuppressWarnings("javadoc")
 public class EvaluableScriptTest {
 
     

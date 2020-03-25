@@ -7,7 +7,7 @@
     <parent>
         <groupId>net.shibboleth</groupId>
         <artifactId>parent</artifactId>
-        <version>11.0.0</version>
+        <version>11.0.1-SNAPSHOT</version>
     </parent>
 
     <name>java-support</name>
@@ -146,6 +146,34 @@
             <artifactId>spring-web</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!-- Use of GraalVM is currently test only.
+             Move to compile for 'release' -->
+        <dependency>
+            <groupId>org.graalvm.sdk</groupId>
+            <artifactId>graal-sdk</artifactId>
+            <version>${graalvm.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Use of GraalVM is currently test only.
+             Move to runtime for 'release' -->
+        <dependency>
+            <groupId>org.graalvm.js</groupId>
+            <artifactId>js</artifactId>
+            <version>${graalvm.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Use of GraalVM rhino is currently test only
+             Move to compile of we ever want to release -->
+        <dependency>
+            <groupId>org.mozilla</groupId>
+            <artifactId>rhino</artifactId>
+            <scope>test</scope>
+            <!--  version in parent pom -->
+        </dependency>
+
     </dependencies>
 
     <distributionManagement>
