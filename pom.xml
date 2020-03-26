@@ -7,7 +7,7 @@
     <parent>
         <groupId>net.shibboleth</groupId>
         <artifactId>parent</artifactId>
-        <version>11.0.1-SNAPSHOT</version>
+        <version>11.0.0</version>
     </parent>
 
     <name>java-support</name>
@@ -152,7 +152,7 @@
         <dependency>
             <groupId>org.graalvm.sdk</groupId>
             <artifactId>graal-sdk</artifactId>
-            <version>${graalvm.version}</version>
+            <version>20.0.0</version>
             <scope>test</scope>
         </dependency>
 
@@ -161,7 +161,7 @@
         <dependency>
             <groupId>org.graalvm.js</groupId>
             <artifactId>js</artifactId>
-            <version>${graalvm.version}</version>
+            <version>20.0.0</version>
             <scope>test</scope>
         </dependency>
 
