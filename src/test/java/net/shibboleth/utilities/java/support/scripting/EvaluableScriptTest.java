@@ -22,12 +22,16 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URL;
 
 import javax.annotation.Nonnull;
 import javax.script.ScriptException;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
+import net.shibboleth.utilities.java.support.resource.Resource;
 
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
@@ -52,7 +56,8 @@ public class EvaluableScriptTest {
         }
     }
     
-    @Test public void testEvaluableScript() throws ScriptException, IOException {
+    @SuppressWarnings("removal")
+    @Test public void testEvaluableScriptDeprecated() throws ScriptException, IOException {
        
         new EvaluableScript(SCRIPT_LANGUAGE, TEST_SIMPLE_SCRIPT);
         
@@ -91,9 +96,13 @@ public class EvaluableScriptTest {
         }
 
         Assert.assertEquals((new EvaluableScript(SCRIPT_LANGUAGE, theFile)).getScriptLanguage(), SCRIPT_LANGUAGE);
-        
+
         try (InputStream is = new FileInputStream(theFile)) {
             Assert.assertEquals((new EvaluableScript(SCRIPT_LANGUAGE, is)).getScriptLanguage(), SCRIPT_LANGUAGE);
+        }
+        
+        try (InputStream is = new FileInputStream(theFile)) {
+            Assert.assertEquals((new EvaluableScript(SCRIPT_LANGUAGE, resourceFor(is))).getScriptLanguage(), SCRIPT_LANGUAGE);
         }
 
         try {
@@ -109,7 +118,154 @@ public class EvaluableScriptTest {
         } catch (final ConstraintViolationException e) {
             // OK
         }
+    }
 
+    private EvaluableScript testEvaluableScript(String language, String script) throws ComponentInitializationException {
+        final EvaluableScript ev = new EvaluableScript();
+        ev.setScriptLanguage(language);
+        ev.setScript(script);
+        ev.initialize();
+        return ev;
+    }
+
+    private EvaluableScript testEvaluableScript(String language, File script) throws ComponentInitializationException, IOException {
+        final EvaluableScript ev = new EvaluableScript();
+        ev.setScriptLanguage(language);
+        ev.setScript(script);
+        ev.initialize();
+        return ev;
+    }
+
+    private EvaluableScript testEvaluableScript(String language, InputStream script) throws ComponentInitializationException, IOException {
+        final EvaluableScript ev = new EvaluableScript();
+        ev.setScriptLanguage(language);
+        ev.setScript(script);
+        ev.initialize();
+        return ev;
+    }
+
+    private EvaluableScript testEvaluableScript(String language, Resource script) throws ComponentInitializationException, IOException {
+        final EvaluableScript ev = new EvaluableScript();
+        ev.setScriptLanguage(language);
+        ev.setScript(script);
+        ev.initialize();
+        return ev;
+    }
+
+    @Test public void testEvaluableScriptNonDeprecated() throws ScriptException, IOException, ComponentInitializationException {
+
+        testEvaluableScript(SCRIPT_LANGUAGE, TEST_SIMPLE_SCRIPT);
+
+        try {
+            testEvaluableScript(" ", TEST_SIMPLE_SCRIPT);
+            Assert.fail();
+        } catch (final ConstraintViolationException e) {
+            // OK
+        }
+
+        try {
+            testEvaluableScript(SCRIPT_LANGUAGE, " ");
+            Assert.fail();
+        } catch (final ConstraintViolationException e) {
+            // OK
+        }
+
+        try {
+            testEvaluableScript(nullValue(), TEST_SIMPLE_SCRIPT);
+            Assert.fail();
+        } catch (final ConstraintViolationException e) {
+            // OK
+        }
+
+        try {
+            testEvaluableScript(SCRIPT_LANGUAGE, (String) nullValue());
+            Assert.fail();
+        } catch (final ConstraintViolationException e) {
+            // OK
+        }
+
+        theFile = File.createTempFile("EvaluableScriptTest", ".js");
+
+        try (final FileWriter s = new FileWriter(theFile)) {
+            s.write(TEST_SIMPLE_SCRIPT, 0, TEST_SIMPLE_SCRIPT.length());
+        }
+
+        Assert.assertEquals((testEvaluableScript(SCRIPT_LANGUAGE, theFile)).getScriptLanguage(), SCRIPT_LANGUAGE);
+
+        try (InputStream is = new FileInputStream(theFile)) {
+            Assert.assertEquals((testEvaluableScript(SCRIPT_LANGUAGE, is)).getScriptLanguage(), SCRIPT_LANGUAGE);
+        }
+
+        try (InputStream is = new FileInputStream(theFile)) {
+            Assert.assertEquals((testEvaluableScript(SCRIPT_LANGUAGE, resourceFor(is))).getScriptLanguage(), SCRIPT_LANGUAGE);
+        }
+
+        try {
+            testEvaluableScript(nullValue(), theFile);
+            Assert.fail();
+        } catch (final ConstraintViolationException e) {
+            // OK
+        }
+
+        try {
+            testEvaluableScript(SCRIPT_LANGUAGE, (File) nullValue());
+            Assert.fail();
+        } catch (final ConstraintViolationException e) {
+            // OK
+        }
+    }
+
+    private Resource resourceFor(final InputStream is) {
+        return new Resource() {
+
+            public long lastModified() throws IOException {
+                return 0;
+            }
+
+            public boolean isReadable() {
+                return true;
+            }
+
+            public boolean isOpen() {
+                return false;
+            }
+
+            public URL getURL() throws IOException {
+                return null;
+            }
+
+            public URI getURI() throws IOException {
+                return null;
+            }
+
+            public InputStream getInputStream() throws IOException {
+                return is;
+            }
+
+            public String getFilename() {
+                return null;
+            }
+
+            public File getFile() throws IOException {
+                return null;
+            }
+
+            public String getDescription() {
+                return null;
+            }
+
+            public boolean exists() {
+                return true;
+            }
+
+            public Resource createRelativeResource(String relativePath) throws IOException {
+                return null;
+            }
+
+            public long contentLength() throws IOException {
+                return 0;
+            }
+        };
     }
 
     private <T> T nullValue() {
