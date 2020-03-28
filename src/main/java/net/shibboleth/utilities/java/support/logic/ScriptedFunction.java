@@ -110,6 +110,7 @@ public class ScriptedFunction<T, U> extends AbstractScriptEvaluator implements F
     }
 
     /** {@inheritDoc} */
+    @SuppressWarnings("unchecked")
     public U apply(@Nullable final T input) {
 
         if (null != getInputType() && null != input && !getInputType().isInstance(input)) {
@@ -140,10 +141,14 @@ public class ScriptedFunction<T, U> extends AbstractScriptEvaluator implements F
      * @throws ScriptException if the compile fails
      * @throws IOException if the file doesn't exist.
      */
+    @SuppressWarnings("removal")
     public static <T,U> ScriptedFunction<T,U> resourceScript(@Nonnull @NotEmpty final String engineName,
             @Nonnull final Resource resource) throws ScriptException, IOException {
         try (final InputStream is = resource.getInputStream()) {
-            final EvaluableScript script = new EvaluableScript(engineName, is);
+            final EvaluableScript script = new EvaluableScript();
+            script.setScriptLanguage(engineName);
+            script.setScript(is);
+            script.initializeWithScriptException();
             return new ScriptedFunction<>(script, resource.getDescription());
         }
     }
@@ -177,9 +182,13 @@ public class ScriptedFunction<T, U> extends AbstractScriptEvaluator implements F
      * 
      * @throws ScriptException if the compile fails
      */
+    @SuppressWarnings("removal")
     public static <T,U> ScriptedFunction<T,U> inlineScript(@Nonnull @NotEmpty final String engineName,
             @Nonnull @NotEmpty final String scriptSource) throws ScriptException {
-        final EvaluableScript script = new EvaluableScript(engineName, scriptSource);
+        final EvaluableScript script = new EvaluableScript();
+        script.setScriptLanguage(engineName);
+        script.setScript(scriptSource);
+        script.initializeWithScriptException();
         return new ScriptedFunction<>(script, "Inline");
     }
 
@@ -194,9 +203,12 @@ public class ScriptedFunction<T, U> extends AbstractScriptEvaluator implements F
      * 
      * @throws ScriptException if the compile fails
      */
+    @SuppressWarnings("removal")
     public static <T,U> ScriptedFunction<T,U> inlineScript(@Nonnull @NotEmpty final String scriptSource)
             throws ScriptException {
-        final EvaluableScript script = new EvaluableScript(DEFAULT_ENGINE, scriptSource);
+        final EvaluableScript script = new EvaluableScript();
+        script.setScript(scriptSource);
+        script.initializeWithScriptException();
         return new ScriptedFunction<>(script, "Inline");
     }
 }

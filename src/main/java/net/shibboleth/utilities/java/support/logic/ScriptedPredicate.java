@@ -107,10 +107,14 @@ public class ScriptedPredicate<T> extends AbstractScriptEvaluator implements Pre
      * @throws ScriptException if the compile fails
      * @throws IOException if the file doesn't exist.
      */
+    @SuppressWarnings("removal")
     public static <T> ScriptedPredicate<T> resourceScript(@Nonnull @NotEmpty final String engineName,
             @Nonnull final Resource resource) throws ScriptException, IOException {
         try (final InputStream is = resource.getInputStream()) {
-            final EvaluableScript script = new EvaluableScript(engineName, is);
+            final EvaluableScript script = new EvaluableScript();
+            script.setScriptLanguage(engineName);
+            script.setScript(is);
+            script.initializeWithScriptException();
             return new ScriptedPredicate<>(script, resource.getDescription());
         }
     }
@@ -141,9 +145,13 @@ public class ScriptedPredicate<T> extends AbstractScriptEvaluator implements Pre
      * 
      * @throws ScriptException if the compile fails
      */
+    @SuppressWarnings("removal")
     public static <T> ScriptedPredicate<T> inlineScript(@Nonnull @NotEmpty final String engineName,
             @Nonnull @NotEmpty final String scriptSource) throws ScriptException {
-        final EvaluableScript script = new EvaluableScript(engineName, scriptSource);
+        final EvaluableScript script = new EvaluableScript();
+        script.setScriptLanguage(engineName);
+        script.setScript(scriptSource);
+        script.initializeWithScriptException();
         return new ScriptedPredicate<>(script, "Inline");
     }
 
@@ -157,9 +165,13 @@ public class ScriptedPredicate<T> extends AbstractScriptEvaluator implements Pre
      * 
      * @throws ScriptException if the compile fails
      */
+    @SuppressWarnings("removal")
     public static <T> ScriptedPredicate<T> inlineScript(@Nonnull @NotEmpty final String scriptSource)
             throws ScriptException {
-        final EvaluableScript script = new EvaluableScript(DEFAULT_ENGINE, scriptSource);
+        final EvaluableScript script = new EvaluableScript();
+        script.setScriptLanguage(DEFAULT_ENGINE);
+        script.setScript(scriptSource);
+        script.initializeWithScriptException();
         return new ScriptedPredicate<>(script, "Inline");
     }
 
