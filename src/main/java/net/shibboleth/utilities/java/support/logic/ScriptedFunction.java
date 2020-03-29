@@ -146,7 +146,7 @@ public class ScriptedFunction<T, U> extends AbstractScriptEvaluator implements F
             @Nonnull final Resource resource) throws ScriptException, IOException {
         try (final InputStream is = resource.getInputStream()) {
             final EvaluableScript script = new EvaluableScript();
-            script.setScriptLanguage(engineName);
+            script.setEngineName(engineName);
             script.setScript(is);
             script.initializeWithScriptException();
             return new ScriptedFunction<>(script, resource.getDescription());
@@ -186,7 +186,7 @@ public class ScriptedFunction<T, U> extends AbstractScriptEvaluator implements F
     public static <T,U> ScriptedFunction<T,U> inlineScript(@Nonnull @NotEmpty final String engineName,
             @Nonnull @NotEmpty final String scriptSource) throws ScriptException {
         final EvaluableScript script = new EvaluableScript();
-        script.setScriptLanguage(engineName);
+        script.setEngineName(engineName);
         script.setScript(scriptSource);
         script.initializeWithScriptException();
         return new ScriptedFunction<>(script, "Inline");

@@ -122,7 +122,7 @@ public class EvaluableScriptTest {
 
     private EvaluableScript testEvaluableScript(String language, String script) throws ComponentInitializationException {
         final EvaluableScript ev = new EvaluableScript();
-        ev.setScriptLanguage(language);
+        ev.setEngineName(language);
         ev.setScript(script);
         ev.initialize();
         return ev;
@@ -130,7 +130,7 @@ public class EvaluableScriptTest {
 
     private EvaluableScript testEvaluableScript(String language, File script) throws ComponentInitializationException, IOException {
         final EvaluableScript ev = new EvaluableScript();
-        ev.setScriptLanguage(language);
+        ev.setEngineName(language);
         ev.setScript(script);
         ev.initialize();
         return ev;
@@ -138,7 +138,7 @@ public class EvaluableScriptTest {
 
     private EvaluableScript testEvaluableScript(String language, InputStream script) throws ComponentInitializationException, IOException {
         final EvaluableScript ev = new EvaluableScript();
-        ev.setScriptLanguage(language);
+        ev.setEngineName(language);
         ev.setScript(script);
         ev.initialize();
         return ev;
@@ -146,7 +146,7 @@ public class EvaluableScriptTest {
 
     private EvaluableScript testEvaluableScript(String language, Resource script) throws ComponentInitializationException, IOException {
         final EvaluableScript ev = new EvaluableScript();
-        ev.setScriptLanguage(language);
+        ev.setEngineName(language);
         ev.setScript(script);
         ev.initialize();
         return ev;
