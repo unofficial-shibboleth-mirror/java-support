@@ -337,7 +337,7 @@ public final class EvaluableScript extends AbstractInitializableComponent {
      *
      * @param what the script language
      */
-    @Nonnull @NotEmpty public void setScriptLanguage(@Nonnull @NotEmpty final String what) {
+    @Nonnull @NotEmpty public void setEngineName(@Nonnull @NotEmpty final String what) {
         scriptLanguage = Constraint.isNotNull(StringSupport.trimOrNull(what),
                 "Language must not be null");
     }

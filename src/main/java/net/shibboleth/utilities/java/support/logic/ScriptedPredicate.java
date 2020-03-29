@@ -112,7 +112,7 @@ public class ScriptedPredicate<T> extends AbstractScriptEvaluator implements Pre
             @Nonnull final Resource resource) throws ScriptException, IOException {
         try (final InputStream is = resource.getInputStream()) {
             final EvaluableScript script = new EvaluableScript();
-            script.setScriptLanguage(engineName);
+            script.setEngineName(engineName);
             script.setScript(is);
             script.initializeWithScriptException();
             return new ScriptedPredicate<>(script, resource.getDescription());
@@ -149,7 +149,7 @@ public class ScriptedPredicate<T> extends AbstractScriptEvaluator implements Pre
     public static <T> ScriptedPredicate<T> inlineScript(@Nonnull @NotEmpty final String engineName,
             @Nonnull @NotEmpty final String scriptSource) throws ScriptException {
         final EvaluableScript script = new EvaluableScript();
-        script.setScriptLanguage(engineName);
+        script.setEngineName(engineName);
         script.setScript(scriptSource);
         script.initializeWithScriptException();
         return new ScriptedPredicate<>(script, "Inline");
@@ -169,7 +169,7 @@ public class ScriptedPredicate<T> extends AbstractScriptEvaluator implements Pre
     public static <T> ScriptedPredicate<T> inlineScript(@Nonnull @NotEmpty final String scriptSource)
             throws ScriptException {
         final EvaluableScript script = new EvaluableScript();
-        script.setScriptLanguage(DEFAULT_ENGINE);
+        script.setEngineName(DEFAULT_ENGINE);
         script.setScript(scriptSource);
         script.initializeWithScriptException();
         return new ScriptedPredicate<>(script, "Inline");
