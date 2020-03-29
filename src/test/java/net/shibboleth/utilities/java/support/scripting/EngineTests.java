@@ -22,6 +22,8 @@ import static org.testng.Assert.assertTrue;
 
 import java.util.Map;
 
+import javax.script.Compilable;
+import javax.script.CompiledScript;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -60,11 +62,30 @@ public class EngineTests {
         ctx.setAttribute("b", this, ScriptContext.ENGINE_SCOPE);
         
         final Object o = scriptEngine.eval(script, ctx);
-        
+
         assertTrue(o instanceof Map);
         final Map map = (Map) o;
         assertEquals(map.size(), 1);
         assertEquals(map.get("a"), this);
     }
 
+    @Test public void testGraalCompiled() throws ScriptException {
+        final ScriptEngineManager engineManager = new ScriptEngineManager();
+        final ScriptEngine scriptEngine = engineManager.getEngineByName("shibboleth-nashorn");
+        final Compilable compiler = (Compilable) scriptEngine;
+
+        final ScriptContext ctx = new SimpleScriptContext();
+        ctx.setAttribute("b", this, ScriptContext.ENGINE_SCOPE);
+
+        final String script = "var map = Java.type('java.util.HashMap');"
+                + "var s = new map(2); s.put('a',b); s";
+
+        final CompiledScript compiled = compiler.compile(script);
+        final Object o = compiled.eval(ctx);
+
+        assertTrue(o instanceof Map);
+        final Map map = (Map) o;
+        assertEquals(map.size(), 1);
+        assertEquals(map.get("a"), this);
+    }
 }
