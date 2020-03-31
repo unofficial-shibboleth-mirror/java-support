@@ -84,7 +84,7 @@ public final class PredicateSupport {
      *  @since 7.4.0
      */
     @Nonnull public static <T> Predicate<T> fromFunction(@Nonnull final Function<T,Boolean> function,
-            @Nonnull final java.util.function.Predicate<T> defValue) {
+            @Nonnull final java.util.function.Predicate<? super T> defValue) {
         return new Predicate<>() {
             public boolean test(@Nullable final T input) {
                 final Boolean result = function.apply(input);
@@ -102,7 +102,7 @@ public final class PredicateSupport {
      * 
      * @return the negated predicate
      */
-    @Nonnull public static <T> Predicate<T> not(@Nonnull final java.util.function.Predicate<T> predicate) {
+    @Nonnull public static <T> Predicate<T> not(@Nonnull final java.util.function.Predicate<? super T> predicate) {
         return predicate.negate()::test;
     }
 

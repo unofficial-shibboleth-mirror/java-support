@@ -63,9 +63,10 @@ public final class FunctionSupport {
      * @return the composition of {@code f} and {@code g}
      * @see <a href="//en.wikipedia.org/wiki/Function_composition">function composition</a>
      */
-    @Nonnull public static <A,B,C> Function<A,C> compose(@Nonnull @ParameterName(name="g") final Function<B,C> g,
+    @Nonnull public static <A,B,C> Function<A,C> compose(
+            @Nonnull @ParameterName(name="g") final Function<? super B,? extends C> g,
             @Nonnull @ParameterName(name="f") final Function<A,? extends B> f) {
-        return g.compose(f);
+        return f.andThen(g);
     }
 
     /**
@@ -78,7 +79,8 @@ public final class FunctionSupport {
      * 
      * @return a corresponding function 
      */
-    @Nonnull public static <T> Function<T,Boolean> forPredicate(@Nonnull final Predicate<T> predicate) {
+    @Nonnull public static <T> Function<T,Boolean> forPredicate(
+            @Nonnull @ParameterName(name="predicate") final Predicate<? super T> predicate) {
         return predicate::test;
     }
     
