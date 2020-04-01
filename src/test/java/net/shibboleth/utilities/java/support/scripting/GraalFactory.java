@@ -28,9 +28,6 @@ import javax.script.ScriptEngineFactory;
  */
 public class GraalFactory implements ScriptEngineFactory {
     
-    /** The public name. */
-    public final static String LANGUAGE = "shibboleth-js";
-    
     /** {@inheritDoc} */
     public String getEngineName() {
         
@@ -45,7 +42,7 @@ public class GraalFactory implements ScriptEngineFactory {
     /** {@inheritDoc} */
     public List<String> getExtensions() {
         
-        return List.of("js","rhino-js");
+        return List.of("js","nashorn-js");
     }
 
     /** {@inheritDoc} */
@@ -55,12 +52,14 @@ public class GraalFactory implements ScriptEngineFactory {
 
     /** {@inheritDoc} */
     public List<String> getNames() {
-        return List.of(LANGUAGE,"shibboleth-nashorn");
+        return List.of("shibboleth-nashorn", "shibboleth-Nashorn", 
+                "shibboleth-js", "shibboleth-JS", "shibboleth-JavaScript", "shibboleth-javascript", 
+                "shibboleth-ECMAScript", "shibboleth-ecmascript");
     }
 
     /** {@inheritDoc} */
     public String getLanguageName() {
-        return "javascript";
+        return "ECMAScript";
     }
 
     /** {@inheritDoc} */

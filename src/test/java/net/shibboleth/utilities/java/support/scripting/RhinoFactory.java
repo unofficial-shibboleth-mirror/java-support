@@ -28,9 +28,6 @@ import javax.script.ScriptEngineFactory;
  */
 public class RhinoFactory implements ScriptEngineFactory {
     
-    /** The public name. */
-    public final static String LANGUAGE = "shibboleth-js";
-    
     /** {@inheritDoc} */
     public String getEngineName() {
         
@@ -55,12 +52,14 @@ public class RhinoFactory implements ScriptEngineFactory {
 
     /** {@inheritDoc} */
     public List<String> getNames() {
-        return List.of(LANGUAGE,"shibboleth-rhino");
+        return List.of("shibboleth-rhino", "shibboleth-Rhino", 
+                "shibboleth-js", "shibboleth-JS", "shibboleth-JavaScript", "shibboleth-javascript", 
+                "shibboleth-ECMAScript", "shibboleth-ecmascript");
     }
 
     /** {@inheritDoc} */
     public String getLanguageName() {
-        return "javascript";
+        return "ECMAScript";
     }
 
     /** {@inheritDoc} */
