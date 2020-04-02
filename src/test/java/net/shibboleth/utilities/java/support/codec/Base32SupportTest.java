@@ -17,9 +17,9 @@
 
 package net.shibboleth.utilities.java.support.codec;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import junit.framework.Assert;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 /** {@link Base32Support} unit test. */
