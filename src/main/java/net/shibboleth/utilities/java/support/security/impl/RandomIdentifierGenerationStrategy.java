@@ -71,7 +71,7 @@ public class RandomIdentifierGenerationStrategy implements IdentifierGenerationS
         try {
             random = SecureRandom.getInstance("SHA1PRNG");
             sizeOfIdentifier =
-                    (int) Constraint.isGreaterThan(0, identifierSize,
+                    Constraint.isGreaterThan(0, identifierSize,
                             "Number of bytes in the identifier must be greater than 0");
             encoder = new Hex();
         } catch (final NoSuchAlgorithmException e) {
@@ -90,7 +90,7 @@ public class RandomIdentifierGenerationStrategy implements IdentifierGenerationS
             @Nonnull final BinaryEncoder identifierEncoder) {
         random = Constraint.isNotNull(source, "Random number source can not be null");
         sizeOfIdentifier =
-                (int) Constraint.isGreaterThan(0, identifierSize,
+                Constraint.isGreaterThan(0, identifierSize,
                         "Number of bytes in the identifier must be greater than 0");
         encoder = Constraint.isNotNull(identifierEncoder, "Identifier is encoder can not be null");
     }
