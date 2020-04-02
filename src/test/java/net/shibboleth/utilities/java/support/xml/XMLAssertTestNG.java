@@ -113,11 +113,13 @@ import org.xml.sax.SAXException;
  * <p>
  * Examples and more at <a href="http://xmlunit.sourceforge.net">xmlunit.sourceforge.net</a>
  * </p>
+ * 
+ * @deprecated
  */
-public class XMLAssertTestNG implements XSLTConstants {
+@Deprecated(since="8.0.0", forRemoval=true)
+public final class XMLAssertTestNG implements XSLTConstants {
 
-    protected XMLAssertTestNG() {
-        super();
+    private XMLAssertTestNG() {
     }
 
     /**
