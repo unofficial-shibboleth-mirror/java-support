@@ -7,7 +7,7 @@
     <parent>
         <groupId>net.shibboleth</groupId>
         <artifactId>parent</artifactId>
-        <version>11.0.0</version>
+        <version>11.0.1-SNAPSHOT</version>
     </parent>
 
     <name>java-support</name>
@@ -56,6 +56,11 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.graalvm.sdk</groupId>
+            <artifactId>graal-sdk</artifactId>
+            <version>${graalvm.version}</version>
         </dependency>
 
         <!-- OPTIONAL Compile Dependencies -->
@@ -124,6 +129,12 @@
         </dependency>
 
         <!-- Runtime Dependencies -->
+        <dependency>
+            <groupId>org.graalvm.js</groupId>
+            <artifactId>js</artifactId>
+            <version>${graalvm.version}</version>
+            <scope>runtime</scope>
+        </dependency>
 
         <!-- Test Dependencies -->
         <dependency>
@@ -139,24 +150,6 @@
         <dependency>
             <groupId>${spring.groupId}</groupId>
             <artifactId>spring-web</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- Use of GraalVM is currently test only.
-             Move to compile for 'release' -->
-        <dependency>
-            <groupId>org.graalvm.sdk</groupId>
-            <artifactId>graal-sdk</artifactId>
-            <version>20.0.0</version>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- Use of GraalVM is currently test only.
-             Move to runtime for 'release' -->
-        <dependency>
-            <groupId>org.graalvm.js</groupId>
-            <artifactId>js</artifactId>
-            <version>20.0.0</version>
             <scope>test</scope>
         </dependency>
 

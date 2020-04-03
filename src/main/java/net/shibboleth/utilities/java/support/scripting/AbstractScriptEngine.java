@@ -92,7 +92,7 @@ public abstract class AbstractScriptEngine implements ScriptEngine {
     }
 
     /** {@inheritDoc} */
-    public void setContext(ScriptContext context) {
+    public void setContext(final ScriptContext context) {
         throw new RuntimeScriptingException("Unsupported method setContext");
     }
 

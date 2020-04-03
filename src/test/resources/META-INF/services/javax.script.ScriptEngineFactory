@@ -1,2 +1,1 @@
-net.shibboleth.utilities.java.support.scripting.GraalFactory
 net.shibboleth.utilities.java.support.scripting.RhinoFactory

@@ -31,7 +31,7 @@ public class RuntimeScriptingException extends RuntimeException {
      *
      * @param message the message.
      */
-    public RuntimeScriptingException(String message) {
+    public RuntimeScriptingException(final String message) {
         super(message);
     }
 }
