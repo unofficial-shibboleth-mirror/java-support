@@ -19,6 +19,8 @@ package net.shibboleth.utilities.java.support.scripting;
 
 import java.io.Reader;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.script.Bindings;
 import javax.script.Compilable;
 import javax.script.CompiledScript;
@@ -51,56 +53,77 @@ public class GraalEngine extends AbstractScriptEngine implements ScriptEngine, C
             }
             final Source s = Source.newBuilder("js", script, "embedded").buildLiteral();
             final Value v = context.eval(s);
-            if (v.isHostObject()) {
-                return v.asHostObject();
-            } else if (v.isProxyObject()) { 
-                return v.asProxyObject();
-            }
-            return v.as(Object.class);
+            return processValue(v);
         }  catch (final RuntimeException e) {
             throw new ScriptException(e);
         }
     }
 
     /** {@inheritDoc} */
-    public CompiledScript compile(String script) throws ScriptException {
+    public CompiledScript compile(final String script) throws ScriptException {
 
-        final ScriptEngine parent = this;
-        return new CompiledScript() {
-            final Source source = Source.newBuilder("js", script, "embedded").buildLiteral();
+        return new GraalVMCompiledScript(script);
+    }
 
-            public ScriptEngine getEngine() {
-                return parent;
-            }
+    /** Convert the output from {@link Context#eval(String, CharSequence)} or
+     * {@link Context#eval(String, CharSequence)} into a java {@link Object}.
+     * @param value what to consider
+     * @return The output
+     */
+    @Nullable protected static Object processValue(@Nonnull final Value value) {
+        if (value.isNull()) {
+            return null;
+        } else if (value.isHostObject()) {
+            return value.asHostObject();
+        } else if (value.isProxyObject()) {
+            return value.asProxyObject();
+        } else {
+            return  value.as(Object.class);
+        }
+    }
 
-            public Object eval(ScriptContext scriptContext) throws ScriptException {
+    private class GraalVMCompiledScript extends CompiledScript {
+        
+        /** The compiled source. */
+        private final Source source;
 
-                try (final Context context = Context.newBuilder().allowExperimentalOptions(true).
-                        option("js.nashorn-compat", "true").
-                        allowAllAccess(true).
-                        build()) {
+        /**
+         * Constructor.
+         *
+         * @param script the script (as text)
+         */
+        protected GraalVMCompiledScript(final String script) {
+            source = Source.newBuilder("js", script, "embedded").buildLiteral();
+        }
 
-                    final Bindings scriptBindings = scriptContext.getBindings(ScriptContext.ENGINE_SCOPE);
-                    final Value bindings  = context.getBindings("js");
-                    for (final String name: scriptBindings.keySet()) {
-                        bindings.putMember(name, scriptBindings.get(name));
-                    }
-                    final Value v = context.eval(source);
-                    if (v.isHostObject()) {
-                        return v.asHostObject();
-                    } else if (v.isProxyObject()) {
-                        return v.asProxyObject();
-                    }
-                    return v.as(Object.class);
-                }  catch (final RuntimeException e) {
-                    throw new ScriptException(e);
+        /** {@inheritDoc} */
+        public ScriptEngine getEngine() {
+            return GraalEngine.this;
+        }
+
+        /** {@inheritDoc} */
+        public Object eval(final ScriptContext scriptContext) throws ScriptException {
+
+            try (final Context context = Context.newBuilder().allowExperimentalOptions(true).
+                    option("js.nashorn-compat", "true").
+                    allowAllAccess(true).
+                    build()) {
+
+                final Bindings scriptBindings = scriptContext.getBindings(ScriptContext.ENGINE_SCOPE);
+                final Value bindings  = context.getBindings("js");
+                for (final String name: scriptBindings.keySet()) {
+                    bindings.putMember(name, scriptBindings.get(name));
                 }
+                final Value v = context.eval(source);
+                return processValue(v);
+            }  catch (final RuntimeException e) {
+                throw new ScriptException(e);
             }
-        };
+        }
     }
 
     /** {@inheritDoc} */
-    public CompiledScript compile(Reader script) throws ScriptException {
+    public CompiledScript compile(final Reader script) throws ScriptException {
        throw new ScriptException("Cannot compile from a reader");
     }
 }
