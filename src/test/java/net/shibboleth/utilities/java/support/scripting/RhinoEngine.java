@@ -18,10 +18,14 @@
 package net.shibboleth.utilities.java.support.scripting;
 
 import javax.script.Bindings;
+import javax.script.Compilable;
+import javax.script.CompiledScript;
+import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 
 import org.mozilla.javascript.Context;
+import org.mozilla.javascript.Script;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 
@@ -31,16 +35,16 @@ import org.mozilla.javascript.ScriptableObject;
  * 
  * NOTE that this does not (currently) implement {@link javax.script.Compilable}.
  */
-public class RhinoEngine extends AbstractScriptEngine implements ScriptEngine {
+public class RhinoEngine extends AbstractScriptEngine implements ScriptEngine, Compilable {
 
     /** {@inheritDoc} */
-    public Object eval(final String script, final Bindings binding) throws ScriptException {
+    public Object eval(final String script, final Bindings bindings) throws ScriptException {
         final Context ctx = Context.enter();
         try {
             final Scriptable scope = ctx.initStandardObjects();
             
-            for (final String name: binding.keySet()) {
-                final Object jsObj = Context.javaToJS(binding.get(name), scope);
+            for (final String name: bindings.keySet()) {
+                final Object jsObj = Context.javaToJS(bindings.get(name), scope);
                 ScriptableObject.putProperty(scope, name, jsObj);
             }
             final Object o = ctx.evaluateString(scope, script, "rhino source", 1, null);
@@ -50,6 +54,56 @@ public class RhinoEngine extends AbstractScriptEngine implements ScriptEngine {
             throw new ScriptException(e);
         } finally {
             Context.exit();
+        }
+    }
+
+    /** {@inheritDoc} */
+    public CompiledScript compile(final String script) throws ScriptException {
+        return new CompiledScriptImpl(script);
+    }
+    
+    /** Rhino {@link CompiledScript}. */
+    private class CompiledScriptImpl extends CompiledScript {
+
+        /** The compiled script. */
+        private final Script script;
+        
+        /** Constructor.
+         *
+         * @param source what to compile up.
+         */
+        public CompiledScriptImpl(final String source) {
+            final Context ctx = Context.enter();
+            try {
+                script = ctx.compileString(source, "Script", 1, null);  
+            } finally {
+                Context.exit();
+            }
+        }
+
+        /** {@inheritDoc} */
+        public Object eval(final ScriptContext context) throws ScriptException {
+            final Bindings bindings = context.getBindings(ScriptContext.ENGINE_SCOPE);
+            final Context ctx = Context.enter();
+            try {
+                final Scriptable scope = ctx.initStandardObjects();
+                
+                for (final String name: bindings.keySet()) {
+                    final Object jsObj = Context.javaToJS(bindings.get(name), scope);
+                    ScriptableObject.putProperty(scope, name, jsObj);
+                }
+                final Object o = script.exec(ctx, scope);
+                return Context.jsToJava(o, Object.class);
+            } 
+            finally {
+                Context.exit();
+            }
+
+        }
+
+        /** {@inheritDoc} */
+        public ScriptEngine getEngine() {
+            return RhinoEngine.this;
         }
     }
 }

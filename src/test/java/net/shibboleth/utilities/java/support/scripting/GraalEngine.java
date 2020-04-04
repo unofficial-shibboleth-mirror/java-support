@@ -17,8 +17,6 @@
 
 package net.shibboleth.utilities.java.support.scripting;
 
-import java.io.Reader;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.script.Bindings;
@@ -82,6 +80,7 @@ public class GraalEngine extends AbstractScriptEngine implements ScriptEngine, C
         }
     }
 
+    /** GraalVM {@link CompiledScript} implementation. */
     private class GraalVMCompiledScript extends CompiledScript {
         
         /** The compiled source. */
@@ -120,10 +119,5 @@ public class GraalEngine extends AbstractScriptEngine implements ScriptEngine, C
                 throw new ScriptException(e);
             }
         }
-    }
-
-    /** {@inheritDoc} */
-    public CompiledScript compile(final Reader script) throws ScriptException {
-       throw new ScriptException("Cannot compile from a reader");
     }
 }

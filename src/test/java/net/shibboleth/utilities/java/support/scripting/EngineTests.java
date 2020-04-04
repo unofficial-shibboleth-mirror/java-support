@@ -52,6 +52,26 @@ public class EngineTests {
         assertEquals(map.get("a"), this);
     }
 
+    @Test public void testRhinoCompiled() throws ScriptException {
+        final ScriptEngineManager engineManager = new ScriptEngineManager();
+        final ScriptEngine scriptEngine = engineManager.getEngineByName("shibboleth-rhino");
+        final Compilable compiler = (Compilable) scriptEngine;
+
+        
+        final ScriptContext ctx = new SimpleScriptContext();
+        final String script = "var s = new java.util.HashMap(2); s.put('a',b); s";
+
+        ctx.setAttribute("b", this, ScriptContext.ENGINE_SCOPE);
+        
+        final CompiledScript compiled = compiler.compile(script);
+        final Object o = compiled.eval(ctx);
+        
+        assertTrue(o instanceof Map);
+        final Map map = (Map) o;
+        assertEquals(map.size(), 1);
+        assertEquals(map.get("a"), this);
+    }
+
     @Test public void testGraal() throws ScriptException {
         final ScriptEngineManager engineManager = new ScriptEngineManager();
         final ScriptEngine scriptEngine = engineManager.getEngineByName("shibboleth-nashorn");
