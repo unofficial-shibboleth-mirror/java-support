@@ -68,22 +68,22 @@ public class GraalFactory implements ScriptEngineFactory {
     }
 
     /** {@inheritDoc} */
-    public Object getParameter(String key) {
+    public Object getParameter(final String key) {
         throw new RuntimeScriptingException("Unsupported method getMethodCallSyntax");
     }
 
     /** {@inheritDoc} */
-    public String getMethodCallSyntax(String obj, String m, String... args) {
+    public String getMethodCallSyntax(final String obj, final String m, final String... args) {
         throw new RuntimeScriptingException("Unsupported method getMethodCallSyntax");
     }
 
     /** {@inheritDoc} */
-    public String getOutputStatement(String toDisplay) {
+    public String getOutputStatement(final String toDisplay) {
         throw new RuntimeScriptingException("Unsupported method getMethodCallSyntax");
     }
 
     /** {@inheritDoc} */
-    public String getProgram(String... statements) {
+    public String getProgram(final String... statements) {
         throw new RuntimeScriptingException("Unsupported method getMethodCallSyntax");
     }
 
