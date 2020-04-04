@@ -20,6 +20,8 @@ package net.shibboleth.utilities.java.support.scripting;
 import java.io.Reader;
 
 import javax.script.Bindings;
+import javax.script.Compilable;
+import javax.script.CompiledScript;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
@@ -28,7 +30,7 @@ import javax.script.ScriptException;
 /**
  * Enough boiler plate to allow us to implement a {@link ScriptEngine} sufficient for our own use.
  */
-public abstract class AbstractScriptEngine implements ScriptEngine {
+public abstract class AbstractScriptEngine implements ScriptEngine, Compilable {
 
     /** {@inheritDoc} */
     public Object eval(final String script, final ScriptContext context) throws ScriptException {
@@ -99,6 +101,11 @@ public abstract class AbstractScriptEngine implements ScriptEngine {
     /** {@inheritDoc} */
     public ScriptEngineFactory getFactory() {
         throw new RuntimeScriptingException("Unsupported method getFactory");
+    }
+
+    /** {@inheritDoc} */
+    public CompiledScript compile(final Reader script) throws ScriptException {
+       throw new ScriptException("Cannot compile from a reader");
     }
 
 }
