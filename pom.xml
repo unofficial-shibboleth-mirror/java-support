@@ -62,6 +62,13 @@
             <artifactId>graal-sdk</artifactId>
             <version>${graalvm.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.mozilla</groupId>
+            <artifactId>rhino</artifactId>
+	    <!-- runtime in parent pom -->
+	    <scope>compile</scope>
+            <!--  version in parent pom -->
+        </dependency>
 
         <!-- OPTIONAL Compile Dependencies -->
         <dependency>
@@ -152,16 +159,6 @@
             <artifactId>spring-web</artifactId>
             <scope>test</scope>
         </dependency>
-
-        <!-- Use of GraalVM rhino is currently test only
-             Move to compile of we ever want to release -->
-        <dependency>
-            <groupId>org.mozilla</groupId>
-            <artifactId>rhino</artifactId>
-            <scope>test</scope>
-            <!--  version in parent pom -->
-        </dependency>
-
     </dependencies>
 
     <distributionManagement>
