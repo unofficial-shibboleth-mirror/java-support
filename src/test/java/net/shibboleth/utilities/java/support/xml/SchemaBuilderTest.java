@@ -30,7 +30,7 @@ import net.shibboleth.utilities.java.support.resource.TestResourceConverter;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.testng.Assert;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.xml.sax.SAXException;
 
@@ -59,7 +59,7 @@ public class SchemaBuilderTest {
         return new StreamSource(fails.getInputStream());
     }
 
-    @BeforeTest public void setup()  {
+    @BeforeClass public void setup()  {
         works = new ClassPathResource(TEST_DIR + "schemaBuilderTest-works.xml");
         fails = new ClassPathResource(TEST_DIR + "schemaBuilderTest-fails.xml");
     }

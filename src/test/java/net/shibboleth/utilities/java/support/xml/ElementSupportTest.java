@@ -34,7 +34,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.testng.Assert;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -66,7 +66,7 @@ public class ElementSupportTest {
 
     private Element rootElement;
 
-    @BeforeTest public void setUp() throws XMLParserException, ComponentInitializationException, SAXException,
+    @BeforeClass public void setUp() throws XMLParserException, ComponentInitializationException, SAXException,
             IOException {
         parserPool = new BasicParserPool();
         parserPool.setCoalescing(false);

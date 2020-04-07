@@ -35,8 +35,8 @@ import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -79,7 +79,7 @@ public class AttributeSupportTest {
 
     private BasicParserPool parserPool;
 
-    @BeforeTest public void setUp() throws XMLParserException, ComponentInitializationException, SAXException,
+    @BeforeClass public void setUp() throws XMLParserException, ComponentInitializationException, SAXException,
             IOException {
         parserPool = new BasicParserPool();
         parserPool.initialize();

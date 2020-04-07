@@ -27,7 +27,7 @@ import javax.xml.parsers.DocumentBuilder;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.testng.Assert;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -136,7 +136,7 @@ public class SerializeSupportTest {
         }
     }
 
-    @BeforeTest public void setup()
+    @BeforeClass public void setup()
             throws XMLParserException, ComponentInitializationException, SAXException, IOException {
         parserPool = new BasicParserPool();
         parserPool.initialize();

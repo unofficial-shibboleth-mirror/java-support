@@ -29,7 +29,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.testng.Assert;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -43,7 +43,7 @@ public class DOMTypeSupportTest {
     private Element xsStringXSITypeElement;
     private Element noXSITypeElement;
     
-    @BeforeTest public void setup() throws ComponentInitializationException, SAXException, IOException, XMLParserException {
+    @BeforeClass public void setup() throws ComponentInitializationException, SAXException, IOException, XMLParserException {
         BasicParserPool pool = new BasicParserPool();
         pool.initialize();
         parserPool = pool;

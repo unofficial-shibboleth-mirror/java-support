@@ -30,7 +30,7 @@ import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.testng.Assert;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -63,7 +63,7 @@ public class QNameSupportTest {
 
     private Element child;
 
-    @BeforeTest public void setup() throws ComponentInitializationException, SAXException, IOException,
+    @BeforeClass public void setup() throws ComponentInitializationException, SAXException, IOException,
             XMLParserException {
         BasicParserPool pool = new BasicParserPool();
         pool.initialize();
