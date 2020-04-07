@@ -1,3 +1,3 @@
 <me:Parent xmlns:me="http://example.org/Outer" xmlns="http://example.org/Outer">
-  <Child/>
+    <Child/>
 </me:Parent>
