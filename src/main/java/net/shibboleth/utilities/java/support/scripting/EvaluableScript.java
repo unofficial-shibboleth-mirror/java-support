@@ -32,6 +32,9 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -61,6 +64,9 @@ public final class EvaluableScript extends AbstractInitializableComponent {
 
     /** The compiled form of the script, if the script engine supports compiling. */
     @Nullable private CompiledScript compiledScript;
+    
+    /** The log. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(EvaluableScript.class);
 
     /**
      * Constructor.
@@ -394,6 +400,11 @@ public final class EvaluableScript extends AbstractInitializableComponent {
 
         final ScriptEngineManager engineManager = new ScriptEngineManager();
         scriptEngine = engineManager.getEngineByName(scriptLanguage);
+        if (scriptEngine == null) {
+            // fallback into our private implementations?
+            log.debug("Native support for {} not found, trying shibboleth-{}", scriptLanguage, scriptLanguage);
+            scriptEngine = engineManager.getEngineByName("shibboleth-" + scriptLanguage);
+        }
         Constraint.isNotNull(scriptEngine, "No scripting engine associated with scripting language " + scriptLanguage);
 
         if (scriptEngine instanceof Compilable) {
