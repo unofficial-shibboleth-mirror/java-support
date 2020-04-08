@@ -25,6 +25,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 
 import org.mozilla.javascript.Context;
+import org.mozilla.javascript.ImporterTopLevel;
 import org.mozilla.javascript.Script;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
@@ -41,7 +42,7 @@ public class RhinoEngine extends AbstractScriptEngine implements ScriptEngine, C
     public Object eval(final String script, final Bindings bindings) throws ScriptException {
         final Context ctx = Context.enter();
         try {
-            final Scriptable scope = ctx.initStandardObjects();
+            final Scriptable scope = new ImporterTopLevel(ctx);
             
             for (final String name: bindings.keySet()) {
                 final Object jsObj = Context.javaToJS(bindings.get(name), scope);
@@ -86,7 +87,7 @@ public class RhinoEngine extends AbstractScriptEngine implements ScriptEngine, C
             final Bindings bindings = context.getBindings(ScriptContext.ENGINE_SCOPE);
             final Context ctx = Context.enter();
             try {
-                final Scriptable scope = ctx.initStandardObjects();
+                final Scriptable scope = new ImporterTopLevel(ctx);
                 
                 for (final String name: bindings.keySet()) {
                     final Object jsObj = Context.javaToJS(bindings.get(name), scope);
