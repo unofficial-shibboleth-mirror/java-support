@@ -151,8 +151,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Use of GraalVM is currently test only.
-             Move to runtime for 'release' -->
+        <!-- Use of GraalVM is test only. -->
         <dependency>
             <groupId>org.graalvm.js</groupId>
             <artifactId>js</artifactId>
@@ -160,8 +159,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Use of GraalVM rhino is currently test only
-             Move to compile of we ever want to release -->
+        <!-- Use of GraalVM rhino is test only -->
         <dependency>
             <groupId>org.mozilla</groupId>
             <artifactId>rhino</artifactId>
