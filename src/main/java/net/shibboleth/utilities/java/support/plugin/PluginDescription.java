@@ -17,7 +17,6 @@
 
 package net.shibboleth.utilities.java.support.plugin;
 
-import java.net.URL;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
@@ -34,7 +33,7 @@ import net.shibboleth.utilities.java.support.resource.Resource;
 /**
  * This class is exported (via the service API) by every plugin.
  */
-public abstract class PluginInstaller {
+public abstract class PluginDescription {
     
     /** Return the unique identifier for the plugin.  This name <em>MUST</em> be
      * <ul>
@@ -56,18 +55,34 @@ public abstract class PluginInstaller {
     }
     
     /** Return the list of (idp.home) relative paths (of files, <em>not directories </em>) 
-     * to copy from the distribution into the IdP installation.<p>
-     * 
-     * These files are copied non-destructively (if the file already exists
-     * then it is not copied).  Some paths are disallowed (for instance dist and system).</p>
+     * to copy from the distribution into the IdP installation.
+     *
+     * <p>These files are copied non-destructively (if the file already exists
+     * then it is not copied).  Some paths are disallowed (for instance dist and system).
+     * Directories are created if needed</p>
      * <p>
      * The dist folder is always copied, so no files from it should be included.</p>
+     *
      * @return The list of paths.
      */
     @Nonnull public List<Path> getFilePathsToCopy() {
         return Collections.emptyList();
     }
     
+    /** <p>Return the list of files <em>not directories </em> to get from 'external'
+     * sources. This allows external content to be downloaded during installation.</p>
+     *
+     * <p>The first part of the pair is the source (usually an HTTPResource),
+     * the second is a path relative to idp.home.  These can include files
+     * going to dist\edit-webapp in which case the path is expected to have the
+     * plugin id appended. Sub directories are created if needed</p>
+     *
+     * @return The list.
+     */
+    @Nonnull public List<Pair<Resource, Path>> getExternalFilePathsToCopy() {
+        return Collections.emptyList();
+    }
+
     /** Return the places to look for updates for this plugin package.
      * The format of the paths below this point is fixed.
      * 
