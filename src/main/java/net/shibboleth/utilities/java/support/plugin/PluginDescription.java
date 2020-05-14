@@ -17,6 +17,7 @@
 
 package net.shibboleth.utilities.java.support.plugin;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
@@ -78,18 +79,19 @@ public abstract class PluginDescription {
      * plugin id appended. Sub directories are created if needed</p>
      *
      * @return The list.
+     * @throws IOException if the resource construction failed.
      */
-    @Nonnull public List<Pair<Resource, Path>> getExternalFilePathsToCopy() {
+    @Nonnull public List<Pair<Resource, Path>> getExternalFilePathsToCopy() throws IOException {
         return Collections.emptyList();
     }
 
     /** Return the places to look for updates for this plugin package.
      * The format of the paths below this point is fixed.
      * 
-     * 
      * @return At least one Resource.
+     * @throws IOException if the resource construction failed.
      */
-    @Nonnull @NotEmpty @NonnullElements public abstract List<Resource> getUpdateResources();
+    @Nonnull @NotEmpty @NonnullElements public abstract List<Resource> getUpdateResources() throws IOException;
     
     /** Return this properties that require list merging.  
      * 
