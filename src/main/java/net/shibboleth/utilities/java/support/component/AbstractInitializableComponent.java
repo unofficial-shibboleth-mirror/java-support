@@ -42,7 +42,7 @@ public abstract class AbstractInitializableComponent implements DestructableComp
     /** {@inheritDoc} */
     @Override
     public final synchronized void destroy() {
-        if (isDestroyed) {
+        if (isDestroyed()) {
             return;
         }
 
