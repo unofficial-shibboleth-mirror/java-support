@@ -17,25 +17,29 @@
 
 package net.shibboleth.utilities.java.support.component;
 
+import javax.annotation.concurrent.GuardedBy;
+import javax.annotation.concurrent.ThreadSafe;
+
 /** Base class for things that implement {@link DestructableComponent} and {@link InitializableComponent}. */
+@ThreadSafe
 public abstract class AbstractInitializableComponent implements DestructableComponent,
         InitializableComponent {
 
     /** Whether this component has been destroyed. */
-    private boolean isDestroyed;
+    @GuardedBy("this") private boolean isDestroyed;
 
     /** Whether this component has been initialized. */
-    private boolean isInitialized;
+    @GuardedBy("this") private boolean isInitialized;
 
     /** {@inheritDoc} */
     @Override
-    public final boolean isDestroyed() {
+    public final synchronized boolean isDestroyed() {
         return isDestroyed;
     }
 
     /** {@inheritDoc} */
     @Override
-    public boolean isInitialized() {
+    public synchronized boolean isInitialized() {
         return isInitialized;
     }
 

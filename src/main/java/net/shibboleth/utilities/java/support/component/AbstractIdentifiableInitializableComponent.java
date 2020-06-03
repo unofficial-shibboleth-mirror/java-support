@@ -18,17 +18,19 @@
 package net.shibboleth.utilities.java.support.component;
 
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 /**
  * An {@link AbstractIdentifiedInitializableComponent} with a public setter.
  */
+@ThreadSafe
 public abstract class AbstractIdentifiableInitializableComponent extends AbstractIdentifiedInitializableComponent
         implements IdentifiableComponent {
 
     /** {@inheritDoc} */
-    @Override public void setId(@Nonnull @NotEmpty final String componentId) {
+    @Override public synchronized void setId(@Nonnull @NotEmpty final String componentId) {
         super.setId(componentId);
     }
 }
