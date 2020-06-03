@@ -19,6 +19,7 @@ package net.shibboleth.utilities.java.support.component;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.GuardedBy;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -32,10 +33,10 @@ public abstract class AbstractIdentifiedInitializableComponent extends AbstractI
         IdentifiedComponent {
 
     /** The unique identifier for this component. */
-    @Nullable @NonnullAfterInit private String id;
+    @Nullable @NonnullAfterInit @GuardedBy("this") private String id;
 
     /** {@inheritDoc} */
-    @Nullable @NonnullAfterInit public String getId() {
+    @Nullable @NonnullAfterInit public synchronized String getId() {
         return id;
     }
 
@@ -44,7 +45,7 @@ public abstract class AbstractIdentifiedInitializableComponent extends AbstractI
      * 
      * @param componentId ID of the component
      */
-    protected void setId(@Nonnull @NotEmpty final String componentId) {
+    protected synchronized void setId(@Nonnull @NotEmpty final String componentId) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         id = Constraint.isNotNull(StringSupport.trimOrNull(componentId), "Component ID can not be null or empty");
