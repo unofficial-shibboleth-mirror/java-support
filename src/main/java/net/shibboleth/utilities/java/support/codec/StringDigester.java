@@ -36,8 +36,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A function impl which accepts a String input, digests it according to a specified {@link MessageDigest} algorithm,
- * and then returns the output in a specified format: Base64-encoded or hexadecimal with with lower or upper 
+ * A function which accepts a String input, digests it according to a specified {@link MessageDigest} algorithm,
+ * and then returns the output in a specified format: Base32/64-encoded or hexadecimal with with lower or upper 
  * case characters.
  */
 public class StringDigester implements Function<String,String> {
@@ -49,7 +49,9 @@ public class StringDigester implements Function<String,String> {
         /** Hexadecimal encoding, with lower case characters.*/
         HEX_LOWER,
         /** Hexadecimal encoding, with upper case characters.*/
-        HEX_UPPER
+        HEX_UPPER,
+        /** Base32-encoding. */
+        BASE32
     };
     
     /** The default input character set.*/
@@ -174,31 +176,40 @@ public class StringDigester implements Function<String,String> {
             return null;
         }
         
-        String output = null;
+        final String output = encodeOutput(digestedBytes);
+        log.debug("Produced digested and formatted output '{}'", output);
         
+        return output;
+    }
+    
+    @Nullable private String encodeOutput(@Nonnull final byte[] digestedBytes) {
         switch(outputFormat) {
+            case BASE32:
+                try {
+                    return Base32Support.encode(digestedBytes, false);
+                } catch (final EncodingException e) {
+                    //unlikely to happen.
+                    log.warn("Could not base32 encode digest bytes, no data returned",e);
+                    return null;
+                }
             case BASE64:
                 try {
-                    output = Base64Support.encode(digestedBytes, false);
+                    return Base64Support.encode(digestedBytes, false);
                 } catch (final EncodingException e) {
                     //unlikely to happen.
                     log.warn("Could not base64 encode digest bytes, no data returned",e);
                     return null;
                 }
-                break;
             case HEX_LOWER:
-                output = new String(Hex.encodeHex(digestedBytes, true));
-                break;
+                return new String(Hex.encodeHex(digestedBytes, true));
             case HEX_UPPER:
-                output = new String(Hex.encodeHex(digestedBytes, false));
-                break;
+                return new String(Hex.encodeHex(digestedBytes, false));
             default:
                 break;
         }
         
-        log.debug("Produced digested and formatted output '{}'", output);
-        
-        return output;
+        log.error("Unsupported output format");
+        return null;
     }
 
 }
