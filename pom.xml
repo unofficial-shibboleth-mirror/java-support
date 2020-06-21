@@ -142,24 +142,20 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Use of GraalVM is currently test only.
-             Move to compile for 'release' -->
         <dependency>
             <groupId>org.graalvm.sdk</groupId>
             <artifactId>graal-sdk</artifactId>
-            <version>20.0.0</version>
+            <version>${graalvm.version}</version>
             <scope>test</scope>
         </dependency>
 
-        <!-- Use of GraalVM is test only. -->
         <dependency>
             <groupId>org.graalvm.js</groupId>
             <artifactId>js</artifactId>
-            <version>20.0.0</version>
+            <version>${graalvm.version}</version>
             <scope>test</scope>
         </dependency>
 
-        <!-- Use of GraalVM rhino is test only -->
         <dependency>
             <groupId>org.mozilla</groupId>
             <artifactId>rhino</artifactId>
