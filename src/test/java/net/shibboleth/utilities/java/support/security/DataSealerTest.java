@@ -104,8 +104,17 @@ public class DataSealerTest {
         sealer.initialize();
         return sealer;
     }
-    
+
     @Test public void encodeDecode() throws DataSealerException, ComponentInitializationException {
+        final DataSealer sealer = createDataSealer();
+
+        final String encoded = sealer.wrap(THE_DATA);
+        final StringBuffer alias = new StringBuffer(); 
+        Assert.assertEquals(sealer.unwrap(encoded, alias), THE_DATA);
+        Assert.assertEquals(alias.toString(), "secret1");
+    }
+
+    @Test public void encodeDecodeWithExp() throws DataSealerException, ComponentInitializationException {
         final DataSealer sealer = createDataSealer();
 
         final String encoded = sealer.wrap(THE_DATA, Instant.now().plusSeconds(50));

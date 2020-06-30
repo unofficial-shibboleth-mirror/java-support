@@ -56,6 +56,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Applies a MAC to time-limited information and encrypts with a symmetric key.
+ * 
+ * TODO: make final
  */
 public class DataSealer extends AbstractInitializableComponent {
 
@@ -269,7 +271,7 @@ public class DataSealer extends AbstractInitializableComponent {
                 new DataInputStream(new GZIPInputStream(new ByteArrayInputStream(decryptedBytes)))) {
 
             final long decodedExpirationTime = dataInputStream.readLong();
-            if (System.currentTimeMillis() > decodedExpirationTime) {
+            if (decodedExpirationTime > 0 && System.currentTimeMillis() > decodedExpirationTime) {
                 log.debug("Unwrapped data has expired");
                 throw new DataExpiredException("Unwrapped data has expired");
             }
@@ -296,6 +298,17 @@ public class DataSealer extends AbstractInitializableComponent {
     }
 
     /**
+     * Equivalent to {@link #wrap(String, Instant)} with expiration set to "never".
+     * 
+     * @param data the data to wrap
+     * @return the encoded blob
+     * @throws DataSealerException if the wrapping operation fails
+     */
+    @Nonnull public String wrap(@Nonnull @NotEmpty final String data) throws DataSealerException {
+        return wrap(data, null);
+    }
+    
+    /**
      * Encodes data into an AEAD-encrypted blob, gzip(exp|data)
      * 
      * <ul>
@@ -308,11 +321,11 @@ public class DataSealer extends AbstractInitializableComponent {
      * (in length-prefixed UTF-8 format), which identifies the key used. Finally the result is base64-encoded.</p>
      * 
      * @param data the data to wrap
-     * @param exp expiration time
+     * @param exp expiration time or null for none
      * @return the encoded blob
      * @throws DataSealerException if the wrapping operation fails
      */
-    @Nonnull public String wrap(@Nonnull @NotEmpty final String data, @Nonnull final Instant exp)
+    @Nonnull public String wrap(@Nonnull @NotEmpty final String data, @Nullable final Instant exp)
             throws DataSealerException {
 
         if (data == null || data.length() == 0) {
@@ -335,7 +348,7 @@ public class DataSealer extends AbstractInitializableComponent {
                     final GZIPOutputStream compressedStream = new GZIPOutputStream(byteStream);
                     final DataOutputStream dataStream = new DataOutputStream(compressedStream)) {
 
-                dataStream.writeLong(exp.toEpochMilli());
+                dataStream.writeLong(exp != null ? exp.toEpochMilli() : 0);
 
                 int count = 0;
                 int start = 0;
