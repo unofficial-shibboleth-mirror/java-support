@@ -186,7 +186,6 @@ public class DataSealer extends AbstractInitializableComponent {
      * @throws DataSealerException if the data cannot be unwrapped and verified
      */
     @Nonnull public String unwrap(@Nonnull @NotEmpty final String wrapped) throws DataSealerException {
-
         return unwrap(wrapped, null);
     }
     
@@ -202,7 +201,8 @@ public class DataSealer extends AbstractInitializableComponent {
      */
     @Nonnull public String unwrap(@Nonnull @NotEmpty final String wrapped, @Nullable final StringBuffer keyUsed)
             throws DataSealerException {
-
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        
         try {
             final byte[] in = decoder.decode(wrapped.getBytes(StandardCharsets.UTF_8));
 
@@ -327,7 +327,8 @@ public class DataSealer extends AbstractInitializableComponent {
      */
     @Nonnull public String wrap(@Nonnull @NotEmpty final String data, @Nullable final Instant exp)
             throws DataSealerException {
-
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        
         if (data == null || data.length() == 0) {
             throw new IllegalArgumentException("Data must be supplied for the wrapping operation");
         }
