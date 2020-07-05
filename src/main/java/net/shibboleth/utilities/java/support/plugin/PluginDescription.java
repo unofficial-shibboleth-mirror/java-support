@@ -19,11 +19,12 @@ package net.shibboleth.utilities.java.support.plugin;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
+
+import com.google.common.annotations.Beta;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -34,7 +35,8 @@ import net.shibboleth.utilities.java.support.resource.Resource;
 /**
  * This class is exported (via the service API) by every plugin.
  */
-public abstract class PluginDescription {
+@Beta
+public interface PluginDescription {
     
     /** Return the unique identifier for the plugin.  This name <em>MUST</em> be
      * <ul>
@@ -45,15 +47,13 @@ public abstract class PluginDescription {
      *
      * @return The id of this plugin.
      */
-    @Nonnull @NotEmpty public abstract String getPluginId();
+    @Nonnull @NotEmpty public String getPluginId();
 
     /** Return the list of file names to be appended to
      * <code>idp.additional.properties</code>.
      * @return The list of names, potentially empty.
      */
-    @Nonnull public List<String> getAdditionalPropertyFiles() {
-        return Collections.emptyList();
-    }
+    @Nonnull public List<String> getAdditionalPropertyFiles();
     
     /** Return the list of (idp.home) relative paths (of files, <em>not directories </em>) 
      * to copy from the distribution into the IdP installation.
@@ -66,9 +66,7 @@ public abstract class PluginDescription {
      *
      * @return The list of paths.
      */
-    @Nonnull public List<Path> getFilePathsToCopy() {
-        return Collections.emptyList();
-    }
+    @Nonnull public List<Path> getFilePathsToCopy();
     
     /** <p>Return the list of files <em>not directories </em> to get from 'external'
      * sources. This allows external content to be downloaded during installation.</p>
@@ -81,9 +79,7 @@ public abstract class PluginDescription {
      * @return The list.
      * @throws IOException if the resource construction failed.
      */
-    @Nonnull public List<Pair<Resource, Path>> getExternalFilePathsToCopy() throws IOException {
-        return Collections.emptyList();
-    }
+    @Nonnull public List<Pair<Resource, Path>> getExternalFilePathsToCopy() throws IOException;
 
     /** Return the places to look for updates for this plugin package.
      * The format of the paths below this point is fixed.
@@ -91,7 +87,7 @@ public abstract class PluginDescription {
      * @return At least one Resource.
      * @throws IOException if the resource construction failed.
      */
-    @Nonnull @NotEmpty @NonnullElements public abstract List<Resource> getUpdateResources() throws IOException;
+    @Nonnull @NotEmpty @NonnullElements public List<Resource> getUpdateResources() throws IOException;
     
     /** Return this properties that require list merging.  
      * 
@@ -104,30 +100,26 @@ public abstract class PluginDescription {
      * @return A list of pairs, the first element of the pair is the (relative) path of the property file
      * and the second is a list of property names to edit within that file.
      */
-    @Nonnull public List<Pair<Path, List<String>>> getPropertyMerges() {
-        return Collections.emptyList();
-    }
+    @Nonnull public List<Pair<Path, List<String>>> getPropertyMerges();
     
     /** Return the major version, (as defined by the 
      * <a href="https://wiki.shibboleth.net/confluence/display/DEV/Java+Product+Version+Policy">
      * Java Product Version Policy</a>.
      * @return The major version.
      */
-    @Positive public abstract int getMajorVersion();
+    @Positive public int getMajorVersion();
 
     /** Return the minor version, (as defined by the 
      * <a href="https://wiki.shibboleth.net/confluence/display/DEV/Java+Product+Version+Policy">
      * Java Product Version Policy</a>.
      * @return The minor version.
      */
-    @Nonnegative public abstract int getMinorVersion();
+    @Nonnegative public int getMinorVersion();
     
     /** Return The patch version, (as defined by the 
      * <a href="https://wiki.shibboleth.net/confluence/display/DEV/Java+Product+Version+Policy">
      * Java Product Version Policy</a>.
      * @return The patch version.
      */
-    @Nonnegative public int getPatchVersion() {
-        return 0;
-    }
+    @Nonnegative public int getPatchVersion();
 }
