@@ -18,6 +18,7 @@
 package net.shibboleth.utilities.java.support.plugin;
 
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
@@ -28,7 +29,6 @@ import javax.annotation.Nonnull;
 import com.google.common.annotations.Beta;
 
 import net.shibboleth.utilities.java.support.collection.Pair;
-import net.shibboleth.utilities.java.support.resource.Resource;
 
 /**
  * This class is exported (via the service API) by every plugin.
@@ -47,7 +47,7 @@ public abstract class AbstractPluginDescription implements PluginDescription {
     }
     
     /** {@inheritDoc} */
-    @Nonnull public List<Pair<Resource, Path>> getExternalFilePathsToCopy() throws IOException {
+    @Nonnull public List<Pair<URL, Path>> getExternalFilePathsToCopy() throws IOException {
         return Collections.emptyList();
     }
 

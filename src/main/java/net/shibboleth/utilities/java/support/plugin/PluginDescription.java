@@ -18,6 +18,7 @@
 package net.shibboleth.utilities.java.support.plugin;
 
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -30,7 +31,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.collection.Pair;
-import net.shibboleth.utilities.java.support.resource.Resource;
 
 /**
  * This class is exported (via the service API) by every plugin.
@@ -71,7 +71,7 @@ public interface PluginDescription {
     /** <p>Return the list of files <em>not directories </em> to get from 'external'
      * sources. This allows external content to be downloaded during installation.</p>
      *
-     * <p>The first part of the pair is the source (usually an HTTPResource),
+     * <p>The first part of the pair is the source URL,
      * the second is a path relative to idp.home.  These can include files
      * going to dist\edit-webapp in which case the path is expected to have the
      * plugin id appended. Sub directories are created if needed</p>
@@ -79,15 +79,15 @@ public interface PluginDescription {
      * @return The list.
      * @throws IOException if the resource construction failed.
      */
-    @Nonnull public List<Pair<Resource, Path>> getExternalFilePathsToCopy() throws IOException;
+    @Nonnull public List<Pair<URL, Path>> getExternalFilePathsToCopy() throws IOException;
 
     /** Return the places to look for updates for this plugin package.
      * The format of the paths below this point is fixed.
      * 
-     * @return At least one Resource.
+     * @return Zero or more URLs
      * @throws IOException if the resource construction failed.
      */
-    @Nonnull @NotEmpty @NonnullElements public List<Resource> getUpdateResources() throws IOException;
+    @Nonnull @NonnullElements public List<URL> getUpdateURLs() throws IOException;
     
     /** Return this properties that require list merging.  
      * 
