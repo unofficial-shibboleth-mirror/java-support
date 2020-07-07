@@ -41,8 +41,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.Lists;
-
 public class ContextHandlingHttpClientTest {
     
     public static final CloseableHttpResponse STATIC_RESPONSE_HTTP = new MockCloseableHttpResponse(new ProtocolVersion("HTTP", 1, 1), HttpStatus.SC_OK, "OK");
@@ -97,9 +95,9 @@ public class ContextHandlingHttpClientTest {
     
     @Test
     public void testStaticOnly() throws ClientProtocolException, IOException {
-        client = new ContextHandlingHttpClient(new MockHttpClient(), Lists.newArrayList(staticOne, staticTwo, staticThree));
+        client = new ContextHandlingHttpClient(new MockHttpClient(), List.of(staticOne, staticTwo, staticThree));
         
-        List<String> control = Lists.newArrayList(
+        List<String> control = List.of(
                 "before-static-1",
                 "before-static-2",
                 "before-static-3",
@@ -129,7 +127,7 @@ public class ContextHandlingHttpClientTest {
     public void testDynamicOnly() throws ClientProtocolException, IOException {
         client = new ContextHandlingHttpClient(new MockHttpClient());
         
-        List<String> control = Lists.newArrayList(
+        List<String> control = List.of(
                 "before-dynamic-1",
                 "before-dynamic-2",
                 "before-dynamic-3",
@@ -138,7 +136,7 @@ public class ContextHandlingHttpClientTest {
                 "after-dynamic-1"
                 );
         
-        List<HttpClientContextHandler> handlers = Lists.newArrayList(dynamicOne, dynamicTwo, dynamicThree);
+        List<HttpClientContextHandler> handlers = List.of(dynamicOne, dynamicTwo, dynamicThree);
         
         context = HttpClientContext.create();
         HttpClientSupport.getDynamicContextHandlerList(context).addAll(handlers);
@@ -163,9 +161,9 @@ public class ContextHandlingHttpClientTest {
     
     @Test
     public void testStaticAndDynamic() throws ClientProtocolException, IOException {
-        client = new ContextHandlingHttpClient(new MockHttpClient(), Lists.newArrayList(staticOne, staticTwo, staticThree));
+        client = new ContextHandlingHttpClient(new MockHttpClient(), List.of(staticOne, staticTwo, staticThree));
         
-        List<String> control = Lists.newArrayList(
+        List<String> control = List.of(
                 "before-static-1",
                 "before-static-2",
                 "before-static-3",
@@ -180,7 +178,7 @@ public class ContextHandlingHttpClientTest {
                 "after-static-1"
                 );
         
-        List<HttpClientContextHandler> handlers = Lists.newArrayList(dynamicOne, dynamicTwo, dynamicThree);
+        List<HttpClientContextHandler> handlers = List.of(dynamicOne, dynamicTwo, dynamicThree);
         
         context = HttpClientContext.create();
         HttpClientSupport.getDynamicContextHandlerList(context).addAll(handlers);
@@ -206,9 +204,9 @@ public class ContextHandlingHttpClientTest {
     @Test
     public void testWrappedClientThrowsIOException() throws ClientProtocolException, IOException {
         IOException error = new IOException();
-        client = new ContextHandlingHttpClient(new MockHttpClient(error), Lists.newArrayList(staticOne, staticTwo, staticThree));
+        client = new ContextHandlingHttpClient(new MockHttpClient(error), List.of(staticOne, staticTwo, staticThree));
         
-        List<String> control = Lists.newArrayList(
+        List<String> control = List.of(
                 "before-static-1",
                 "before-static-2",
                 "before-static-3",
@@ -223,7 +221,7 @@ public class ContextHandlingHttpClientTest {
                 "after-static-1"
                 );
         
-        List<HttpClientContextHandler> handlers = Lists.newArrayList(dynamicOne, dynamicTwo, dynamicThree);
+        List<HttpClientContextHandler> handlers = List.of(dynamicOne, dynamicTwo, dynamicThree);
         
         try {
             context = HttpClientContext.create();
@@ -269,9 +267,9 @@ public class ContextHandlingHttpClientTest {
     @Test
     public void testWrappedClientThrowsRuntimeException() throws ClientProtocolException, IOException {
         RuntimeException error = new RuntimeException();
-        client = new ContextHandlingHttpClient(new MockHttpClient(error), Lists.newArrayList(staticOne, staticTwo, staticThree));
+        client = new ContextHandlingHttpClient(new MockHttpClient(error), List.of(staticOne, staticTwo, staticThree));
         
-        List<String> control = Lists.newArrayList(
+        List<String> control = List.of(
                 "before-static-1",
                 "before-static-2",
                 "before-static-3",
@@ -286,7 +284,7 @@ public class ContextHandlingHttpClientTest {
                 "after-static-1"
                 );
         
-        List<HttpClientContextHandler> handlers = Lists.newArrayList(dynamicOne, dynamicTwo, dynamicThree);
+        List<HttpClientContextHandler> handlers = List.of(dynamicOne, dynamicTwo, dynamicThree);
         
         try {
             context = HttpClientContext.create();
@@ -332,9 +330,9 @@ public class ContextHandlingHttpClientTest {
     @Test
     public void testWrappedClientThrowsError() throws ClientProtocolException, IOException {
         Error error = new Error();
-        client = new ContextHandlingHttpClient(new MockHttpClient(error), Lists.newArrayList(staticOne, staticTwo, staticThree));
+        client = new ContextHandlingHttpClient(new MockHttpClient(error), List.of(staticOne, staticTwo, staticThree));
         
-        List<String> control = Lists.newArrayList(
+        List<String> control = List.of(
                 "before-static-1",
                 "before-static-2",
                 "before-static-3",
@@ -349,7 +347,7 @@ public class ContextHandlingHttpClientTest {
                 "after-static-1"
                 );
         
-        List<HttpClientContextHandler> handlers = Lists.newArrayList(dynamicOne, dynamicTwo, dynamicThree);
+        List<HttpClientContextHandler> handlers = List.of(dynamicOne, dynamicTwo, dynamicThree);
         
         try {
             context = HttpClientContext.create();
@@ -396,9 +394,9 @@ public class ContextHandlingHttpClientTest {
     public void testSingleStaticHandlerInvokeBeforeThrowsIOException() throws ClientProtocolException, IOException {
         IOException error = new IOException();
         client = new ContextHandlingHttpClient(new MockHttpClient(), 
-                Lists.newArrayList(staticOne, new TestContextHandler("static-2", error, null), staticThree));
+                List.of(staticOne, new TestContextHandler("static-2", error, null), staticThree));
         
-        List<String> control = Lists.newArrayList(
+        List<String> control = List.of(
                 "before-static-1",
                 "before-static-2",
                 "before-static-3",
@@ -413,7 +411,7 @@ public class ContextHandlingHttpClientTest {
                 "after-static-1"
                 );
         
-        List<HttpClientContextHandler> handlers = Lists.newArrayList(dynamicOne, dynamicTwo, dynamicThree);
+        List<HttpClientContextHandler> handlers = List.of(dynamicOne, dynamicTwo, dynamicThree);
         
         try {
             context = HttpClientContext.create();
@@ -460,9 +458,9 @@ public class ContextHandlingHttpClientTest {
     public void testSingleStaticHandlerInvokeAfterThrowsIOException() throws ClientProtocolException, IOException {
         IOException error = new IOException();
         client = new ContextHandlingHttpClient(new MockHttpClient(), 
-                Lists.newArrayList(staticOne, new TestContextHandler("static-2", null, error), staticThree));
+                List.of(staticOne, new TestContextHandler("static-2", null, error), staticThree));
         
-        List<String> control = Lists.newArrayList(
+        List<String> control = List.of(
                 "before-static-1",
                 "before-static-2",
                 "before-static-3",
@@ -477,7 +475,7 @@ public class ContextHandlingHttpClientTest {
                 "after-static-1"
                 );
         
-        List<HttpClientContextHandler> handlers = Lists.newArrayList(dynamicOne, dynamicTwo, dynamicThree);
+        List<HttpClientContextHandler> handlers = List.of(dynamicOne, dynamicTwo, dynamicThree);
         
         try {
             context = HttpClientContext.create();
@@ -524,9 +522,9 @@ public class ContextHandlingHttpClientTest {
     public void testSingleStaticHandlerInvokeBeforeThrowsRuntimeException() throws ClientProtocolException, IOException {
         RuntimeException error = new RuntimeException();
         client = new ContextHandlingHttpClient(new MockHttpClient(), 
-                Lists.newArrayList(staticOne, new TestContextHandler("static-2", error, null), staticThree));
+                List.of(staticOne, new TestContextHandler("static-2", error, null), staticThree));
         
-        List<String> control = Lists.newArrayList(
+        List<String> control = List.of(
                 "before-static-1",
                 "before-static-2",
                 "before-static-3",
@@ -541,7 +539,7 @@ public class ContextHandlingHttpClientTest {
                 "after-static-1"
                 );
         
-        List<HttpClientContextHandler> handlers = Lists.newArrayList(dynamicOne, dynamicTwo, dynamicThree);
+        List<HttpClientContextHandler> handlers = List.of(dynamicOne, dynamicTwo, dynamicThree);
         
         try {
             context = HttpClientContext.create();
@@ -588,9 +586,9 @@ public class ContextHandlingHttpClientTest {
     public void testSingleStaticHandlerInvokeAfterThrowsRuntimeException() throws ClientProtocolException, IOException {
         RuntimeException error = new RuntimeException();
         client = new ContextHandlingHttpClient(new MockHttpClient(), 
-                Lists.newArrayList(staticOne, new TestContextHandler("static-2", null, error), staticThree));
+                List.of(staticOne, new TestContextHandler("static-2", null, error), staticThree));
         
-        List<String> control = Lists.newArrayList(
+        List<String> control = List.of(
                 "before-static-1",
                 "before-static-2",
                 "before-static-3",
@@ -605,7 +603,7 @@ public class ContextHandlingHttpClientTest {
                 "after-static-1"
                 );
         
-        List<HttpClientContextHandler> handlers = Lists.newArrayList(dynamicOne, dynamicTwo, dynamicThree);
+        List<HttpClientContextHandler> handlers = List.of(dynamicOne, dynamicTwo, dynamicThree);
         
         try {
             context = HttpClientContext.create();
@@ -653,9 +651,9 @@ public class ContextHandlingHttpClientTest {
         IOException error1 = new IOException();
         IOException error3 = new IOException();
         client = new ContextHandlingHttpClient(new MockHttpClient(), 
-                Lists.newArrayList( new TestContextHandler("static-1", error1, null), staticTwo, new TestContextHandler("static-3", error3, null)));
+                List.of( new TestContextHandler("static-1", error1, null), staticTwo, new TestContextHandler("static-3", error3, null)));
         
-        List<String> control = Lists.newArrayList(
+        List<String> control = List.of(
                 "before-static-1",
                 "before-static-2",
                 "before-static-3",
@@ -670,7 +668,7 @@ public class ContextHandlingHttpClientTest {
                 "after-static-1"
                 );
         
-        List<HttpClientContextHandler> handlers = Lists.newArrayList(dynamicOne, dynamicTwo, dynamicThree);
+        List<HttpClientContextHandler> handlers = List.of(dynamicOne, dynamicTwo, dynamicThree);
         
         try {
             context = HttpClientContext.create();
@@ -681,7 +679,7 @@ public class ContextHandlingHttpClientTest {
             Assert.assertNotSame(e, error1);
             Assert.assertNotSame(e, error3);
             Assert.assertEquals(e.getSuppressed().length, 2);
-            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(Lists.newArrayList(error1, error3)));
+            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(List.of(error1, error3)));
             Assert.assertEquals(context.getAttribute(TestContextHandler.TEST_KEY), control);
         }
         
@@ -694,7 +692,7 @@ public class ContextHandlingHttpClientTest {
             Assert.assertNotSame(e, error1);
             Assert.assertNotSame(e, error3);
             Assert.assertEquals(e.getSuppressed().length, 2);
-            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(Lists.newArrayList(error1, error3)));
+            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(List.of(error1, error3)));
             Assert.assertEquals(context.getAttribute(TestContextHandler.TEST_KEY), control);
         }
         
@@ -707,7 +705,7 @@ public class ContextHandlingHttpClientTest {
             Assert.assertNotSame(e, error1);
             Assert.assertNotSame(e, error3);
             Assert.assertEquals(e.getSuppressed().length, 2);
-            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(Lists.newArrayList(error1, error3)));
+            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(List.of(error1, error3)));
             Assert.assertEquals(context.getAttribute(TestContextHandler.TEST_KEY), control);
         }
         
@@ -720,7 +718,7 @@ public class ContextHandlingHttpClientTest {
             Assert.assertNotSame(e, error1);
             Assert.assertNotSame(e, error3);
             Assert.assertEquals(e.getSuppressed().length, 2);
-            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(Lists.newArrayList(error1, error3)));
+            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(List.of(error1, error3)));
             Assert.assertEquals(context.getAttribute(TestContextHandler.TEST_KEY), control);
         }
     }
@@ -730,9 +728,9 @@ public class ContextHandlingHttpClientTest {
         RuntimeException error1 = new RuntimeException();
         RuntimeException error3 = new RuntimeException();
         client = new ContextHandlingHttpClient(new MockHttpClient(), 
-                Lists.newArrayList( new TestContextHandler("static-1", error1, null), staticTwo, new TestContextHandler("static-3", error3, null)));
+                List.of( new TestContextHandler("static-1", error1, null), staticTwo, new TestContextHandler("static-3", error3, null)));
         
-        List<String> control = Lists.newArrayList(
+        List<String> control = List.of(
                 "before-static-1",
                 "before-static-2",
                 "before-static-3",
@@ -747,7 +745,7 @@ public class ContextHandlingHttpClientTest {
                 "after-static-1"
                 );
         
-        List<HttpClientContextHandler> handlers = Lists.newArrayList(dynamicOne, dynamicTwo, dynamicThree);
+        List<HttpClientContextHandler> handlers = List.of(dynamicOne, dynamicTwo, dynamicThree);
         
         try {
             context = HttpClientContext.create();
@@ -758,7 +756,7 @@ public class ContextHandlingHttpClientTest {
             Assert.assertNotSame(e, error1);
             Assert.assertNotSame(e, error3);
             Assert.assertEquals(e.getSuppressed().length, 2);
-            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(Lists.newArrayList(error1, error3)));
+            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(List.of(error1, error3)));
             Assert.assertEquals(context.getAttribute(TestContextHandler.TEST_KEY), control);
         }
         
@@ -771,7 +769,7 @@ public class ContextHandlingHttpClientTest {
             Assert.assertNotSame(e, error1);
             Assert.assertNotSame(e, error3);
             Assert.assertEquals(e.getSuppressed().length, 2);
-            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(Lists.newArrayList(error1, error3)));
+            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(List.of(error1, error3)));
             Assert.assertEquals(context.getAttribute(TestContextHandler.TEST_KEY), control);
         }
         
@@ -784,7 +782,7 @@ public class ContextHandlingHttpClientTest {
             Assert.assertNotSame(e, error1);
             Assert.assertNotSame(e, error3);
             Assert.assertEquals(e.getSuppressed().length, 2);
-            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(Lists.newArrayList(error1, error3)));
+            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(List.of(error1, error3)));
             Assert.assertEquals(context.getAttribute(TestContextHandler.TEST_KEY), control);
         }
         
@@ -797,7 +795,7 @@ public class ContextHandlingHttpClientTest {
             Assert.assertNotSame(e, error1);
             Assert.assertNotSame(e, error3);
             Assert.assertEquals(e.getSuppressed().length, 2);
-            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(Lists.newArrayList(error1, error3)));
+            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(List.of(error1, error3)));
             Assert.assertEquals(context.getAttribute(TestContextHandler.TEST_KEY), control);
         }
     }
@@ -808,9 +806,9 @@ public class ContextHandlingHttpClientTest {
         IOException error1 = new IOException();
         IOException error3 = new IOException();
         client = new ContextHandlingHttpClient(new MockHttpClient(), 
-                Lists.newArrayList( new TestContextHandler("static-1", null, error1), staticTwo, new TestContextHandler("static-3", null, error3)));
+                List.of( new TestContextHandler("static-1", null, error1), staticTwo, new TestContextHandler("static-3", null, error3)));
         
-        List<String> control = Lists.newArrayList(
+        List<String> control = List.of(
                 "before-static-1",
                 "before-static-2",
                 "before-static-3",
@@ -825,7 +823,7 @@ public class ContextHandlingHttpClientTest {
                 "after-static-1"
                 );
         
-        List<HttpClientContextHandler> handlers = Lists.newArrayList(dynamicOne, dynamicTwo, dynamicThree);
+        List<HttpClientContextHandler> handlers = List.of(dynamicOne, dynamicTwo, dynamicThree);
         
         try {
             context = HttpClientContext.create();
@@ -836,7 +834,7 @@ public class ContextHandlingHttpClientTest {
             Assert.assertNotSame(e, error1);
             Assert.assertNotSame(e, error3);
             Assert.assertEquals(e.getSuppressed().length, 2);
-            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(Lists.newArrayList(error1, error3)));
+            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(List.of(error1, error3)));
             Assert.assertEquals(context.getAttribute(TestContextHandler.TEST_KEY), control);
         }
         
@@ -849,7 +847,7 @@ public class ContextHandlingHttpClientTest {
             Assert.assertNotSame(e, error1);
             Assert.assertNotSame(e, error3);
             Assert.assertEquals(e.getSuppressed().length, 2);
-            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(Lists.newArrayList(error1, error3)));
+            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(List.of(error1, error3)));
             Assert.assertEquals(context.getAttribute(TestContextHandler.TEST_KEY), control);
         }
         
@@ -862,7 +860,7 @@ public class ContextHandlingHttpClientTest {
             Assert.assertNotSame(e, error1);
             Assert.assertNotSame(e, error3);
             Assert.assertEquals(e.getSuppressed().length, 2);
-            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(Lists.newArrayList(error1, error3)));
+            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(List.of(error1, error3)));
             Assert.assertEquals(context.getAttribute(TestContextHandler.TEST_KEY), control);
         }
         
@@ -875,7 +873,7 @@ public class ContextHandlingHttpClientTest {
             Assert.assertNotSame(e, error1);
             Assert.assertNotSame(e, error3);
             Assert.assertEquals(e.getSuppressed().length, 2);
-            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(Lists.newArrayList(error1, error3)));
+            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(List.of(error1, error3)));
             Assert.assertEquals(context.getAttribute(TestContextHandler.TEST_KEY), control);
         }
     }
@@ -885,9 +883,9 @@ public class ContextHandlingHttpClientTest {
         RuntimeException error1 = new RuntimeException();
         RuntimeException error3 = new RuntimeException();
         client = new ContextHandlingHttpClient(new MockHttpClient(), 
-                Lists.newArrayList( new TestContextHandler("static-1", null, error1), staticTwo, new TestContextHandler("static-3", null, error3)));
+                List.of( new TestContextHandler("static-1", null, error1), staticTwo, new TestContextHandler("static-3", null, error3)));
         
-        List<String> control = Lists.newArrayList(
+        List<String> control = List.of(
                 "before-static-1",
                 "before-static-2",
                 "before-static-3",
@@ -902,7 +900,7 @@ public class ContextHandlingHttpClientTest {
                 "after-static-1"
                 );
         
-        List<HttpClientContextHandler> handlers = Lists.newArrayList(dynamicOne, dynamicTwo, dynamicThree);
+        List<HttpClientContextHandler> handlers = List.of(dynamicOne, dynamicTwo, dynamicThree);
         
         try {
             context = HttpClientContext.create();
@@ -913,7 +911,7 @@ public class ContextHandlingHttpClientTest {
             Assert.assertNotSame(e, error1);
             Assert.assertNotSame(e, error3);
             Assert.assertEquals(e.getSuppressed().length, 2);
-            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(Lists.newArrayList(error1, error3)));
+            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(List.of(error1, error3)));
             Assert.assertEquals(context.getAttribute(TestContextHandler.TEST_KEY), control);
         }
         
@@ -926,7 +924,7 @@ public class ContextHandlingHttpClientTest {
             Assert.assertNotSame(e, error1);
             Assert.assertNotSame(e, error3);
             Assert.assertEquals(e.getSuppressed().length, 2);
-            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(Lists.newArrayList(error1, error3)));
+            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(List.of(error1, error3)));
             Assert.assertEquals(context.getAttribute(TestContextHandler.TEST_KEY), control);
         }
         
@@ -939,7 +937,7 @@ public class ContextHandlingHttpClientTest {
             Assert.assertNotSame(e, error1);
             Assert.assertNotSame(e, error3);
             Assert.assertEquals(e.getSuppressed().length, 2);
-            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(Lists.newArrayList(error1, error3)));
+            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(List.of(error1, error3)));
             Assert.assertEquals(context.getAttribute(TestContextHandler.TEST_KEY), control);
         }
         
@@ -952,7 +950,7 @@ public class ContextHandlingHttpClientTest {
             Assert.assertNotSame(e, error1);
             Assert.assertNotSame(e, error3);
             Assert.assertEquals(e.getSuppressed().length, 2);
-            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(Lists.newArrayList(error1, error3)));
+            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(List.of(error1, error3)));
             Assert.assertEquals(context.getAttribute(TestContextHandler.TEST_KEY), control);
         }
     }
@@ -962,9 +960,9 @@ public class ContextHandlingHttpClientTest {
     public void testSingleDynamicHandlerInvokeBeforeThrowsIOException() throws ClientProtocolException, IOException {
         IOException error = new IOException();
         client = new ContextHandlingHttpClient(new MockHttpClient(), 
-                Lists.newArrayList(staticOne, staticTwo, staticThree));
+                List.of(staticOne, staticTwo, staticThree));
         
-        List<String> control = Lists.newArrayList(
+        List<String> control = List.of(
                 "before-static-1",
                 "before-static-2",
                 "before-static-3",
@@ -979,7 +977,7 @@ public class ContextHandlingHttpClientTest {
                 "after-static-1"
                 );
         
-        List<HttpClientContextHandler> handlers = Lists.newArrayList(dynamicOne, new TestContextHandler("dynamic-2", error, null), dynamicThree);
+        List<HttpClientContextHandler> handlers = List.of(dynamicOne, new TestContextHandler("dynamic-2", error, null), dynamicThree);
         
         try {
             context = HttpClientContext.create();
@@ -1026,9 +1024,9 @@ public class ContextHandlingHttpClientTest {
     public void testSingleDynamicHandlerInvokeAfterThrowsIOException() throws ClientProtocolException, IOException {
         IOException error = new IOException();
         client = new ContextHandlingHttpClient(new MockHttpClient(), 
-                Lists.newArrayList(staticOne, staticTwo, staticThree));
+                List.of(staticOne, staticTwo, staticThree));
         
-        List<String> control = Lists.newArrayList(
+        List<String> control = List.of(
                 "before-static-1",
                 "before-static-2",
                 "before-static-3",
@@ -1043,7 +1041,7 @@ public class ContextHandlingHttpClientTest {
                 "after-static-1"
                 );
         
-        List<HttpClientContextHandler> handlers = Lists.newArrayList(dynamicOne, new TestContextHandler("dynamic-2", null, error), dynamicThree);
+        List<HttpClientContextHandler> handlers = List.of(dynamicOne, new TestContextHandler("dynamic-2", null, error), dynamicThree);
         
         try {
             context = HttpClientContext.create();
@@ -1091,9 +1089,9 @@ public class ContextHandlingHttpClientTest {
     public void testSingleDynamicHandlerInvokeBeforeThrowsRuntimeException() throws ClientProtocolException, IOException {
         RuntimeException error = new RuntimeException();
         client = new ContextHandlingHttpClient(new MockHttpClient(), 
-                Lists.newArrayList(staticOne, staticTwo, staticThree));
+                List.of(staticOne, staticTwo, staticThree));
         
-        List<String> control = Lists.newArrayList(
+        List<String> control = List.of(
                 "before-static-1",
                 "before-static-2",
                 "before-static-3",
@@ -1108,7 +1106,7 @@ public class ContextHandlingHttpClientTest {
                 "after-static-1"
                 );
         
-        List<HttpClientContextHandler> handlers = Lists.newArrayList(dynamicOne, new TestContextHandler("dynamic-2", error, null), dynamicThree);
+        List<HttpClientContextHandler> handlers = List.of(dynamicOne, new TestContextHandler("dynamic-2", error, null), dynamicThree);
         
         try {
             context = HttpClientContext.create();
@@ -1155,9 +1153,9 @@ public class ContextHandlingHttpClientTest {
     public void testSingleDynamicHandlerInvokeAfterThrowsRuntimeException() throws ClientProtocolException, IOException {
         RuntimeException error = new RuntimeException();
         client = new ContextHandlingHttpClient(new MockHttpClient(), 
-                Lists.newArrayList(staticOne, staticTwo, staticThree));
+                List.of(staticOne, staticTwo, staticThree));
         
-        List<String> control = Lists.newArrayList(
+        List<String> control = List.of(
                 "before-static-1",
                 "before-static-2",
                 "before-static-3",
@@ -1172,7 +1170,7 @@ public class ContextHandlingHttpClientTest {
                 "after-static-1"
                 );
         
-        List<HttpClientContextHandler> handlers = Lists.newArrayList(dynamicOne, new TestContextHandler("dynamic-2", null, error), dynamicThree);
+        List<HttpClientContextHandler> handlers = List.of(dynamicOne, new TestContextHandler("dynamic-2", null, error), dynamicThree);
         
         try {
             context = HttpClientContext.create();
@@ -1220,9 +1218,9 @@ public class ContextHandlingHttpClientTest {
     public void testMultipleDynamicHandlersInvokeBeforeThrowIOException() throws ClientProtocolException, IOException {
         IOException error1 = new IOException();
         IOException error3 = new IOException();
-        client = new ContextHandlingHttpClient(new MockHttpClient(), Lists.newArrayList(staticOne, staticTwo, staticThree));
+        client = new ContextHandlingHttpClient(new MockHttpClient(), List.of(staticOne, staticTwo, staticThree));
         
-        List<String> control = Lists.newArrayList(
+        List<String> control = List.of(
                 "before-static-1",
                 "before-static-2",
                 "before-static-3",
@@ -1238,7 +1236,7 @@ public class ContextHandlingHttpClientTest {
                 );
         
         List<HttpClientContextHandler> handlers = 
-                Lists.newArrayList(new TestContextHandler("dynamic-1", error1, null), dynamicTwo, new TestContextHandler("dynamic-3", error3, null));
+                List.of(new TestContextHandler("dynamic-1", error1, null), dynamicTwo, new TestContextHandler("dynamic-3", error3, null));
         
         try {
             context = HttpClientContext.create();
@@ -1249,7 +1247,7 @@ public class ContextHandlingHttpClientTest {
             Assert.assertNotSame(e, error1);
             Assert.assertNotSame(e, error3);
             Assert.assertEquals(e.getSuppressed().length, 2);
-            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(Lists.newArrayList(error1, error3)));
+            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(List.of(error1, error3)));
             Assert.assertEquals(context.getAttribute(TestContextHandler.TEST_KEY), control);
         }
         
@@ -1262,7 +1260,7 @@ public class ContextHandlingHttpClientTest {
             Assert.assertNotSame(e, error1);
             Assert.assertNotSame(e, error3);
             Assert.assertEquals(e.getSuppressed().length, 2);
-            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(Lists.newArrayList(error1, error3)));
+            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(List.of(error1, error3)));
             Assert.assertEquals(context.getAttribute(TestContextHandler.TEST_KEY), control);
         }
         
@@ -1275,7 +1273,7 @@ public class ContextHandlingHttpClientTest {
             Assert.assertNotSame(e, error1);
             Assert.assertNotSame(e, error3);
             Assert.assertEquals(e.getSuppressed().length, 2);
-            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(Lists.newArrayList(error1, error3)));
+            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(List.of(error1, error3)));
             Assert.assertEquals(context.getAttribute(TestContextHandler.TEST_KEY), control);
         }
         
@@ -1288,7 +1286,7 @@ public class ContextHandlingHttpClientTest {
             Assert.assertNotSame(e, error1);
             Assert.assertNotSame(e, error3);
             Assert.assertEquals(e.getSuppressed().length, 2);
-            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(Lists.newArrayList(error1, error3)));
+            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(List.of(error1, error3)));
             Assert.assertEquals(context.getAttribute(TestContextHandler.TEST_KEY), control);
         }
     }
@@ -1297,9 +1295,9 @@ public class ContextHandlingHttpClientTest {
     public void testMultipleDynamicHandlersInvokeBeforeThrowRuntimeException() throws ClientProtocolException, IOException {
         RuntimeException error1 = new RuntimeException();
         RuntimeException error3 = new RuntimeException();
-        client = new ContextHandlingHttpClient(new MockHttpClient(), Lists.newArrayList(staticOne, staticTwo, staticThree));
+        client = new ContextHandlingHttpClient(new MockHttpClient(), List.of(staticOne, staticTwo, staticThree));
         
-        List<String> control = Lists.newArrayList(
+        List<String> control = List.of(
                 "before-static-1",
                 "before-static-2",
                 "before-static-3",
@@ -1315,7 +1313,7 @@ public class ContextHandlingHttpClientTest {
                 );
         
         List<HttpClientContextHandler> handlers = 
-                Lists.newArrayList(new TestContextHandler("dynamic-1", error1, null), dynamicTwo, new TestContextHandler("dynamic-3", error3, null));
+                List.of(new TestContextHandler("dynamic-1", error1, null), dynamicTwo, new TestContextHandler("dynamic-3", error3, null));
         
         try {
             context = HttpClientContext.create();
@@ -1326,7 +1324,7 @@ public class ContextHandlingHttpClientTest {
             Assert.assertNotSame(e, error1);
             Assert.assertNotSame(e, error3);
             Assert.assertEquals(e.getSuppressed().length, 2);
-            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(Lists.newArrayList(error1, error3)));
+            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(List.of(error1, error3)));
             Assert.assertEquals(context.getAttribute(TestContextHandler.TEST_KEY), control);
         }
         
@@ -1339,7 +1337,7 @@ public class ContextHandlingHttpClientTest {
             Assert.assertNotSame(e, error1);
             Assert.assertNotSame(e, error3);
             Assert.assertEquals(e.getSuppressed().length, 2);
-            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(Lists.newArrayList(error1, error3)));
+            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(List.of(error1, error3)));
             Assert.assertEquals(context.getAttribute(TestContextHandler.TEST_KEY), control);
         }
         
@@ -1352,7 +1350,7 @@ public class ContextHandlingHttpClientTest {
             Assert.assertNotSame(e, error1);
             Assert.assertNotSame(e, error3);
             Assert.assertEquals(e.getSuppressed().length, 2);
-            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(Lists.newArrayList(error1, error3)));
+            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(List.of(error1, error3)));
             Assert.assertEquals(context.getAttribute(TestContextHandler.TEST_KEY), control);
         }
         
@@ -1365,7 +1363,7 @@ public class ContextHandlingHttpClientTest {
             Assert.assertNotSame(e, error1);
             Assert.assertNotSame(e, error3);
             Assert.assertEquals(e.getSuppressed().length, 2);
-            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(Lists.newArrayList(error1, error3)));
+            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(List.of(error1, error3)));
             Assert.assertEquals(context.getAttribute(TestContextHandler.TEST_KEY), control);
         }
     }
@@ -1374,9 +1372,9 @@ public class ContextHandlingHttpClientTest {
     public void testMultipleDynamicHandlersInvokeAfterThrowIOException() throws ClientProtocolException, IOException {
         IOException error1 = new IOException();
         IOException error3 = new IOException();
-        client = new ContextHandlingHttpClient(new MockHttpClient(), Lists.newArrayList(staticOne, staticTwo, staticThree));
+        client = new ContextHandlingHttpClient(new MockHttpClient(), List.of(staticOne, staticTwo, staticThree));
         
-        List<String> control = Lists.newArrayList(
+        List<String> control = List.of(
                 "before-static-1",
                 "before-static-2",
                 "before-static-3",
@@ -1392,7 +1390,7 @@ public class ContextHandlingHttpClientTest {
                 );
         
         List<HttpClientContextHandler> handlers = 
-                Lists.newArrayList(new TestContextHandler("dynamic-1", null, error1), dynamicTwo, new TestContextHandler("dynamic-3", null, error3));
+                List.of(new TestContextHandler("dynamic-1", null, error1), dynamicTwo, new TestContextHandler("dynamic-3", null, error3));
         
         try {
             context = HttpClientContext.create();
@@ -1403,7 +1401,7 @@ public class ContextHandlingHttpClientTest {
             Assert.assertNotSame(e, error1);
             Assert.assertNotSame(e, error3);
             Assert.assertEquals(e.getSuppressed().length, 2);
-            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(Lists.newArrayList(error1, error3)));
+            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(List.of(error1, error3)));
             Assert.assertEquals(context.getAttribute(TestContextHandler.TEST_KEY), control);
         }
         
@@ -1416,7 +1414,7 @@ public class ContextHandlingHttpClientTest {
             Assert.assertNotSame(e, error1);
             Assert.assertNotSame(e, error3);
             Assert.assertEquals(e.getSuppressed().length, 2);
-            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(Lists.newArrayList(error1, error3)));
+            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(List.of(error1, error3)));
             Assert.assertEquals(context.getAttribute(TestContextHandler.TEST_KEY), control);
         }
         
@@ -1429,7 +1427,7 @@ public class ContextHandlingHttpClientTest {
             Assert.assertNotSame(e, error1);
             Assert.assertNotSame(e, error3);
             Assert.assertEquals(e.getSuppressed().length, 2);
-            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(Lists.newArrayList(error1, error3)));
+            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(List.of(error1, error3)));
             Assert.assertEquals(context.getAttribute(TestContextHandler.TEST_KEY), control);
         }
         
@@ -1442,7 +1440,7 @@ public class ContextHandlingHttpClientTest {
             Assert.assertNotSame(e, error1);
             Assert.assertNotSame(e, error3);
             Assert.assertEquals(e.getSuppressed().length, 2);
-            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(Lists.newArrayList(error1, error3)));
+            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(List.of(error1, error3)));
             Assert.assertEquals(context.getAttribute(TestContextHandler.TEST_KEY), control);
         }
     }
@@ -1451,9 +1449,9 @@ public class ContextHandlingHttpClientTest {
     public void testMultipleDynamicHandlersInvokeAfterThrowRuntimeException() throws ClientProtocolException, IOException {
         RuntimeException error1 = new RuntimeException();
         RuntimeException error3 = new RuntimeException();
-        client = new ContextHandlingHttpClient(new MockHttpClient(), Lists.newArrayList(staticOne, staticTwo, staticThree));
+        client = new ContextHandlingHttpClient(new MockHttpClient(), List.of(staticOne, staticTwo, staticThree));
         
-        List<String> control = Lists.newArrayList(
+        List<String> control = List.of(
                 "before-static-1",
                 "before-static-2",
                 "before-static-3",
@@ -1469,7 +1467,7 @@ public class ContextHandlingHttpClientTest {
                 );
         
         List<HttpClientContextHandler> handlers = 
-                Lists.newArrayList(new TestContextHandler("dynamic-1", null, error1), dynamicTwo, new TestContextHandler("dynamic-3", null, error3));
+                List.of(new TestContextHandler("dynamic-1", null, error1), dynamicTwo, new TestContextHandler("dynamic-3", null, error3));
         
         try {
             context = HttpClientContext.create();
@@ -1480,7 +1478,7 @@ public class ContextHandlingHttpClientTest {
             Assert.assertNotSame(e, error1);
             Assert.assertNotSame(e, error3);
             Assert.assertEquals(e.getSuppressed().length, 2);
-            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(Lists.newArrayList(error1, error3)));
+            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(List.of(error1, error3)));
             Assert.assertEquals(context.getAttribute(TestContextHandler.TEST_KEY), control);
         }
         
@@ -1493,7 +1491,7 @@ public class ContextHandlingHttpClientTest {
             Assert.assertNotSame(e, error1);
             Assert.assertNotSame(e, error3);
             Assert.assertEquals(e.getSuppressed().length, 2);
-            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(Lists.newArrayList(error1, error3)));
+            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(List.of(error1, error3)));
             Assert.assertEquals(context.getAttribute(TestContextHandler.TEST_KEY), control);
         }
         
@@ -1506,7 +1504,7 @@ public class ContextHandlingHttpClientTest {
             Assert.assertNotSame(e, error1);
             Assert.assertNotSame(e, error3);
             Assert.assertEquals(e.getSuppressed().length, 2);
-            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(Lists.newArrayList(error1, error3)));
+            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(List.of(error1, error3)));
             Assert.assertEquals(context.getAttribute(TestContextHandler.TEST_KEY), control);
         }
         
@@ -1519,7 +1517,7 @@ public class ContextHandlingHttpClientTest {
             Assert.assertNotSame(e, error1);
             Assert.assertNotSame(e, error3);
             Assert.assertEquals(e.getSuppressed().length, 2);
-            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(Lists.newArrayList(error1, error3)));
+            Assert.assertTrue(Arrays.asList(e.getSuppressed()).containsAll(List.of(error1, error3)));
             Assert.assertEquals(context.getAttribute(TestContextHandler.TEST_KEY), control);
         }
     }
@@ -1530,7 +1528,7 @@ public class ContextHandlingHttpClientTest {
         IOException staticBeforeError = null;
         IOException dynamicAfterError = null;
         
-        List<String> control = Lists.newArrayList(
+        List<String> control = List.of(
                 "before-static-1",
                 "before-static-2",
                 "before-static-3",
@@ -1551,8 +1549,8 @@ public class ContextHandlingHttpClientTest {
         dynamicAfterError = new IOException();
         
         client = new ContextHandlingHttpClient(new MockHttpClient(), 
-                Lists.newArrayList(staticOne, new TestContextHandler("static-2", staticBeforeError, null), staticThree));
-        dynamicHandlers = Lists.newArrayList(dynamicOne, new TestContextHandler("dynamic-2", null, dynamicAfterError), dynamicThree);
+                List.of(staticOne, new TestContextHandler("static-2", staticBeforeError, null), staticThree));
+        dynamicHandlers = List.of(dynamicOne, new TestContextHandler("dynamic-2", null, dynamicAfterError), dynamicThree);
         
         try {
             context = HttpClientContext.create();
@@ -1570,8 +1568,8 @@ public class ContextHandlingHttpClientTest {
         dynamicAfterError = new IOException();
         
         client = new ContextHandlingHttpClient(new MockHttpClient(), 
-                Lists.newArrayList(staticOne, new TestContextHandler("static-2", staticBeforeError, null), staticThree));
-        dynamicHandlers = Lists.newArrayList(dynamicOne, new TestContextHandler("dynamic-2", null, dynamicAfterError), dynamicThree);
+                List.of(staticOne, new TestContextHandler("static-2", staticBeforeError, null), staticThree));
+        dynamicHandlers = List.of(dynamicOne, new TestContextHandler("dynamic-2", null, dynamicAfterError), dynamicThree);
         
         try {
             context = HttpClientContext.create();
@@ -1589,8 +1587,8 @@ public class ContextHandlingHttpClientTest {
         dynamicAfterError = new IOException();
         
         client = new ContextHandlingHttpClient(new MockHttpClient(), 
-                Lists.newArrayList(staticOne, new TestContextHandler("static-2", staticBeforeError, null), staticThree));
-        dynamicHandlers = Lists.newArrayList(dynamicOne, new TestContextHandler("dynamic-2", null, dynamicAfterError), dynamicThree);
+                List.of(staticOne, new TestContextHandler("static-2", staticBeforeError, null), staticThree));
+        dynamicHandlers = List.of(dynamicOne, new TestContextHandler("dynamic-2", null, dynamicAfterError), dynamicThree);
         
         try {
             context = HttpClientContext.create();
@@ -1608,8 +1606,8 @@ public class ContextHandlingHttpClientTest {
         dynamicAfterError = new IOException();
         
         client = new ContextHandlingHttpClient(new MockHttpClient(), 
-                Lists.newArrayList(staticOne, new TestContextHandler("static-2", staticBeforeError, null), staticThree));
-        dynamicHandlers = Lists.newArrayList(dynamicOne, new TestContextHandler("dynamic-2", null, dynamicAfterError), dynamicThree);
+                List.of(staticOne, new TestContextHandler("static-2", staticBeforeError, null), staticThree));
+        dynamicHandlers = List.of(dynamicOne, new TestContextHandler("dynamic-2", null, dynamicAfterError), dynamicThree);
         
         try {
             context = HttpClientContext.create();
@@ -1629,9 +1627,9 @@ public class ContextHandlingHttpClientTest {
         RuntimeException staticBeforeError = new RuntimeException();
         RuntimeException dynamicAfterError = new RuntimeException();
         client = new ContextHandlingHttpClient(new MockHttpClient(), 
-                Lists.newArrayList(staticOne, new TestContextHandler("static-2", staticBeforeError, null), staticThree));
+                List.of(staticOne, new TestContextHandler("static-2", staticBeforeError, null), staticThree));
         
-        List<String> control = Lists.newArrayList(
+        List<String> control = List.of(
                 "before-static-1",
                 "before-static-2",
                 "before-static-3",
@@ -1646,7 +1644,7 @@ public class ContextHandlingHttpClientTest {
                 "after-static-1"
                 );
         
-        List<HttpClientContextHandler> handlers = Lists.newArrayList(dynamicOne, new TestContextHandler("dynamic-2", null, dynamicAfterError), dynamicThree);
+        List<HttpClientContextHandler> handlers = List.of(dynamicOne, new TestContextHandler("dynamic-2", null, dynamicAfterError), dynamicThree);
         
         try {
             context = HttpClientContext.create();
@@ -1702,7 +1700,7 @@ public class ContextHandlingHttpClientTest {
         IOException clientError = null;
         IOException dynamicAfterError = null;
         
-        List<String> control = Lists.newArrayList(
+        List<String> control = List.of(
                 "before-static-1",
                 "before-static-2",
                 "before-static-3",
@@ -1723,8 +1721,8 @@ public class ContextHandlingHttpClientTest {
         dynamicAfterError = new IOException();
         
         client = new ContextHandlingHttpClient(new MockHttpClient(clientError), 
-                Lists.newArrayList(staticOne, staticTwo, staticThree));
-        dynamicHandlers = Lists.newArrayList(dynamicOne, new TestContextHandler("dynamic-2", null, dynamicAfterError), dynamicThree);
+                List.of(staticOne, staticTwo, staticThree));
+        dynamicHandlers = List.of(dynamicOne, new TestContextHandler("dynamic-2", null, dynamicAfterError), dynamicThree);
         
         try {
             context = HttpClientContext.create();
@@ -1742,8 +1740,8 @@ public class ContextHandlingHttpClientTest {
         dynamicAfterError = new IOException();
         
         client = new ContextHandlingHttpClient(new MockHttpClient(clientError), 
-                Lists.newArrayList(staticOne, staticTwo, staticThree));
-        dynamicHandlers = Lists.newArrayList(dynamicOne, new TestContextHandler("dynamic-2", null, dynamicAfterError), dynamicThree);
+                List.of(staticOne, staticTwo, staticThree));
+        dynamicHandlers = List.of(dynamicOne, new TestContextHandler("dynamic-2", null, dynamicAfterError), dynamicThree);
         
         try {
             context = HttpClientContext.create();
@@ -1761,8 +1759,8 @@ public class ContextHandlingHttpClientTest {
         dynamicAfterError = new IOException();
         
         client = new ContextHandlingHttpClient(new MockHttpClient(clientError), 
-                Lists.newArrayList(staticOne, staticTwo, staticThree));
-        dynamicHandlers = Lists.newArrayList(dynamicOne, new TestContextHandler("dynamic-2", null, dynamicAfterError), dynamicThree);
+                List.of(staticOne, staticTwo, staticThree));
+        dynamicHandlers = List.of(dynamicOne, new TestContextHandler("dynamic-2", null, dynamicAfterError), dynamicThree);
         
         try {
             context = HttpClientContext.create();
@@ -1780,8 +1778,8 @@ public class ContextHandlingHttpClientTest {
         dynamicAfterError = new IOException();
         
         client = new ContextHandlingHttpClient(new MockHttpClient(clientError), 
-                Lists.newArrayList(staticOne, staticTwo, staticThree));
-        dynamicHandlers = Lists.newArrayList(dynamicOne, new TestContextHandler("dynamic-2", null, dynamicAfterError), dynamicThree);
+                List.of(staticOne, staticTwo, staticThree));
+        dynamicHandlers = List.of(dynamicOne, new TestContextHandler("dynamic-2", null, dynamicAfterError), dynamicThree);
         
         try {
             context = HttpClientContext.create();

@@ -18,13 +18,13 @@
 package net.shibboleth.utilities.java.support.httpclient;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.Lists;
 
 public class HttpClientSupportTest {
 
@@ -40,7 +40,7 @@ public class HttpClientSupportTest {
         HttpClientSupport.addDynamicContextHandlerFirst(context, two);
         HttpClientSupport.addDynamicContextHandlerFirst(context, three);
         
-        Assert.assertEquals(HttpClientSupport.getDynamicContextHandlerList(context), Lists.newArrayList(three, two, one));
+        Assert.assertEquals(HttpClientSupport.getDynamicContextHandlerList(context), List.of(three, two, one));
     }
      
     @Test
@@ -54,7 +54,7 @@ public class HttpClientSupportTest {
         HttpClientSupport.addDynamicContextHandlerLast(context, two);
         HttpClientSupport.addDynamicContextHandlerLast(context, three);
         
-        Assert.assertEquals(HttpClientSupport.getDynamicContextHandlerList(context), Lists.newArrayList(one, two, three));
+        Assert.assertEquals(HttpClientSupport.getDynamicContextHandlerList(context), List.of(one, two, three));
     }
     
     @Test
@@ -75,7 +75,7 @@ public class HttpClientSupportTest {
         HttpClientSupport.addDynamicContextHandlerFirst(context, two);
         HttpClientSupport.addDynamicContextHandlerFirst(context, one);
         
-        Assert.assertEquals(HttpClientSupport.getDynamicContextHandlerList(context), Lists.newArrayList(three, two, one));
+        Assert.assertEquals(HttpClientSupport.getDynamicContextHandlerList(context), List.of(three, two, one));
     }
      
     @Test
@@ -96,7 +96,7 @@ public class HttpClientSupportTest {
         HttpClientSupport.addDynamicContextHandlerLast(context, two);
         HttpClientSupport.addDynamicContextHandlerLast(context, one);
         
-        Assert.assertEquals(HttpClientSupport.getDynamicContextHandlerList(context), Lists.newArrayList(one, two, three));
+        Assert.assertEquals(HttpClientSupport.getDynamicContextHandlerList(context), List.of(one, two, three));
     }
     
     @Test
@@ -110,7 +110,7 @@ public class HttpClientSupportTest {
         HttpClientSupport.addDynamicContextHandlerFirst(context, two, true);
         HttpClientSupport.addDynamicContextHandlerFirst(context, three, true);
         
-        Assert.assertEquals(HttpClientSupport.getDynamicContextHandlerList(context), Lists.newArrayList(one));
+        Assert.assertEquals(HttpClientSupport.getDynamicContextHandlerList(context), Collections.singletonList(one));
     }
      
     @Test
@@ -124,7 +124,7 @@ public class HttpClientSupportTest {
         HttpClientSupport.addDynamicContextHandlerLast(context, two, true);
         HttpClientSupport.addDynamicContextHandlerLast(context, three, true);
         
-        Assert.assertEquals(HttpClientSupport.getDynamicContextHandlerList(context), Lists.newArrayList(one));
+        Assert.assertEquals(HttpClientSupport.getDynamicContextHandlerList(context), Collections.singletonList(one));
     }
      
     

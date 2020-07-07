@@ -17,12 +17,14 @@
 
 package net.shibboleth.utilities.java.support.net;
 
+import java.util.Collections;
+import java.util.Set;
+
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.Sets;
 import com.google.common.net.MediaType;
 
 /** {@link HttpServletSupport} unit test. */
@@ -71,12 +73,12 @@ public class HttpServletSupportTest {
         
         // No Content-type
         Assert.assertTrue(HttpServletSupport.validateContentType(request, 
-                Sets.newHashSet(MediaType.XML_UTF_8), 
+                Collections.singleton(MediaType.XML_UTF_8), 
                 true, 
                 false));
         
         Assert.assertFalse(HttpServletSupport.validateContentType(request, 
-                Sets.newHashSet(MediaType.XML_UTF_8), 
+                Collections.singleton(MediaType.XML_UTF_8), 
                 false, 
                 false));
         
@@ -84,32 +86,32 @@ public class HttpServletSupportTest {
         request.setContentType("text/xml; charset=utf-8");
         
         Assert.assertFalse(HttpServletSupport.validateContentType(request, 
-                Sets.newHashSet(MediaType.create("application", "foobar")), 
+                Collections.singleton(MediaType.create("application", "foobar")), 
                 true, 
                 false));
         
         Assert.assertTrue(HttpServletSupport.validateContentType(request, 
-                Sets.newHashSet(MediaType.XML_UTF_8, MediaType.create("application", "foobar")), 
+                Set.of(MediaType.XML_UTF_8, MediaType.create("application", "foobar")), 
                 true, 
                 false));
         
         Assert.assertTrue(HttpServletSupport.validateContentType(request, 
-                Sets.newHashSet(MediaType.XML_UTF_8, MediaType.create("application", "foobar")), 
+                Set.of(MediaType.XML_UTF_8, MediaType.create("application", "foobar")), 
                 true, 
                 true));
         
         Assert.assertTrue(HttpServletSupport.validateContentType(request, 
-                Sets.newHashSet(MediaType.XML_UTF_8.withoutParameters(), MediaType.create("application", "foobar")), 
+                Set.of(MediaType.XML_UTF_8.withoutParameters(), MediaType.create("application", "foobar")), 
                 true, 
                 true));
         
         Assert.assertTrue(HttpServletSupport.validateContentType(request, 
-                Sets.newHashSet(MediaType.ANY_TEXT_TYPE, MediaType.create("application", "foobar")), 
+                Set.of(MediaType.ANY_TEXT_TYPE, MediaType.create("application", "foobar")), 
                 true, 
                 true));
         
         Assert.assertTrue(HttpServletSupport.validateContentType(request, 
-                Sets.newHashSet(MediaType.ANY_TYPE, MediaType.create("application", "foobar")), 
+                Set.of(MediaType.ANY_TYPE, MediaType.create("application", "foobar")), 
                 true, 
                 true));
         
@@ -117,33 +119,33 @@ public class HttpServletSupportTest {
         request.setContentType("text/xml");
         
         Assert.assertFalse(HttpServletSupport.validateContentType(request, 
-                Sets.newHashSet(MediaType.create("application", "foobar")), 
+                Collections.singleton(MediaType.create("application", "foobar")), 
                 true, 
                 false));
         
         Assert.assertTrue(HttpServletSupport.validateContentType(request, 
-                Sets.newHashSet(MediaType.XML_UTF_8, MediaType.create("application", "foobar")), 
+                Set.of(MediaType.XML_UTF_8, MediaType.create("application", "foobar")), 
                 true, 
                 false));
         
         // Not valid, because the text/xml valid type includes parameters
         Assert.assertFalse(HttpServletSupport.validateContentType(request, 
-                Sets.newHashSet(MediaType.XML_UTF_8, MediaType.create("application", "foobar")), 
+                Set.of(MediaType.XML_UTF_8, MediaType.create("application", "foobar")), 
                 true, 
                 true));
         
         Assert.assertTrue(HttpServletSupport.validateContentType(request, 
-                Sets.newHashSet(MediaType.XML_UTF_8.withoutParameters(), MediaType.create("application", "foobar")), 
+                Set.of(MediaType.XML_UTF_8.withoutParameters(), MediaType.create("application", "foobar")), 
                 true, 
                 true));
         
         Assert.assertTrue(HttpServletSupport.validateContentType(request, 
-                Sets.newHashSet(MediaType.ANY_TEXT_TYPE, MediaType.create("application", "foobar")), 
+                Set.of(MediaType.ANY_TEXT_TYPE, MediaType.create("application", "foobar")), 
                 true, 
                 true));
         
         Assert.assertTrue(HttpServletSupport.validateContentType(request, 
-                Sets.newHashSet(MediaType.ANY_TYPE, MediaType.create("application", "foobar")), 
+                Set.of(MediaType.ANY_TYPE, MediaType.create("application", "foobar")), 
                 true, 
                 true));
         
