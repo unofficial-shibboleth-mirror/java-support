@@ -53,7 +53,7 @@ public class ClassToInstanceMultiMap<B> {
     @Nonnull private final HashMap<Class<?>, List<B>> backingMap;
 
     /** List of values that are indexed. */
-    @Nonnull private final List<B> values;
+    @Nonnull @NonnullElements private final List<B> values;
 
     /** Constructor. Does not index supertypes. */
     public ClassToInstanceMultiMap() {
