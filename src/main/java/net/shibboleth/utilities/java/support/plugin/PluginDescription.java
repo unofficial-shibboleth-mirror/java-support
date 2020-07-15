@@ -36,6 +36,7 @@ import net.shibboleth.utilities.java.support.collection.Pair;
  * This class is exported (via the service API) by every plugin.
  */
 @Beta
+@Deprecated(forRemoval = true, since = "4.1")
 public interface PluginDescription {
     
     /** Return the unique identifier for the plugin.  This name <em>MUST</em> be
@@ -58,6 +59,8 @@ public interface PluginDescription {
     /** Return the list of (idp.home) relative paths (of files, <em>not directories </em>) 
      * to copy from the distribution into the IdP installation.
      *
+     * <em>Not currently supported</em>
+     * 
      * <p>These files are copied non-destructively (if the file already exists
      * then it is not copied).  Some paths are disallowed (for instance dist and system).
      * Directories are created if needed</p>
@@ -90,6 +93,8 @@ public interface PluginDescription {
     @Nonnull @NonnullElements public List<URL> getUpdateURLs() throws IOException;
     
     /** Return this properties that require list merging.  
+     * 
+     * <em>Not currently supported</em>
      * 
      * <p>Given
      * an property called (say) <code>idp.service.foo</code> in file <code>services.property</code>

@@ -34,6 +34,7 @@ import net.shibboleth.utilities.java.support.collection.Pair;
  * This class is exported (via the service API) by every plugin.
  */
 @Beta
+@Deprecated(forRemoval = true, since = "4.1")
 public abstract class AbstractPluginDescription implements PluginDescription {
     
     /** {@inheritDoc} */
