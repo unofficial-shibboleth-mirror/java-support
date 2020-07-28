@@ -24,15 +24,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.annotations.Beta;
-
 /**
  * Map implementation which allows subsets of entries to be retrieved based on the type of the entry value.
  * 
  * @param <KeyType> the type of object used as keys
  * @param <ValueType> the type of object stored as values
  */
-@Beta
 public class ValueTypeIndexedMap<KeyType, ValueType> implements Map<KeyType, ValueType> {
 
     /** Class to represent null values. */

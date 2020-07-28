@@ -35,7 +35,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /** Utilities for working with HTTP Servlet requests and responses. */
-@Beta
 public final class HttpServletSupport {
 
     /** Constructor. */
