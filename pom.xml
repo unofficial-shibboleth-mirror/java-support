@@ -172,13 +172,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.mozilla</groupId>
-            <artifactId>rhino</artifactId>
-            <scope>test</scope>
-            <!--  version in parent pom -->
-        </dependency>
-
     </dependencies>
 
     <distributionManagement>
