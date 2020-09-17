@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.utilities.java.support.repository;
+package net.shibboleth.utilities.java.support.test.repository;
 
 import javax.annotation.Nonnull;
 

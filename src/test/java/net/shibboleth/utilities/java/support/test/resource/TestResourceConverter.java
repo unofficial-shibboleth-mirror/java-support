@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.utilities.java.support.resource;
+package net.shibboleth.utilities.java.support.test.resource;
 
 import java.io.File;
 import java.io.IOException;

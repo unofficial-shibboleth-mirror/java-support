@@ -25,7 +25,7 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.Validator;
 
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.resource.TestResourceConverter;
+import net.shibboleth.utilities.java.support.test.resource.TestResourceConverter;
 
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;

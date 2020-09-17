@@ -1,5 +1,5 @@
 
-package net.shibboleth.utilities.java.support.repository;
+package net.shibboleth.utilities.java.support.test.repository;
 
 import java.io.IOException;
 import java.net.URL;
