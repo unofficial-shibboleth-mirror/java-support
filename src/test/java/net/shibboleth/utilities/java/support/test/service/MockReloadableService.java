@@ -15,10 +15,13 @@
  * limitations under the License.
  */
 
-package net.shibboleth.utilities.java.support.service;
+package net.shibboleth.utilities.java.support.test.service;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.shibboleth.utilities.java.support.service.AbstractReloadableService;
+import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 /**
  * Utility class for wrapping a serviceable component in a dummy reloadable service.
