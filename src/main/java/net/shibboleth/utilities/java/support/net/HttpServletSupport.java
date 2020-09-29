@@ -27,7 +27,6 @@ import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.common.annotations.Beta;
 import com.google.common.net.MediaType;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
