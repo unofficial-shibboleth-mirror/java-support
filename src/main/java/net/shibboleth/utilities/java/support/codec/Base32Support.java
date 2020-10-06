@@ -22,6 +22,7 @@ import javax.annotation.Nonnull;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+import org.apache.commons.codec.CodecPolicy;
 import org.apache.commons.codec.binary.Base32;
 
 /**
@@ -42,10 +43,12 @@ public final class Base32Support {
     public static final boolean UNCHUNKED = false;
 
     /** Encoder used to produce chunked output. */
-    @Nonnull private static final Base32 CHUNKED_ENCODER = new Base32(76, new byte[] { '\n' });
+    @Nonnull private static final Base32 CHUNKED_ENCODER = new Base32(76, new byte[] { '\n' },
+            false, (byte)'=', CodecPolicy.STRICT);
 
     /** Encoder used to produce unchunked output. */
-    @Nonnull private static final Base32 UNCHUNKED_ENCODER = new Base32(0, new byte[] { '\n' });
+    @Nonnull private static final Base32 UNCHUNKED_ENCODER = new Base32(0, new byte[] { '\n' },
+            false, (byte)'=', CodecPolicy.STRICT);
 
     /** Constructor. */
     private Base32Support() {
