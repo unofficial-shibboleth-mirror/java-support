@@ -29,6 +29,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.net.HttpServletSupport;
 import net.shibboleth.utilities.java.support.net.IPRange;
 import net.shibboleth.utilities.java.support.security.AccessControl;
 
@@ -75,7 +76,7 @@ public class IPRangeAccessControl extends AbstractIdentifiableInitializableCompo
         
         Constraint.isNotNull(request, "ServletRequest cannot be null");
 
-        final String addr = request.getRemoteAddr();
+        final String addr = HttpServletSupport.getRemoteAddr(request);
         if (addr != null) {
             log.debug("{} Evaluating client address '{}'", getLogPrefix(), addr);
             

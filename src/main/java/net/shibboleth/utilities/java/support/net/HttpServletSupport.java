@@ -24,6 +24,8 @@ import java.util.Locale.LanguageRange;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -45,7 +47,7 @@ public final class HttpServletSupport {
      * 
      * @param response transport to add headers to
      */
-    public static void addNoCacheHeaders(final HttpServletResponse response) {
+    public static void addNoCacheHeaders(@Nonnull final HttpServletResponse response) {
         response.setHeader("Cache-control", "no-cache, no-store");
         response.setHeader("Pragma", "no-cache");
     }
@@ -55,7 +57,7 @@ public final class HttpServletSupport {
      * 
      * @param response transport to set character encoding type
      */
-    public static void setUTF8Encoding(final HttpServletResponse response) {
+    public static void setUTF8Encoding(@Nonnull final HttpServletResponse response) {
         response.setCharacterEncoding("UTF-8");
     }
 
@@ -65,7 +67,7 @@ public final class HttpServletSupport {
      * @param response the transport to set content type on
      * @param contentType the content type to set
      */
-    public static void setContentType(final HttpServletResponse response, final String contentType) {
+    public static void setContentType(@Nonnull final HttpServletResponse response, @Nullable final String contentType) {
         response.setHeader("Content-Type", contentType);
     }
 
@@ -77,7 +79,7 @@ public final class HttpServletSupport {
      * 
      * @return constructed URI
      */
-    public static String getRequestPathWithoutContext(final HttpServletRequest request) {
+    public static String getRequestPathWithoutContext(@Nonnull final HttpServletRequest request) {
         final String servletPath = request.getServletPath();
 
         if (request.getPathInfo() == null) {
@@ -95,7 +97,7 @@ public final class HttpServletSupport {
      * 
      * @return URL that was requested to generate this request
      */
-    public static URI getFullRequestURI(final HttpServletRequest request) {
+    public static URI getFullRequestURI(@Nonnull final HttpServletRequest request) {
         final StringBuffer requestUrl = request.getRequestURL();
 
         final String encodedQuery = StringSupport.trimOrNull(request.getQueryString());
@@ -133,8 +135,9 @@ public final class HttpServletSupport {
      * @param isOneOfStrategy flag for the strategy used in the validation (see above for details)
      * @return true if the content type is valid, false if not
      */
-    public static boolean validateContentType(final HttpServletRequest request, final Set<MediaType> validTypes, 
-            final boolean noContentTypeIsValid, final boolean isOneOfStrategy) {
+    public static boolean validateContentType(@Nonnull final HttpServletRequest request,
+            @Nonnull @NonnullElements final Set<MediaType> validTypes, final boolean noContentTypeIsValid,
+            final boolean isOneOfStrategy) {
         
         return MediaTypeSupport.validateContentType(request.getContentType(), validTypes, 
                 noContentTypeIsValid, isOneOfStrategy);
@@ -146,13 +149,34 @@ public final class HttpServletSupport {
      * @return The range.
      */
     @Nonnull @NonnullElements @Unmodifiable
-    public static List<LanguageRange> getLanguageRange(final HttpServletRequest request) {
+    public static List<LanguageRange> getLanguageRange(@Nonnull final HttpServletRequest request) {
         
         final String languages = StringSupport.trimOrNull(request.getHeader("Accept-Language"));
         if (languages == null) {
             return Collections.EMPTY_LIST;
         }
         return List.copyOf(LanguageRange.parse(languages));
-                
     }
+
+    /**
+     * Gets the sanitized form of the result of {@link ServletRequest#getRemoteAddr()}.
+     * 
+     * <p>This routine accounts for variability in the format of the returned address string,
+     * in particular the incorrect use of brackets around IPv6 addresses, a form intended to be
+     * used when expressing addresses as hostnames, not as bare addresses.</p> 
+     * 
+     * @param request servlet request
+     * 
+     * @return sanitized address string
+     */
+    @Nullable public static String getRemoteAddr(@Nonnull final ServletRequest request) {
+        final String addr = request.getRemoteAddr();
+        
+        if (addr.startsWith("[") && addr.endsWith("]")) {
+            return addr.substring(1, addr.length() - 1);
+        }
+        
+        return addr;
+    }
+    
 }
