@@ -172,7 +172,7 @@ public final class HttpServletSupport {
     @Nullable public static String getRemoteAddr(@Nonnull final ServletRequest request) {
         final String addr = request.getRemoteAddr();
         
-        if (addr.startsWith("[") && addr.endsWith("]")) {
+        if (addr != null && addr.startsWith("[") && addr.endsWith("]")) {
             return addr.substring(1, addr.length() - 1);
         }
         
