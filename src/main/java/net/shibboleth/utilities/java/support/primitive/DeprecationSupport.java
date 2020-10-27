@@ -83,7 +83,14 @@ public final class DeprecationSupport {
         ACTION("Spring WebFlow action"),
         
         /** Configuration approach. */
-        CONFIGURATION("configuration");
+        CONFIGURATION("configuration"),
+        
+        /**
+         * Command-line option.
+         *
+         * @since 8.1
+         */
+        CLI_OPTION("command-line option");
         
         /** Printed version. */
         @Nonnull @NotEmpty private final String text;
