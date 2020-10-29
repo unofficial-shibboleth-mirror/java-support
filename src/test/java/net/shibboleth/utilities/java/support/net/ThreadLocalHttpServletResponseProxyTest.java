@@ -75,7 +75,7 @@ public class ThreadLocalHttpServletResponseProxyTest {
         HttpServletRequestResponseContext.loadCurrent(request, response);
         
         ThreadLocalHttpServletResponseProxy proxy = new ThreadLocalHttpServletResponseProxy();
-        Assert.assertEquals(proxy.getContentType(), "text/html");
+        Assert.assertEquals(proxy.getContentType(), "text/html;charset=UTF-8");
         Assert.assertEquals(proxy.getCharacterEncoding(), "UTF-8");
         Assert.assertTrue(proxy.containsHeader("MyResponseHeader"));
         
