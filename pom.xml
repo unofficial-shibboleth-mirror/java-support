@@ -7,7 +7,7 @@
     <parent>
         <groupId>net.shibboleth</groupId>
         <artifactId>parent</artifactId>
-        <version>11.1.0</version>
+        <version>11.2.0-RELEASE</version>
     </parent>
 
     <name>java-support</name>
