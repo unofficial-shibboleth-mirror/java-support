@@ -28,6 +28,7 @@ import org.testng.annotations.Test;
 import com.google.common.net.MediaType;
 
 /** {@link HttpServletSupport} unit test. */
+@SuppressWarnings("javadoc")
 public class HttpServletSupportTest {
 
     @Test public void testAddNoCacheHeaders(){
@@ -149,5 +150,17 @@ public class HttpServletSupportTest {
                 true, 
                 true));
         
+    }
+
+    @Test
+    public void testLanguageRanges() {
+        MockHttpServletRequest request =  new MockHttpServletRequest();
+
+        Assert.assertTrue(HttpServletSupport.getLanguageRange(request).isEmpty());
+        request.addHeader("Accept-Language", "en-us");
+        Assert.assertEquals(HttpServletSupport.getLanguageRange(request).size(), 1);
+        request =  new MockHttpServletRequest();
+        request.addHeader("Accept-Language", "A Random Pile Of Garbage");
+        Assert.assertTrue(HttpServletSupport.getLanguageRange(request).isEmpty());
     }
 }

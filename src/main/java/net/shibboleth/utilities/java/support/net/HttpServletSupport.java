@@ -29,6 +29,9 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.net.MediaType;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -37,6 +40,9 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /** Utilities for working with HTTP Servlet requests and responses. */
 public final class HttpServletSupport {
+
+    /** Log. */
+    private static final Logger LOG = LoggerFactory.getLogger(HttpServletSupport.class);
 
     /** Constructor. */
     private HttpServletSupport() {
@@ -152,10 +158,14 @@ public final class HttpServletSupport {
     public static List<LanguageRange> getLanguageRange(@Nonnull final HttpServletRequest request) {
         
         final String languages = StringSupport.trimOrNull(request.getHeader("Accept-Language"));
-        if (languages == null) {
-            return Collections.EMPTY_LIST;
+        if (languages != null) {
+            try {
+                return List.copyOf(LanguageRange.parse(languages));
+            } catch (final IllegalArgumentException e) {
+                LOG.warn("Could not parse provided languages '{}'", languages, e);
+            }
         }
-        return List.copyOf(LanguageRange.parse(languages));
+        return Collections.EMPTY_LIST;
     }
 
     /**
