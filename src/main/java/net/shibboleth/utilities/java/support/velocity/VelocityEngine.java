@@ -21,6 +21,8 @@ import java.util.Properties;
 
 import javax.annotation.Nonnull;
 
+import org.apache.velocity.runtime.RuntimeConstants;
+
 /**
  * This is a helper class for creating velocity engines.
  */
@@ -57,20 +59,20 @@ public final class VelocityEngine {
     /**
      * Returns the default velocity engine properties. Default properties include:
      * <ul>
-     * <li>"string.resource.loader.class","org.apache.velocity.runtime.resource.loader.StringResourceLoader"</li>
-     * <li>"classpath.resource.loader.class","org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader"</li>
-     * <li>"resource.loader", "classpath, string"</li>
+     * <li>"resource.loader.string.class","org.apache.velocity.runtime.resource.loader.StringResourceLoader"</li>
+     * <li>"resource.loader.classpath.class","org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader"</li>
+     * <li>"resource.loaders", "classpath, string"</li>
      * </ul>
      * 
      * @return velocity engine properties
      */
     @Nonnull public static Properties getDefaultProperties() {
         final Properties props = new Properties();
-        props.setProperty("string.resource.loader.class",
+        props.setProperty("resource.loader.string.class",
                 "org.apache.velocity.runtime.resource.loader.StringResourceLoader");
-        props.setProperty("classpath.resource.loader.class",
+        props.setProperty("resource.loader.classpath.class",
                 "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
-        props.setProperty("resource.loader", "classpath, string");
+        props.setProperty(RuntimeConstants.RESOURCE_LOADERS, "classpath, string");
         return props;
     }
 }
