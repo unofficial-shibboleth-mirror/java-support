@@ -113,6 +113,7 @@ public class TestSupport {
      *
      * @return <code>true</code> if the runtime environment is Java 7 or later
      */
+    @Deprecated(forRemoval = true, since = "4.1")
     public static boolean isJavaV7OrLater() {
         return getJavaVersion(System.getProperty("java.version")) >= 7;
     }
@@ -123,6 +124,7 @@ public class TestSupport {
      *
      * @return <code>true</code> if the runtime environment is Java 8 or later
      */
+    @Deprecated(forRemoval = true, since = "4.1")
     public static boolean isJavaV8OrLater() {
         return getJavaVersion(System.getProperty("java.version")) >= 8;
     }
@@ -133,6 +135,7 @@ public class TestSupport {
      *
      * @return <code>true</code> if the runtime environment is Java 9 or later
      */
+    @Deprecated(forRemoval = true, since = "4.1")
     public static boolean isJavaV9OrLater() {
         return getJavaVersion(System.getProperty("java.version")) >= 9;
     }
@@ -143,6 +146,7 @@ public class TestSupport {
      *
      * @return <code>true</code> if the runtime environment is Java 11 or later
      */
+    @Deprecated(forRemoval = true, since = "4.1")
     public static boolean isJavaV11OrLater() {
         return getJavaVersion(System.getProperty("java.version")) >= 11;
     }
