@@ -20,7 +20,7 @@ package net.shibboleth.utilities.java.support.logic;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.function.Function;
+import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -37,18 +37,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@link Function} which calls out to a supplied script.
+ * A {@link Consumer} which calls out to a supplied script.
  *
  * @param <T> input type
- * @param <U> output type
- * @since 7.4.0
+ * @since 8.2.0
  */
-public class ScriptedFunction<T, U> extends AbstractScriptEvaluator implements Function<T,U> {
+public class ScriptedConsumer<T> extends AbstractScriptEvaluator implements Consumer<T> {
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(ScriptedFunction.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(ScriptedConsumer.class);
 
-    /** Input type. */
+    /** Input Type.*/
     @Nullable private Class<T> inputTypeClass;
 
     /**
@@ -57,10 +56,10 @@ public class ScriptedFunction<T, U> extends AbstractScriptEvaluator implements F
      * @param theScript the script we will evaluate.
      * @param extraInfo debugging information.
      */
-    protected ScriptedFunction(@Nonnull @NotEmpty @ParameterName(name="theScript") final EvaluableScript theScript,
+    protected ScriptedConsumer(@Nonnull @NotEmpty @ParameterName(name="theScript") final EvaluableScript theScript,
             @Nullable @NotEmpty @ParameterName(name="extraInfo") final String extraInfo) {
         super(theScript);
-        setLogPrefix("Scripted Function from " + extraInfo + ":");
+        setLogPrefix("Scripted Consumer from " + extraInfo + ":");
     }
 
     /**
@@ -68,18 +67,9 @@ public class ScriptedFunction<T, U> extends AbstractScriptEvaluator implements F
      *
      * @param theScript the script we will evaluate.
      */
-    protected ScriptedFunction(@Nonnull @NotEmpty @ParameterName(name="theScript") final EvaluableScript theScript) {
+    protected ScriptedConsumer(@Nonnull @NotEmpty @ParameterName(name="theScript") final EvaluableScript theScript) {
         super(theScript);
-        setLogPrefix("Anonymous Function:");
-    }
-
-    /**
-     * Set the output type to be enforced.
-     *
-     * @param type output type
-     */
-    @Override public void setOutputType(@Nullable final Class<?> type) {
-        super.setOutputType(type);
+        setLogPrefix("Anonymous Consumer:");
     }
 
     /**
@@ -87,7 +77,7 @@ public class ScriptedFunction<T, U> extends AbstractScriptEvaluator implements F
      *
      * @return input type
      */
-    @Nullable public Class<T> getInputType() {
+    @Nullable public  Class<T> getInputType() {
         return inputTypeClass;
     }
 
@@ -100,26 +90,15 @@ public class ScriptedFunction<T, U> extends AbstractScriptEvaluator implements F
         inputTypeClass = type;
     }
 
-    /**
-     * Set value to return if an error occurs.
-     *
-     * @param value value to return
-     */
-    @Override public void setReturnOnError(@Nullable final Object value) {
-        super.setReturnOnError(value);
-    }
-
     /** {@inheritDoc} */
-    @SuppressWarnings("unchecked")
-    public U apply(@Nullable final T input) {
+    public void accept(@Nullable final T input) {
 
         if (null != getInputType() && null != input && !getInputType().isInstance(input)) {
             log.error("{} Input of type {} was not of type {}", getLogPrefix(), input.getClass(),
                     getInputType());
-            return (U) getReturnOnError();
+        } else {
+            evaluate(input);
         }
-
-        return (U) evaluate(input);
     }
 
     /** {@inheritDoc} */
@@ -129,10 +108,9 @@ public class ScriptedFunction<T, U> extends AbstractScriptEvaluator implements F
     }
 
     /**
-     * Factory to create {@link ScriptedFunction} from a {@link Resource}.
+     * Factory to create {@link ScriptedConsumer} from a {@link Resource}.
      *
      * @param <T> input type
-     * @param <U> output type
      * @param resource the resource to look at
      * @param engineName the language
      * 
@@ -142,22 +120,21 @@ public class ScriptedFunction<T, U> extends AbstractScriptEvaluator implements F
      * @throws IOException if the file doesn't exist.
      */
     @SuppressWarnings("removal")
-    public static <T,U> ScriptedFunction<T,U> resourceScript(@Nonnull @NotEmpty final String engineName,
+    public static <T> ScriptedConsumer<T> resourceScript(@Nonnull @NotEmpty final String engineName,
             @Nonnull final Resource resource) throws ScriptException, IOException {
         try (final InputStream is = resource.getInputStream()) {
             final EvaluableScript script = new EvaluableScript();
             script.setEngineName(engineName);
             script.setScript(is);
             script.initializeWithScriptException();
-            return new ScriptedFunction<>(script, resource.getDescription());
+            return new ScriptedConsumer<>(script, resource.getDescription());
         }
     }
 
     /**
-     * Factory to create {@link ScriptedFunction} from a {@link Resource}.
+     * Factory to create {@link ScriptedConsumer} from a {@link Resource}.
      *
      * @param <T> input type
-     * @param <U> output type
      * @param resource the resource to look at
      * 
      * @return the function
@@ -165,16 +142,15 @@ public class ScriptedFunction<T, U> extends AbstractScriptEvaluator implements F
      * @throws ScriptException if the compile fails
      * @throws IOException if the file doesn't exist.
      */
-    public static <T,U> ScriptedFunction<T,U> resourceScript(final Resource resource)
+    public static <T> ScriptedConsumer<T> resourceScript(final Resource resource)
             throws ScriptException, IOException {
         return resourceScript(DEFAULT_ENGINE, resource);
     }
 
     /**
-     * Factory to create {@link ScriptedFunction} from inline data.
+     * Factory to create {@link ScriptedConsumer} from inline data.
      *
      * @param <T> input type
-     * @param <U> output type
      * @param scriptSource the script, as a string
      * @param engineName the language
      * 
@@ -183,20 +159,19 @@ public class ScriptedFunction<T, U> extends AbstractScriptEvaluator implements F
      * @throws ScriptException if the compile fails
      */
     @SuppressWarnings("removal")
-    public static <T,U> ScriptedFunction<T,U> inlineScript(@Nonnull @NotEmpty final String engineName,
+    public static <T> ScriptedConsumer<T> inlineScript(@Nonnull @NotEmpty final String engineName,
             @Nonnull @NotEmpty final String scriptSource) throws ScriptException {
         final EvaluableScript script = new EvaluableScript();
         script.setEngineName(engineName);
         script.setScript(scriptSource);
         script.initializeWithScriptException();
-        return new ScriptedFunction<>(script, "Inline");
+        return new ScriptedConsumer<>(script, "Inline");
     }
 
     /**
-     * Factory to create {@link ScriptedFunction} from inline data.
+     * Factory to create {@link ScriptedConsumer} from inline data.
      *
      * @param <T> input type
-     * @param <U> output type
      * @param scriptSource the script, as a string
      * 
      * @return the function
@@ -204,11 +179,11 @@ public class ScriptedFunction<T, U> extends AbstractScriptEvaluator implements F
      * @throws ScriptException if the compile fails
      */
     @SuppressWarnings("removal")
-    public static <T,U> ScriptedFunction<T,U> inlineScript(@Nonnull @NotEmpty final String scriptSource)
+    public static <T> ScriptedConsumer<T> inlineScript(@Nonnull @NotEmpty final String scriptSource)
             throws ScriptException {
         final EvaluableScript script = new EvaluableScript();
         script.setScript(scriptSource);
         script.initializeWithScriptException();
-        return new ScriptedFunction<>(script, "Inline");
+        return new ScriptedConsumer<>(script, "Inline");
     }
 }

@@ -20,7 +20,7 @@ package net.shibboleth.utilities.java.support.logic;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.function.Function;
+import java.util.function.BiConsumer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -29,6 +29,7 @@ import javax.script.ScriptException;
 
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.resource.Resource;
 import net.shibboleth.utilities.java.support.scripting.AbstractScriptEvaluator;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
@@ -37,19 +38,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@link Function} which calls out to a supplied script.
+ * A {@link BiConsumer} which calls out to a supplied script.
  *
- * @param <T> input type
- * @param <U> output type
- * @since 7.4.0
+ * @param <T> first input type
+ * @param <U> second input type
+ * @since 8.2.0
  */
-public class ScriptedFunction<T, U> extends AbstractScriptEvaluator implements Function<T,U> {
+public class ScriptedBiConsumer<T,U> extends AbstractScriptEvaluator implements BiConsumer<T,U> {
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(ScriptedFunction.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(ScriptedBiConsumer.class);
 
-    /** Input type. */
-    @Nullable private Class<T> inputTypeClass;
+    /** Input type 1. */
+    @Nullable private Class<T> inputTypeClass1;
+
+    /** Input type 2. */
+    @Nullable private Class<U> inputTypeClass2;
 
     /**
      * Constructor.
@@ -57,10 +61,10 @@ public class ScriptedFunction<T, U> extends AbstractScriptEvaluator implements F
      * @param theScript the script we will evaluate.
      * @param extraInfo debugging information.
      */
-    protected ScriptedFunction(@Nonnull @NotEmpty @ParameterName(name="theScript") final EvaluableScript theScript,
+    protected ScriptedBiConsumer(@Nonnull @NotEmpty @ParameterName(name="theScript") final EvaluableScript theScript,
             @Nullable @NotEmpty @ParameterName(name="extraInfo") final String extraInfo) {
         super(theScript);
-        setLogPrefix("Scripted Function from " + extraInfo + ":");
+        setLogPrefix("Scripted BiConsumer from " + extraInfo + ":");
     }
 
     /**
@@ -68,18 +72,9 @@ public class ScriptedFunction<T, U> extends AbstractScriptEvaluator implements F
      *
      * @param theScript the script we will evaluate.
      */
-    protected ScriptedFunction(@Nonnull @NotEmpty @ParameterName(name="theScript") final EvaluableScript theScript) {
+    protected ScriptedBiConsumer(@Nonnull @NotEmpty @ParameterName(name="theScript") final EvaluableScript theScript) {
         super(theScript);
-        setLogPrefix("Anonymous Function:");
-    }
-
-    /**
-     * Set the output type to be enforced.
-     *
-     * @param type output type
-     */
-    @Override public void setOutputType(@Nullable final Class<?> type) {
-        super.setOutputType(type);
+        setLogPrefix("Anonymous BiConsumer:");
     }
 
     /**
@@ -87,52 +82,52 @@ public class ScriptedFunction<T, U> extends AbstractScriptEvaluator implements F
      *
      * @return input type
      */
-    @Nullable public Class<T> getInputType() {
-        return inputTypeClass;
+    @Nullable public Pair<Class<T>,Class<U>> getInputTypes() {
+        return new Pair<>(inputTypeClass1, inputTypeClass2);
     }
 
     /**
      * Set the input type to be enforced.
      *
-     * @param type input type
+     * @param type1 first input type
+     * @param type2 second input type
      */
-    public void setInputType(@Nullable final Class<T> type) {
-        inputTypeClass = type;
-    }
-
-    /**
-     * Set value to return if an error occurs.
-     *
-     * @param value value to return
-     */
-    @Override public void setReturnOnError(@Nullable final Object value) {
-        super.setReturnOnError(value);
+    public void setInputTypes(@Nullable final Class<T> type1, @Nullable final Class<U> type2) {
+        inputTypeClass1 = type1;
+        inputTypeClass2 = type2;
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings("unchecked")
-    public U apply(@Nullable final T input) {
-
-        if (null != getInputType() && null != input && !getInputType().isInstance(input)) {
-            log.error("{} Input of type {} was not of type {}", getLogPrefix(), input.getClass(),
-                    getInputType());
-            return (U) getReturnOnError();
+    public void accept(@Nullable final T first, @Nullable final U second) {
+        
+        final Pair<Class<T>,Class<U>> types = getInputTypes();
+        if (null != types) {
+            if (null != first && !types.getFirst().isInstance(first)) {
+                log.error("{} Input of type {} was not of type {}", getLogPrefix(), first.getClass(), types.getFirst());
+                return;
+            }
+            if (null != second && !types.getSecond().isInstance(second)) {
+                log.error("{} Input of type {} was not of type {}", getLogPrefix(), second.getClass(),
+                        types.getSecond());
+                return;
+            }
         }
 
-        return (U) evaluate(input);
+        evaluate(first, second);
     }
 
     /** {@inheritDoc} */
     @Override
     protected void prepareContext(@Nonnull final ScriptContext scriptContext, @Nullable final Object... input) {
-        scriptContext.setAttribute("input", input[0], ScriptContext.ENGINE_SCOPE);
+        scriptContext.setAttribute("input1", input[0], ScriptContext.ENGINE_SCOPE);
+        scriptContext.setAttribute("input2", input[1], ScriptContext.ENGINE_SCOPE);
     }
 
     /**
-     * Factory to create {@link ScriptedFunction} from a {@link Resource}.
+     * Factory to create {@link ScriptedBiConsumer} from a {@link Resource}.
      *
-     * @param <T> input type
-     * @param <U> output type
+     * @param <T> first input type
+     * @param <U> second input type
      * @param resource the resource to look at
      * @param engineName the language
      * 
@@ -142,22 +137,22 @@ public class ScriptedFunction<T, U> extends AbstractScriptEvaluator implements F
      * @throws IOException if the file doesn't exist.
      */
     @SuppressWarnings("removal")
-    public static <T,U> ScriptedFunction<T,U> resourceScript(@Nonnull @NotEmpty final String engineName,
+    public static <T,U> ScriptedBiConsumer<T,U> resourceScript(@Nonnull @NotEmpty final String engineName,
             @Nonnull final Resource resource) throws ScriptException, IOException {
         try (final InputStream is = resource.getInputStream()) {
             final EvaluableScript script = new EvaluableScript();
             script.setEngineName(engineName);
             script.setScript(is);
             script.initializeWithScriptException();
-            return new ScriptedFunction<>(script, resource.getDescription());
+            return new ScriptedBiConsumer<>(script, resource.getDescription());
         }
     }
 
     /**
-     * Factory to create {@link ScriptedFunction} from a {@link Resource}.
+     * Factory to create {@link ScriptedBiConsumer} from a {@link Resource}.
      *
-     * @param <T> input type
-     * @param <U> output type
+     * @param <T> first input type
+     * @param <U> second input type
      * @param resource the resource to look at
      * 
      * @return the function
@@ -165,16 +160,16 @@ public class ScriptedFunction<T, U> extends AbstractScriptEvaluator implements F
      * @throws ScriptException if the compile fails
      * @throws IOException if the file doesn't exist.
      */
-    public static <T,U> ScriptedFunction<T,U> resourceScript(final Resource resource)
+    public static <T,U> ScriptedBiConsumer<T,U> resourceScript(final Resource resource)
             throws ScriptException, IOException {
         return resourceScript(DEFAULT_ENGINE, resource);
     }
 
     /**
-     * Factory to create {@link ScriptedFunction} from inline data.
+     * Factory to create {@link ScriptedBiConsumer} from inline data.
      *
-     * @param <T> input type
-     * @param <U> output type
+     * @param <T> first input type
+     * @param <U> second input type
      * @param scriptSource the script, as a string
      * @param engineName the language
      * 
@@ -183,20 +178,20 @@ public class ScriptedFunction<T, U> extends AbstractScriptEvaluator implements F
      * @throws ScriptException if the compile fails
      */
     @SuppressWarnings("removal")
-    public static <T,U> ScriptedFunction<T,U> inlineScript(@Nonnull @NotEmpty final String engineName,
+    public static <T,U> ScriptedBiConsumer<T,U> inlineScript(@Nonnull @NotEmpty final String engineName,
             @Nonnull @NotEmpty final String scriptSource) throws ScriptException {
         final EvaluableScript script = new EvaluableScript();
         script.setEngineName(engineName);
         script.setScript(scriptSource);
         script.initializeWithScriptException();
-        return new ScriptedFunction<>(script, "Inline");
+        return new ScriptedBiConsumer<>(script, "Inline");
     }
 
     /**
-     * Factory to create {@link ScriptedFunction} from inline data.
+     * Factory to create {@link ScriptedBiConsumer} from inline data.
      *
-     * @param <T> input type
-     * @param <U> output type
+     * @param <T> first input type
+     * @param <U> second input type
      * @param scriptSource the script, as a string
      * 
      * @return the function
@@ -204,11 +199,11 @@ public class ScriptedFunction<T, U> extends AbstractScriptEvaluator implements F
      * @throws ScriptException if the compile fails
      */
     @SuppressWarnings("removal")
-    public static <T,U> ScriptedFunction<T,U> inlineScript(@Nonnull @NotEmpty final String scriptSource)
+    public static <T,U> ScriptedBiConsumer<T,U> inlineScript(@Nonnull @NotEmpty final String scriptSource)
             throws ScriptException {
         final EvaluableScript script = new EvaluableScript();
         script.setScript(scriptSource);
         script.initializeWithScriptException();
-        return new ScriptedFunction<>(script, "Inline");
+        return new ScriptedBiConsumer<>(script, "Inline");
     }
 }

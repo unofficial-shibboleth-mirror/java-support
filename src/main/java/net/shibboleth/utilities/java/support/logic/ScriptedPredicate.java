@@ -46,7 +46,10 @@ public class ScriptedPredicate<T> extends AbstractScriptEvaluator implements Pre
     
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ScriptedPredicate.class);
-    
+
+    /** Input type. */
+    @Nullable private Class<T> inputTypeClass;
+
     /**
      * Constructor.
      * 
@@ -74,6 +77,28 @@ public class ScriptedPredicate<T> extends AbstractScriptEvaluator implements Pre
     }
     
     /**
+     * Get the input type to be enforced.
+     *
+     * @return input type
+     * 
+     * @since 8.2.0
+     */
+    @Nullable public Class<T> getInputType() {
+        return inputTypeClass;
+    }
+
+    /**
+     * Set the input type to be enforced.
+     *
+     * @param type input type
+     * 
+     * @since 8.2.0
+     */
+    public void setInputType(@Nullable final Class<T> type) {
+        inputTypeClass = type;
+    }
+    
+    /**
      * Set value to return if an error occurs.
      * 
      * @param flag value to return
@@ -85,6 +110,12 @@ public class ScriptedPredicate<T> extends AbstractScriptEvaluator implements Pre
     /** {@inheritDoc} */
     public boolean test(@Nullable final T input) {
         
+        if (null != getInputType() && null != input && !getInputType().isInstance(input)) {
+            log.error("{} Input of type {} was not of type {}", getLogPrefix(), input.getClass(),
+                    getInputType());
+            return (boolean) getReturnOnError();
+        }
+
         final Object result = evaluate(input);
         return (boolean) (result != null ? result : getReturnOnError());
     }
