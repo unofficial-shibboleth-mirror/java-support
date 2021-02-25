@@ -64,6 +64,8 @@ public class ScriptedBiPredicate<T,U> extends AbstractScriptEvaluator implements
     protected ScriptedBiPredicate(@Nonnull @NotEmpty @ParameterName(name="theScript") final EvaluableScript theScript,
             @Nullable @NotEmpty @ParameterName(name="extraInfo") final String extraInfo) {
         super(theScript);
+        setOutputType(Boolean.class);
+        setReturnOnError(false);
         setLogPrefix("Scripted BiPredicate from " + extraInfo + ":");
     }
 
@@ -74,6 +76,8 @@ public class ScriptedBiPredicate<T,U> extends AbstractScriptEvaluator implements
      */
     protected ScriptedBiPredicate(@Nonnull @NotEmpty @ParameterName(name="theScript") final EvaluableScript theScript) {
         super(theScript);
+        setOutputType(Boolean.class);
+        setReturnOnError(false);
         setLogPrefix("Anonymous BiPredicate:");
     }
 
