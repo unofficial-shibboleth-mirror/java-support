@@ -393,7 +393,7 @@ public class HttpClientBuilder {
      * @param size size of the socket buffer, in bytes, used for request/response buffering; must be greater than 0
      */
     public void setSocketBufferSize(final int size) {
-        socketBufferSize = (int) Constraint.isGreaterThan(0, size, "Socket buffer size must be greater than 0");
+        socketBufferSize = Constraint.isGreaterThan(0, size, "Socket buffer size must be greater than 0");
     }
 
     /**
