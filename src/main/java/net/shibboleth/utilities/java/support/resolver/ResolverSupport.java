@@ -40,6 +40,8 @@ public final class ResolverSupport {
     /**
      * Obtain a set of {@link Predicate} based on a {@link CriteriaSet}.
      * 
+     * @param <T> the type of target which the returned predicates can evaluate
+     * @param <E> the type of criterion predicates to extract directly from the criteria set
      * @param criteriaSet the criteria set to evaluate
      * @param predicateCriterionType the optional type to evaluate and extract directly from the criteria set
      * @param registry the optional registry of mappings from {@link Criterion} to {@link Predicate}
@@ -47,9 +49,6 @@ public final class ResolverSupport {
      * @return a set of predicates, possibly empty
      * 
      * @throws ResolverException if there is a fatal error evaluating the criteria set
-     * 
-     * @param <T> the type of target which the returned predicates can evaluate
-     * @param <E> the type of criterion predicates to extract directly from the criteria set
      */
     @Nonnull
     public static <T, E extends Predicate<T>> Set<Predicate<T>> getPredicates(@Nullable final CriteriaSet criteriaSet, 

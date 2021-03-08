@@ -182,6 +182,13 @@ public class StringDigester implements Function<String,String> {
         return output;
     }
     
+    /**
+     * Apply the output encoding.
+     * 
+     * @param digestedBytes input to encoding
+     * 
+     * @return encoded string or null if the format is unknown
+     */
     @Nullable private String encodeOutput(@Nonnull final byte[] digestedBytes) {
         switch(outputFormat) {
             case BASE32:

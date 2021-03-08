@@ -48,6 +48,7 @@ import org.apache.http.util.CharArrayBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
@@ -58,7 +59,8 @@ public final class HttpClientSupport {
     /** Context key for instances of dynamic context handlers to be invoked before and after the HTTP request.
      * Must be an instance of
      * {@link java.util.List}<code>&lt;</code>{@link HttpClientContextHandler}<code>&gt;</code>. */
-    private static final String CONTEXT_KEY_DYNAMIC_CONTEXT_HANDLERS = "java-support.DynamicContextHandlers";
+    @Nonnull @NotEmpty
+    public static final String CONTEXT_KEY_DYNAMIC_CONTEXT_HANDLERS = "java-support.DynamicContextHandlers";
 
     /** Constructor to prevent instantiation. */
     private HttpClientSupport() { }
