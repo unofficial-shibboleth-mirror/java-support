@@ -50,10 +50,7 @@ public class ScriptedBiPredicate<T,U> extends AbstractScriptEvaluator implements
     @Nonnull private final Logger log = LoggerFactory.getLogger(ScriptedBiPredicate.class);
 
     /** Input type 1. */
-    @Nullable private Class<T> inputTypeClass1;
-
-    /** Input type 2. */
-    @Nullable private Class<U> inputTypeClass2;
+    @Nullable private Pair<Class<T>,Class<U>> inputTypes;
 
     /**
      * Constructor.
@@ -87,18 +84,20 @@ public class ScriptedBiPredicate<T,U> extends AbstractScriptEvaluator implements
      * @return input type
      */
     @Nullable public Pair<Class<T>,Class<U>> getInputTypes() {
-        return new Pair<>(inputTypeClass1, inputTypeClass2);
+        return inputTypes;
     }
 
     /**
-     * Set the input type to be enforced.
+     * Set the input types to be enforced.
      *
-     * @param type1 first input type
-     * @param type2 second input type
+     * @param types the input types
      */
-    public void setInputTypes(@Nullable final Class<T> type1, @Nullable final Class<U> type2) {
-        inputTypeClass1 = type1;
-        inputTypeClass2 = type2;
+    public void setInputTypes(@Nullable final Pair<Class<T>,Class<U>> types) {
+        if (types != null && types.getFirst() != null && types.getSecond() != null) {
+            inputTypes = types;
+        } else {
+            inputTypes = null;
+        }
     }
 
     /**
