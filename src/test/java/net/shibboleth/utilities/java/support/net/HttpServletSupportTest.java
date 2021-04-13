@@ -18,6 +18,8 @@
 package net.shibboleth.utilities.java.support.net;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.Locale.LanguageRange;
 import java.util.Set;
 
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -157,10 +159,12 @@ public class HttpServletSupportTest {
         MockHttpServletRequest request =  new MockHttpServletRequest();
 
         Assert.assertTrue(HttpServletSupport.getLanguageRange(request).isEmpty());
-        request.addHeader("Accept-Language", "en-us");
-        Assert.assertEquals(HttpServletSupport.getLanguageRange(request).size(), 1);
+        request.addHeader("Accept-Language", "en-GB,fr-FR;q=0.7,en;q=0.3");
+        List<LanguageRange> ranges = HttpServletSupport.getLanguageRange(request);
+        Assert.assertEquals(ranges.size(), 4);
         request =  new MockHttpServletRequest();
-        request.addHeader("Accept-Language", "A Random Pile Of Garbage");
-        Assert.assertTrue(HttpServletSupport.getLanguageRange(request).isEmpty());
+        request.addHeader("Accept-Language", "en-ca;en-us");
+        ranges = HttpServletSupport.getLanguageRange(request);
+        Assert.assertTrue(ranges.isEmpty());
     }
 }
