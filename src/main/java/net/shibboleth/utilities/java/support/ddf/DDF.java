@@ -920,4 +920,143 @@ public class DDF implements Iterable<DDF> {
         return result;
     }
 
+    /** 
+     * {@inheritDoc}
+     * 
+     * <p>The string output is for debugging purposes and should not be used when serializing.</p>
+     */
+    @Override
+    @Nonnull public String toString() {
+        return dump(new StringBuilder(), 0).toString();
+    }
+
+    /**
+     * Helper method to dump to a string for debugging.
+     * 
+     * @param builder string builder to use
+     * @param indent size of indent
+     * 
+     * @return the first parameter
+     */
+// Checkstyle: MethodLength|CyclomaticComplexity OFF
+    @Nonnull private StringBuilder dump(@Nonnull final StringBuilder builder, final long indent) {
+        
+        for (long i = 0; i < indent; ++i) {
+            builder.append(' ');
+        }
+        
+        switch (type) {
+
+            case DDF_NULL:
+                builder.append("null");
+                break;
+                
+            case DDF_EMPTY:
+                builder.append("empty");
+                if (name != null) {
+                    builder.append(' ').append(name);
+                }
+                break;
+
+            case DDF_STRING:
+                builder.append("String");
+                if (name != null) {
+                    builder.append(' ').append(name);
+                }
+                builder.append(" = ");
+                if (value != null) {
+                    builder.append('"').append(((String) value).replace("\"", "\\\"")).append('"');
+                } else {
+                    builder.append("null");
+                }
+                break;
+                
+            case DDF_STRING_UNSAFE:
+                builder.append("byte[]");
+                if (name != null) {
+                    builder.append(' ').append(name);
+                }
+                builder.append(" = ");
+                if (value != null) {
+                    builder.append(((String) value).getBytes());
+                } else {
+                    builder.append("null");
+                }
+                break;
+
+            case DDF_INT:
+                builder.append("Integer");
+                if (name != null) {
+                    builder.append(' ').append(name);
+                }
+                builder.append(" = ").append(value);
+                break;
+
+            case DDF_FLOAT:
+                builder.append("Double");
+                if (name != null) {
+                    builder.append(' ').append(name);
+                }
+                builder.append(" = ").append(value);
+                break;
+
+            case DDF_STRUCT:
+                builder.append("struct");
+                if (name != null) {
+                    builder.append(' ').append(name);
+                }
+                builder.append(" = {");
+                if (!((Map<?,?>) value).isEmpty()) {
+                    builder.append('\n');
+                    for (final DDF child : this) {
+                        child.dump(builder, indent + 2);
+                    }
+                }
+                for (long i = 0; i < indent; ++i) {
+                    builder.append(' ');
+                }
+                builder.append('}');
+                break;
+
+            case DDF_LIST:
+                builder.append("DDF[").append(((List<?>) value).size()).append(']');
+                if (name != null) {
+                    builder.append(' ').append(name);
+                }
+                builder.append(" = {");
+
+                if (!((List<?>) value).isEmpty()) {
+                    builder.append('\n');
+                    for (final DDF child : this) {
+                        child.dump(builder, indent + 2);
+                    }
+                }
+                for (long i = 0; i < indent; ++i) {
+                    builder.append(' ');
+                }
+                builder.append('}');
+                break;
+
+            case DDF_POINTER:
+                builder.append("Object");
+                if (name != null) {
+                    builder.append(' ').append(name);
+                }
+                builder.append(" = ");
+                if (value != null) {
+                    builder.append(value);
+                } else {
+                    builder.append("null");
+                }
+                break;
+
+            default:
+                builder.append("UNKNOWN -- WARNING: ILLEGAL VALUE");
+        }
+        builder.append(";\n");
+        
+        return builder;
+    }
+// Checkstyle: MethodLength|CyclomaticComplexity ON
+    
 }
