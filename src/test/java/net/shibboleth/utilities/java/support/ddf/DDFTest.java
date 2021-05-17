@@ -19,6 +19,11 @@ package net.shibboleth.utilities.java.support.ddf;
 
 import static org.testng.Assert.*;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+import javax.annotation.Nonnull;
+
 import org.testng.annotations.Test;
 
 import net.shibboleth.utilities.java.support.collection.Pair;
@@ -90,6 +95,9 @@ public class DDFTest {
         assertTrue(obj.isfloat());
         assertEquals(obj.integer(), Integer.valueOf(42));
         assertEquals(obj.floating(), Double.valueOf(42.42));
+        
+        obj.unsafe_string("bar");
+        System.out.print(obj);
     }
     
     @Test
@@ -158,6 +166,65 @@ public class DDFTest {
         assertEquals(obj.getmember("foo2").integer(), Integer.valueOf(1));
         assertTrue(obj.getmember("foo2").getmember("foo3").string().equals("bar3"));
         assertTrue(obj.getmember("foo2.foo3").string().equals("bar3"));
+    }
+    
+    @Test
+    public void testEncoder() throws IOException {
+        try (final ByteArrayOutputStream sink = new ByteArrayOutputStream()) {
+            DDF.encode(sink, "foo".getBytes("UTF8"));
+            assertEquals(sink.toString(), "foo");
+            sink.reset();
+            
+            DDF.encode(sink, "foo bar".getBytes("UTF8"));
+            assertEquals(sink.toString(), "foo%20bar");
+            sink.reset();
+            
+            DDF.encode(sink, "foo\nbar".getBytes("UTF8"));
+            assertEquals(sink.toString(), "foo%0Abar");
+            sink.reset();
+            
+            DDF.encode(sink, "foo☯️bar".getBytes("UTF8"));
+            assertEquals(sink.toString(), "foo%E2%98%AF%EF%B8%8Fbar");
+            sink.reset();
+            
+            // -128 corresponds to 128, which is the extended ASCII Euro symbol.
+            // This test demonstrates that round-tripping through such an encoding
+            // will preserve the original 0x80 hex value in that position in the string
+            // rather than converting through the UTF-8 representation.
+            final byte[] unsafe = {102, 111, 111, -128, 98, 97, 114};
+            DDF.encode(sink, new String(unsafe, "ISO-8859-1").getBytes("ISO-8859-1"));
+            assertEquals(sink.toString(), "foo%80bar");
+            sink.reset();
+        }
+    }
+    
+    @Test
+    public void testSerialize() throws IOException {
+        
+        try (final ByteArrayOutputStream sink = new ByteArrayOutputStream()) {
+            DDF obj = new DDF(null);
+            obj.serialize(sink);
+            assertEquals(sink.toByteArray(), testFile("empty-noname.ddf"));
+            sink.reset();
+            
+            obj.name("foo bar");
+            obj.serialize(sink);
+            assertEquals(sink.toByteArray(), testFile("empty-name.ddf"));
+            sink.reset();
+        }
+    }
+    
+    /**
+     * Convert test file contents to a byte array.
+     * 
+     * @param name file name
+     * 
+     * @return byte array
+     * 
+     * @throws IOException on error
+     */
+    private byte[] testFile(@Nonnull final String name) throws IOException {
+        return getClass().getResourceAsStream(name).readAllBytes();
     }
     
 }

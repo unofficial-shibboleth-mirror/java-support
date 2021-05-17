@@ -17,7 +17,10 @@
 
 package net.shibboleth.utilities.java.support.ddf;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -930,6 +933,7 @@ public class DDF implements Iterable<DDF> {
         return dump(new StringBuilder(), 0).toString();
     }
 
+// Checkstyle: MethodLength|CyclomaticComplexity OFF
     /**
      * Helper method to dump to a string for debugging.
      * 
@@ -938,7 +942,6 @@ public class DDF implements Iterable<DDF> {
      * 
      * @return the first parameter
      */
-// Checkstyle: MethodLength|CyclomaticComplexity OFF
     @Nonnull private StringBuilder dump(@Nonnull final StringBuilder builder, final long indent) {
         
         for (long i = 0; i < indent; ++i) {
@@ -972,13 +975,17 @@ public class DDF implements Iterable<DDF> {
                 break;
                 
             case DDF_STRING_UNSAFE:
-                builder.append("byte[]");
+                builder.append("char[]");
                 if (name != null) {
                     builder.append(' ').append(name);
                 }
                 builder.append(" = ");
                 if (value != null) {
-                    builder.append(((String) value).getBytes());
+                    builder.append('{');
+                    for (final char c : ((String) value).toCharArray()) {
+                        builder.append(Integer.toHexString(c)).append(", ");
+                    }
+                    builder.append('}');
                 } else {
                     builder.append("null");
                 }
@@ -1057,6 +1064,124 @@ public class DDF implements Iterable<DDF> {
         
         return builder;
     }
+    
+    /**
+     * Serialize this object to a provided stream.
+     * 
+     * @param os output stream
+     *
+     * @return the output stream
+     * 
+     * @throws IOException if an error occurs
+     */
+    @Nonnull public OutputStream serialize(@Nonnull final OutputStream os) throws IOException {
+        if (!isnull()) {
+            if (name != null) {
+                encode(os, name.getBytes("UTF8"));
+            } else {
+                os.write('.');
+            }
+            os.write(' ');
+
+            switch (type) {
+                case DDF_EMPTY:
+                case DDF_POINTER:
+                    os.write(Integer.toString(DDFType.DDF_EMPTY.getValue()).getBytes("UTF8"));
+                    os.write('\n');
+                    break;
+
+                case DDF_STRING:
+                    os.write(Integer.toString(type.getValue()).getBytes("UTF8"));
+                    if (value != null) {
+                        os.write(' ');
+                        encode(os, ((String) value).getBytes("UTF-8"));
+                    }
+                    os.write('\n');
+                    break;
+
+                case DDF_STRING_UNSAFE:
+                    os.write(Integer.toString(type.getValue()).getBytes("UTF8"));
+                    if (value != null) {
+                        os.write(' ');
+                        encode(os, ((String) value).getBytes("ISO-8859-1"));
+                    }
+                    os.write('\n');
+                    break;
+
+                case DDF_INT:
+                    os.write(Integer.toString(type.getValue()).getBytes("UTF8"));
+                    os.write(' ');
+                    os.write(Integer.toString((Integer) value).getBytes("UTF8"));
+                    os.write('\n');
+                    break;
+
+                case DDF_FLOAT:
+                    os.write(Integer.toString(type.getValue()).getBytes("UTF8"));
+                    os.write(' ');
+                    os.write(Double.toString((Double) value).getBytes("UTF8"));
+                    os.write('\n');
+                    break;
+
+                case DDF_STRUCT:
+                    @SuppressWarnings("unchecked")
+                    final Collection<DDF> members = ((Map<String,DDF>) value).values();
+                    os.write(Integer.toString(type.getValue()).getBytes("UTF8"));
+                    os.write(' ');
+                    os.write(Integer.toString(members.size()).getBytes("UTF8"));
+                    os.write('\n');
+                    for (final DDF child : members) {
+                        child.serialize(os);
+                    }
+                    break;
+
+                case DDF_LIST:
+                    @SuppressWarnings("unchecked")
+                    final Collection<DDF> children = (List<DDF>) value;
+                    os.write(Integer.toString(type.getValue()).getBytes("UTF8"));
+                    os.write(' ');
+                    os.write(Integer.toString(children.size()).getBytes("UTF8"));
+                    os.write('\n');
+                    for (final DDF child : children) {
+                        child.serialize(os);
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+        }
+        
+        return os;
+    }
 // Checkstyle: MethodLength|CyclomaticComplexity ON
+
+    /**
+     * A simple encoder for non-ASCII characters.
+     * 
+     * <p>Made this package-accessible for unit testing.</p>
+     * 
+     * @param os output stream
+     * @param bytes bytes to encode
+     * 
+     * @throws IOException if an error occurs
+     */
+    static void encode(@Nonnull final OutputStream os, @Nonnull final byte[] bytes) throws IOException {
+        for (final byte b : bytes) {
+            final int i = Byte.toUnsignedInt(b);
+            // 0x25 is the percent char itself.
+            if (i <= 0x20 || i >= 0x7F || i == 0x25) {
+                os.write('%');
+                os.write(hexchar(i >>> 4));
+                os.write(hexchar(i & 0x0F));
+            } else {
+                os.write(b);
+            }
+        }
+    }
+    
+    private static int hexchar(final int b) {
+        // 48 is '0' and 65 is 'A'
+        return (b <= 9) ? (48 + b) : (65 + b - 10);
+    }
     
 }
