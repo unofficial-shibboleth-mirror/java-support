@@ -21,6 +21,8 @@ import static org.testng.Assert.*;
 
 import org.testng.annotations.Test;
 
+import net.shibboleth.utilities.java.support.collection.Pair;
+
 /**
  * DDF unit tests.
  */
@@ -31,7 +33,7 @@ public class DDFTest {
     public void testConstructors() {
         DDF obj = new DDF();
         assertNull(obj.name());
-        assertTrue(obj.isempty());
+        assertTrue(obj.isnull());
         
         obj = new DDF("foo");
         assertEquals(obj.name(), "foo");
@@ -89,5 +91,73 @@ public class DDFTest {
         assertEquals(obj.integer(), Integer.valueOf(42));
         assertEquals(obj.floating(), Double.valueOf(42.42));
     }
+    
+    @Test
+    public void testLists() {
+        final DDF obj = new DDF().list();
+        assertTrue(obj.islist());
+        assertEquals(obj.integer(), Integer.valueOf(0));
+        
+        obj.add(new DDF("foo", "bar"));
+        obj.add(new DDF("foo2", 42));
+        obj.add(new DDF("foo3").pointer(new Pair<>()));
+        assertEquals(obj.integer(), Integer.valueOf(3));
+        
+        for (final DDF el : obj) {
+            switch (el.name()) {
+                case "foo":
+                    assertEquals(el.string(), "bar");
+                    break;
+                
+                case "foo2":
+                    assertEquals(el.integer(), Integer.valueOf(42));
+                    break;
+                        
+                case "foo3":
+                    assertEquals(el.pointer(), new Pair<>());
+                    break;
+                        
+                default:
+                    fail("Node unrecognized");
+            }
+        }
+        
+        assertEquals(obj.getmember("[0]"), new DDF("foo", "bar"));
+        assertEquals(obj.getmember("[1]"), new DDF("foo2", 42));
+        assertTrue(obj.getmember("[3]").isnull());
+        
+        obj.addafter(new DDF(null), obj.getmember("[0]"));
+        assertEquals(obj.integer(), Integer.valueOf(4));
+        assertTrue(obj.getmember("[1]").isempty());
 
+        obj.addbefore(new DDF("foo4"), obj.getmember("[2]"));
+        assertEquals(obj.integer(), Integer.valueOf(5));
+        assertTrue(obj.getmember("[2]").name().equals("foo4"));
+        
+        assertTrue(obj.asList().get(4).remove().ispointer());
+        assertEquals(obj.integer(), Integer.valueOf(4));
+    }
+
+    @Test
+    public void testStructures() {
+        final DDF obj = new DDF().structure();
+        assertTrue(obj.isstruct());
+        assertEquals(obj.integer(), Integer.valueOf(0));
+        
+        obj.add(new DDF("foo", "bar"));
+        assertEquals(obj.integer(), Integer.valueOf(1));
+        assertTrue(obj.getmember("foo").name().equals("foo"));
+        assertTrue(obj.getmember("foo").string().equals("bar"));
+        
+        obj.addmember("foo2").integer(42);
+        assertEquals(obj.integer(), Integer.valueOf(2));
+        
+        obj.addmember("foo2.foo3").string("bar3");
+        assertEquals(obj.integer(), Integer.valueOf(2));
+        assertTrue(obj.getmember("foo2").isstruct());
+        assertEquals(obj.getmember("foo2").integer(), Integer.valueOf(1));
+        assertTrue(obj.getmember("foo2").getmember("foo3").string().equals("bar3"));
+        assertTrue(obj.getmember("foo2.foo3").string().equals("bar3"));
+    }
+    
 }
