@@ -19,11 +19,10 @@ package net.shibboleth.utilities.java.support.ddf;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -54,7 +53,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
  * the other version(s) of the same API.</p>
  */
 @NotThreadSafe
-public class DDF {
+public class DDF implements Iterable<DDF> {
 
     /** Name of node. */
     @Nullable private String name;
@@ -64,6 +63,9 @@ public class DDF {
 
     /** Type enum. */
     public enum DDFType {
+
+        /** A null node. */
+        DDF_NULL(-1),
 
         /** An empty node with no value. */
         DDF_EMPTY(0),
@@ -120,7 +122,7 @@ public class DDF {
     
     /** Constructor. */
     public DDF() {
-        type = DDFType.DDF_EMPTY;
+        type = DDFType.DDF_NULL;
     }
 
     /**
@@ -131,7 +133,7 @@ public class DDF {
      * @param n node name
      */
     public DDF(@Nullable @NotEmpty final String n) {
-        this();
+        type = DDFType.DDF_EMPTY;
         name(n);
     }
 
@@ -197,7 +199,7 @@ public class DDF {
      */
     @Nonnull public DDF destroy() {
         remove().empty().name(null);
-        type = null;
+        type = DDFType.DDF_NULL;
         return this;
     }
     
@@ -211,6 +213,10 @@ public class DDF {
         final DDF dup = new DDF(name);
         
         switch (type) {
+            case DDF_NULL:
+                dup.destroy();
+                break;
+                
             case DDF_EMPTY:
                 break;
                 
@@ -271,7 +277,7 @@ public class DDF {
      * @return this object
      */
     @Nonnull public DDF name(@Nullable @NotEmpty final String n) {
-        if (parent == null || !parent.isstruct()) {
+        if (!isnull() && (parent == null || !parent.isstruct())) {
             if (n != null) {
                 name = Constraint.isNotEmpty(n.substring(0,Integer.min(n.length(), 255)), "Name cannot be empty");
             } else {
@@ -279,6 +285,15 @@ public class DDF {
             }
         }
         return this;
+    }
+    
+    /**
+     * Returns true iff the node is null.
+     * 
+     * @return true iff the node is null
+     */
+    public boolean isnull() {
+        return type == DDFType.DDF_NULL;
     }
     
     /**
@@ -614,7 +629,7 @@ public class DDF {
      */
     @SuppressWarnings("unchecked")
     @Nonnull public DDF add(@Nonnull final DDF child) {
-        if ((!isstruct() && !islist()) || this == child.parent) {
+        if ((!isstruct() && !islist()) || child.isnull() || this == child.parent) {
             return child;
         }
 
@@ -647,7 +662,7 @@ public class DDF {
      * @return the child
      */
     @Nonnull public DDF addbefore(@Nonnull final DDF child, @Nonnull final DDF before) {
-        if (!islist() || before.parent != this) {
+        if (!islist() || child.isnull() || before.parent != this) {
             return child;
         }
 
@@ -672,7 +687,7 @@ public class DDF {
      * @return the child
      */
     @Nonnull public DDF addafter(@Nonnull final DDF child, @Nonnull final DDF after) {
-        if (!islist() || after.parent != this) {
+        if (!islist() || child.isnull() || after.parent != this) {
             return child;
         }
 
@@ -721,36 +736,33 @@ public class DDF {
     }
     
     /**
-     * Expose an immutable map representing a structure or list node.
+     * Expose an immutable map representing a structure node.
      * 
-     * @return immutable map, or null
+     * @return immutable map, or null if the node is not a structure
      */
     @SuppressWarnings("unchecked")
-    @Nonnull @NonnullElements @Unmodifiable @NotLive public Map<String,DDF> asMap() {
+    @Nullable @NonnullElements @Unmodifiable @NotLive public Map<String,DDF> asMap() {
         if (isstruct()) {
             return Map.copyOf((Map<String,DDF>) value);
-        } else if (islist()) {
-            return ((List<DDF>) value).stream().collect(
-                    Collectors.toUnmodifiableMap(DDF::name, Function.identity()));
         }
         
-        return Collections.emptyMap();
+        return null;
     }
 
     /**
      * Expose an immutable list representing a structure or list node.
      * 
-     * @return immutable list, or null
+     * @return immutable list, or null if the node is not a structure or list
      */
     @SuppressWarnings("unchecked")
-    @Nonnull @NonnullElements @Unmodifiable @NotLive public List<DDF> asList() {
+    @Nullable @NonnullElements @Unmodifiable @NotLive public List<DDF> asList() {
         if (isstruct()) {
             return List.copyOf(((Map<String,DDF>) value).values());
         } else if (islist()) {
             return List.copyOf((List<DDF>) value);
         }
         
-        return Collections.emptyList();
+        return null;
     }
 
     /**
@@ -764,45 +776,49 @@ public class DDF {
      * 
      * @param path dotted path to use
      * 
-     * @return the last node added to the nested tree
+     * @return the last node added to the nested tree, or a null node if unable to do so
      */
     @Nonnull public DDF addmember(@Nonnull @NotEmpty final String path) {
         final String[] tokens = Constraint.isNotEmpty(path, "Path cannot be null").split("\\.");
         Constraint.isNotEmpty(tokens, "Path did not produce an array of path segments");
         
-        DDF base = this;
-        for (final String segment : tokens) {
-            if (!base.isstruct()) {
-                base.structure();
+        if (!isnull()) {
+            DDF base = this;
+            for (final String segment : tokens) {
+                if (!base.isstruct()) {
+                    base.structure();
+                }
+                
+                DDF node = base.getmember(segment);
+                if (node.isnull()) {
+                    node = base.add(new DDF(segment));
+                }
+                
+                base = node;
             }
             
-            DDF node = base.getmember(segment);
-            if (node == null) {
-                node = base.add(new DDF(segment));
-            }
-            
-            base = node;
+            return base;
         }
         
-        return base;
+        return new DDF();
     }
 
     /**
      * Access a (possibly nested) structure member via dotted path notation, also allowing access to
      * list elements via "[n]" array notation.
      * 
-     * <p>Failure to navigate the tree at any point will cause a null to be returned.
+     * <p>Failure to navigate the tree at any point will cause a null node to be returned.</p>
      * 
      * @param path dotted path to use
      * 
-     * @return the matching node, or null
+     * @return the matching node, or a null node
      */
 // Checkstyle: CyclomaticComplexity OFF
     @SuppressWarnings("unchecked")
-    @Nullable public DDF getmember(@Nonnull @NotEmpty final String path) {
+    @Nonnull public DDF getmember(@Nonnull @NotEmpty final String path) {
         final String[] tokens = path.split("\\.");
-        if (tokens == null || tokens.length == 0) {
-            return null;
+        if (tokens == null || tokens.length == 0 || isnull()) {
+            return new DDF();
         }
 
         DDF current = this;
@@ -819,30 +835,39 @@ public class DDF {
                 if (islist() && index < ((List<DDF>) current.value).size()) {
                     current = ((List<DDF>) current.value).get(index);
                 } else {
-                    return null;
+                    return new DDF();
                 }
                 i++;
             } else if (current.isstruct()) {
                 // Access the named element and advance the path.
                 current = ((Map<String,DDF>) current.value).get(tokens[i]);
                 if (current == null) {
-                    return null;
+                    return new DDF();
                 }
                 i++;
             } else if (current.islist()) {
                 // Access first element of list, don't advance the path.
                 current = ((List<DDF>) current.value).get(0);
                 if (current == null) {
-                    return null;
+                    return new DDF();
                 }
             } else {
-                return null;
+                return new DDF();
             }
         }
         
         return current;
     }
 
+    /** {@inheritDoc} */
+    @Nonnull public Iterator<DDF> iterator() {
+        final List<DDF> list = asList();
+        if (list != null) {
+            return list.iterator();
+        }
+        return Collections.emptyListIterator();
+    }
+    
     /** {@inheritDoc} */
     @Override
     public boolean equals(final Object obj) {
