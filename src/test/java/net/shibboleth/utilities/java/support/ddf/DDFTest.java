@@ -211,6 +211,39 @@ public class DDFTest {
             obj.serialize(sink);
             assertEquals(sink.toByteArray(), testFile("empty-name.ddf"));
             sink.reset();
+            
+            obj.string("zorkmid☯️");
+            obj.serialize(sink);
+            assertEquals(sink.toByteArray(), testFile("string-name.ddf"));
+            sink.reset();
+
+            final byte[] unsafe = {102, 111, 111, -128, 98, 97, 114};
+            obj.unsafe_string(new String(unsafe, "ISO-8859-1"));
+            obj.serialize(sink);
+            assertEquals(sink.toByteArray(), testFile("unsafestring-name.ddf"));
+            sink.reset();
+            
+            obj.integer(42);
+            obj.serialize(sink);
+            assertEquals(sink.toByteArray(), testFile("int-name.ddf"));
+            sink.reset();
+
+            obj.floating(42.1315927);
+            obj.serialize(sink);
+            assertEquals(sink.toByteArray(), testFile("float-name.ddf"));
+            sink.reset();
+            
+            obj.structure();
+            obj.serialize(sink);
+            assertEquals(sink.toByteArray(), testFile("struct-empty.ddf"));
+            sink.reset();
+            
+            obj.addmember("infocom.zork").list().add(new DDF().integer(1));
+            obj.getmember("infocom.zork").add(new DDF().integer(2));
+            obj.getmember("infocom.zork").add(new DDF().integer(3));
+            obj.serialize(sink);
+            assertEquals(sink.toByteArray(), testFile("struct-complex.ddf"));
+            sink.reset();
         }
     }
     
