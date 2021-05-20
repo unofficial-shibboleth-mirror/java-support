@@ -18,7 +18,9 @@
 package net.shibboleth.utilities.java.support.ddf;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -102,7 +104,7 @@ public class DDF implements Iterable<DDF> {
          * 
          * @param val value of the type enum
          */
-        private DDFType(@NonNegative final int val) {
+        private DDFType(final int val) {
             value = val;
         }
         
@@ -113,6 +115,60 @@ public class DDF implements Iterable<DDF> {
          */
         public int getValue() {
             return value;
+        }
+        
+        /**
+         * Convert an integer into the corresponding enum value.
+         * 
+         * @param val input type
+         * 
+         * @return enum constant
+         * 
+         * @throws IllegalArgumentException if the type is out of range
+         */
+        public static DDFType valueOf(final int val) throws IllegalArgumentException {
+            final DDFType type;
+            switch (val) {
+                case -1:
+                    type = DDF_NULL;
+                    break;
+                        
+                case 0:
+                    type = DDF_EMPTY;
+                    break;
+                        
+                case 1:
+                    type = DDF_STRING;
+                    break;
+                        
+                case 2:
+                    type = DDF_INT;
+                    break;
+
+                case 3:
+                    type = DDF_FLOAT;
+                    break;
+                    
+                case 4:
+                    type = DDF_STRUCT;
+                    break;
+                    
+                case 5:
+                    type = DDF_LIST;
+                    break;
+
+                case 6:
+                    type = DDF_POINTER;
+                    break;
+                    
+                case 7:
+                    type = DDF_STRING_UNSAFE;
+                    break;
+                    
+                default:
+                    throw new IllegalArgumentException("Unrecognized DDF type");
+            }
+            return type;
         }
         
     };
@@ -211,6 +267,7 @@ public class DDF implements Iterable<DDF> {
      * 
      * @return the copy
      */
+// Checkstyle: CyclomaticComplexity OFF
     @SuppressWarnings("unchecked")
     @Nonnull DDF copy() {
         final DDF dup = new DDF(name);
@@ -258,6 +315,7 @@ public class DDF implements Iterable<DDF> {
         
         return dup;
     }
+// Checkstyle: CyclomaticComplexity ON
     
     /**
      * Get the node name.
@@ -835,7 +893,7 @@ public class DDF implements Iterable<DDF> {
                 } catch(final NumberFormatException e) {
                     index = 0;
                 }
-                if (islist() && index < ((List<DDF>) current.value).size()) {
+                if (current.islist() && index < ((List<DDF>) current.value).size()) {
                     current = ((List<DDF>) current.value).get(index);
                 } else {
                     return new DDF();
@@ -1152,6 +1210,159 @@ public class DDF implements Iterable<DDF> {
         }
         
         return os;
+    }
+    
+    /**
+     * Parses a seralized DDF from an input stream.
+     * 
+     * @param is input stream
+     * 
+     * @return the parsed object
+     * 
+     * @throws IOException if an error occurs
+     */
+    @Nonnull public static DDF deserialize(@Nonnull final InputStream is) throws IOException {
+        
+        int ch;
+        final StringBuilder nameBuilder = new StringBuilder();
+
+        // First field is the name.
+        while ((ch = is.read()) != -1 && !Character.isWhitespace(ch)) {
+            if (ch >= 0 && ch <= 127) {
+                // The int is a code point from 0..255, but our grammar constrains this to 0..127 so
+                // this is a safe append, to promote the ASCII into Unicode.
+                nameBuilder.appendCodePoint(ch);
+            } else {
+                throw new IOException("Invalid code point outside US-ASCII range");
+            }
+        }
+        
+        if (ch != 0x20) {
+            // Name has to be followed by a space.
+            // This will also cover an early line or stream termination.
+            throw new IOException("Name not followed by space character");
+        }
+        
+        final String name = nameBuilder.toString();
+        if (name.isEmpty()) {
+            // No name field.
+            throw new IOException("Name field missing");
+        }
+        
+        final DDF obj = new DDF(null);
+        if (!".".equals(name)) {
+            // The name is stipulated to be UTF-8 safe so any high order ASCII characters are
+            // assumed to be part of a multi-byte sequence.
+            try {
+                obj.name(URLDecoder.decode(name, "UTF-8"));
+            } catch (final IllegalArgumentException e) {
+                throw new IOException(e);
+            }
+        }
+        
+        // Next field is the numeric type designation.
+        final StringBuilder typeBuilder = new StringBuilder();
+        while ((ch = is.read()) != -1 && Character.isDigit(ch)) {
+            // This is safe because the byte contract of the stream disallows
+            // any non-ASCII digit from satisfying the isDigit check.
+            typeBuilder.appendCodePoint(ch);
+        }
+        
+        // Before continuing, we convert the string into a DDF type.
+        final DDFType type;
+        try {
+            type = DDFType.valueOf(Integer.valueOf(typeBuilder.toString()));
+        } catch (final IllegalArgumentException e) {
+            throw new IOException("Invalid DDF type");
+        }
+        
+        // Required last byte read will vary by type.
+        if (type == DDFType.DDF_EMPTY || type == DDFType.DDF_POINTER) {
+            if (ch != 0x0A) {
+                throw new IOException("Empty/pointer record not terminated by linefeed");
+            }
+            // Nothing else to do, it's already empty.
+            return obj;
+        }
+        
+        // All others should be followed by a space.
+        if (ch != 0x20) {
+            throw new IOException("Type field not followed by space character");
+        }
+
+        // Process typical value types.
+        final StringBuilder valueBuilder = new StringBuilder();
+        switch (type) {
+            case DDF_STRING:
+            case DDF_STRING_UNSAFE:
+            case DDF_INT:
+            case DDF_FLOAT:
+                while ((ch = is.read()) != -1 && !Character.isWhitespace(ch)) {
+                    if (ch >= 0 && ch <= 127) {
+                        // The int is a code point from 0..255, but our grammar constrains this to 0..127 so
+                        // this is a safe append, to promote the ASCII into Unicode.
+                        valueBuilder.appendCodePoint(ch);
+                    } else {
+                        throw new IOException("Invalid code point outside US-ASCII range");
+                    }
+                }
+                
+                if (ch != 0x0A) {
+                    throw new IOException("String value not followed by linefeed");
+                }
+                
+                try {
+                    if (type == DDFType.DDF_STRING) {
+                        // String values are handled as UTF-8.
+                        obj.string(URLDecoder.decode(valueBuilder.toString(), "UTF-8"));
+                    } else if (type == DDFType.DDF_STRING_UNSAFE) {
+                        // Unsafe string values are processed as ISO-8859-1.
+                        // They may be anything, but it will guarantee a single byte encoding.
+                        obj.unsafe_string(URLDecoder.decode(valueBuilder.toString(), "ISO-8859-1"));
+                    } else if (type == DDFType.DDF_INT) {
+                        obj.integer(valueBuilder.toString());
+                    } else if (type == DDFType.DDF_FLOAT) {
+                        obj.floating(valueBuilder.toString());
+                    }
+                } catch (final IllegalArgumentException e) {
+                    throw new IOException(e);
+                }
+                return obj;
+                
+            case DDF_STRUCT:
+            case DDF_LIST:
+                while ((ch = is.read()) != -1 && Character.isDigit(ch)) {
+                    // This is safe because the byte contract of the stream disallows
+                    // any non-ASCII digit from satisfying the isDigit check.
+                    valueBuilder.appendCodePoint(ch);
+                }
+                
+                if (ch != 0x0A) {
+                    throw new IOException("Record count not followed by linefeed");
+                }
+                
+                int count;
+                try {
+                    count = Integer.valueOf(valueBuilder.toString());
+                } catch (final NumberFormatException e) {
+                    throw new IOException("Invalid record count");
+                }
+                
+                if (type == DDFType.DDF_STRUCT) {
+                    obj.structure();
+                } else {
+                    obj.list();
+                }
+                
+                for (; count > 0; --count) {
+                    obj.add(deserialize(is));
+                }
+                return obj;
+                
+
+            default:
+                throw new IOException("Unexpected record type");
+        }
     }
 // Checkstyle: MethodLength|CyclomaticComplexity ON
 
