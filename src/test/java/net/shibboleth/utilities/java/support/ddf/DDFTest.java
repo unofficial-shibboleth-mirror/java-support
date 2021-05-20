@@ -19,8 +19,10 @@ package net.shibboleth.utilities.java.support.ddf;
 
 import static org.testng.Assert.*;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.annotation.Nonnull;
 
@@ -246,6 +248,71 @@ public class DDFTest {
             sink.reset();
         }
     }
+    
+    @Test
+    public void testDeserialize() throws IOException {
+        try (final InputStream is = getClass().getResourceAsStream("empty-noname.ddf")) {
+            final DDF obj = DDF.deserialize(is);
+            assertTrue(obj.isempty());
+            assertNull(obj.name());
+        }
+        
+        try (final InputStream is = getClass().getResourceAsStream("empty-name.ddf")) {
+            final DDF obj = DDF.deserialize(is);
+            assertTrue(obj.isempty());
+            assertEquals(obj.name(), "foo bar");
+        }
+        
+        try (final InputStream is = getClass().getResourceAsStream("string-name.ddf")) {
+            final DDF obj = DDF.deserialize(is);
+            assertTrue(obj.isstring());
+            assertEquals(obj.name(), "foo bar");
+            assertEquals(obj.string(), "zorkmid☯️");
+        }
+
+        try (final InputStream is = getClass().getResourceAsStream("unsafestring-name.ddf")) {
+            final DDF obj = DDF.deserialize(is);
+            assertTrue(obj.isstring());
+            assertEquals(obj.name(), "foo bar");
+            final byte[] unsafe = {102, 111, 111, -128, 98, 97, 114};
+            assertEquals(obj.string(), new String(unsafe, "ISO-8859-1"));
+        }
+
+        try (final InputStream is = getClass().getResourceAsStream("int-name.ddf")) {
+            final DDF obj = DDF.deserialize(is);
+            assertTrue(obj.isint());
+            assertEquals(obj.name(), "foo bar");
+            assertEquals(obj.integer(), Integer.valueOf(42));
+        }
+
+        try (final InputStream is = getClass().getResourceAsStream("float-name.ddf")) {
+            final DDF obj = DDF.deserialize(is);
+            assertTrue(obj.isfloat());
+            assertEquals(obj.name(), "foo bar");
+            assertEquals(obj.floating(), Double.valueOf(42.1315927));
+        }
+
+        try (final InputStream is = getClass().getResourceAsStream("struct-empty.ddf")) {
+            final DDF obj = DDF.deserialize(is);
+            assertTrue(obj.isstruct());
+            assertEquals(obj.name(), "foo bar");
+            assertEquals(obj.integer(), Integer.valueOf(0));
+        }
+
+        try (final InputStream is = getClass().getResourceAsStream("struct-complex.ddf")) {
+            final DDF obj = DDF.deserialize(is);
+            assertTrue(obj.isstruct());
+            assertEquals(obj.name(), "foo bar");
+            assertEquals(obj.integer(), Integer.valueOf(1));
+            assertTrue(obj.getmember("infocom").isstruct());
+            assertTrue(obj.getmember("infocom.zork").islist());
+            assertEquals(obj.getmember("infocom.zork").integer(), Integer.valueOf(3));
+            assertEquals(obj.getmember("infocom.zork.[0]").integer(), Integer.valueOf(1));
+            assertEquals(obj.getmember("infocom.zork.[1]").integer(), Integer.valueOf(2));
+            assertEquals(obj.getmember("infocom.zork.[2]").integer(), Integer.valueOf(3));
+        }
+    }
+    
     
     /**
      * Convert test file contents to a byte array.
