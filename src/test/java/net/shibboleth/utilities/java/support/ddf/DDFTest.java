@@ -249,6 +249,19 @@ public class DDFTest {
         }
     }
     
+    /**
+     * Convert test file contents to a byte array.
+     * 
+     * @param name file name
+     * 
+     * @return byte array
+     * 
+     * @throws IOException on error
+     */
+    private byte[] testFile(@Nonnull final String name) throws IOException {
+        return getClass().getResourceAsStream(name).readAllBytes();
+    }
+    
     @Test
     public void testDeserialize() throws IOException {
         try (final InputStream is = getClass().getResourceAsStream("empty-noname.ddf")) {
@@ -313,18 +326,127 @@ public class DDFTest {
         }
     }
     
-    
-    /**
-     * Convert test file contents to a byte array.
-     * 
-     * @param name file name
-     * 
-     * @return byte array
-     * 
-     * @throws IOException on error
-     */
-    private byte[] testFile(@Nonnull final String name) throws IOException {
-        return getClass().getResourceAsStream(name).readAllBytes();
+    @Test
+    public void testBadInputs() {
+        try (final InputStream is = new ByteArrayInputStream(new String().getBytes("UTF-8"))) {
+            DDF.deserialize(is);
+            fail("Should have thrown IOException");
+        } catch (final IOException e) {
+            
+        }
+
+        try (final InputStream is = new ByteArrayInputStream(new String("\n").getBytes("UTF-8"))) {
+            DDF.deserialize(is);
+            fail("Should have thrown IOException");
+        } catch (final IOException e) {
+            
+        }
+
+        try (final InputStream is = new ByteArrayInputStream(new String(" ").getBytes("UTF-8"))) {
+            DDF.deserialize(is);
+            fail("Should have thrown IOException");
+        } catch (final IOException e) {
+            
+        }
+
+        try (final InputStream is = new ByteArrayInputStream(new String(".\n").getBytes("UTF-8"))) {
+            DDF.deserialize(is);
+            fail("Should have thrown IOException");
+        } catch (final IOException e) {
+            
+        }
+
+        try (final InputStream is = new ByteArrayInputStream(new String(". \n").getBytes("UTF-8"))) {
+            DDF.deserialize(is);
+            fail("Should have thrown IOException");
+        } catch (final IOException e) {
+            
+        }
+
+        try (final InputStream is = new ByteArrayInputStream(new String(". -2").getBytes("UTF-8"))) {
+            DDF.deserialize(is);
+            fail("Should have thrown IOException");
+        } catch (final IOException e) {
+            
+        }
+
+        try (final InputStream is = new ByteArrayInputStream(new String(". 0 \n").getBytes("UTF-8"))) {
+            DDF.deserialize(is);
+            fail("Should have thrown IOException");
+        } catch (final IOException e) {
+            
+        }
+
+        try (final InputStream is = new ByteArrayInputStream(new String(". 1 foo \n").getBytes("UTF-8"))) {
+            DDF.deserialize(is);
+            fail("Should have thrown IOException");
+        } catch (final IOException e) {
+            
+        }
+
+        try (final InputStream is = new ByteArrayInputStream(new String(". 2\n").getBytes("UTF-8"))) {
+            DDF.deserialize(is);
+            fail("Should have thrown IOException");
+        } catch (final IOException e) {
+            
+        }
+
+        try (final InputStream is = new ByteArrayInputStream(new String(". 2 \n").getBytes("UTF-8"))) {
+            DDF.deserialize(is);
+            fail("Should have thrown IOException");
+        } catch (final IOException e) {
+            
+        }
+
+        try (final InputStream is = new ByteArrayInputStream(new String(". 3\n").getBytes("UTF-8"))) {
+            DDF.deserialize(is);
+            fail("Should have thrown IOException");
+        } catch (final IOException e) {
+            
+        }
+
+        try (final InputStream is = new ByteArrayInputStream(new String(". 3 \n").getBytes("UTF-8"))) {
+            DDF.deserialize(is);
+            fail("Should have thrown IOException");
+        } catch (final IOException e) {
+            
+        }
+
+        try (final InputStream is = new ByteArrayInputStream(new String(". 4 \n").getBytes("UTF-8"))) {
+            DDF.deserialize(is);
+            fail("Should have thrown IOException");
+        } catch (final IOException e) {
+            
+        }
+
+        try (final InputStream is = new ByteArrayInputStream(new String(". 4\n").getBytes("UTF-8"))) {
+            DDF.deserialize(is);
+            fail("Should have thrown IOException");
+        } catch (final IOException e) {
+            
+        }
+
+        try (final InputStream is = new ByteArrayInputStream(new String(". 4 2\n. 1 foo\n").getBytes("UTF-8"))) {
+            DDF.deserialize(is);
+            fail("Should have thrown IOException");
+        } catch (final IOException e) {
+            
+        }
+        
+        try (final InputStream is = new ByteArrayInputStream(new String(". 5 foo\n").getBytes("UTF-8"))) {
+            DDF.deserialize(is);
+            fail("Should have thrown IOException");
+        } catch (final IOException e) {
+            
+        }
+
+        try (final InputStream is = new ByteArrayInputStream(new String(". 5 1\n").getBytes("UTF-8"))) {
+            DDF.deserialize(is);
+            fail("Should have thrown IOException");
+        } catch (final IOException e) {
+            
+        }
+
     }
     
 }

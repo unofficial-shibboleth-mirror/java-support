@@ -1275,28 +1275,29 @@ public class DDF implements Iterable<DDF> {
         } catch (final IllegalArgumentException e) {
             throw new IOException("Invalid DDF type");
         }
-        
-        // Required last byte read will vary by type.
-        if (type == DDFType.DDF_EMPTY || type == DDFType.DDF_POINTER) {
-            if (ch != 0x0A) {
-                throw new IOException("Empty/pointer record not terminated by linefeed");
-            }
-            // Nothing else to do, it's already empty.
-            return obj;
-        }
-        
-        // All others should be followed by a space.
-        if (ch != 0x20) {
-            throw new IOException("Type field not followed by space character");
-        }
 
         // Process typical value types.
         final StringBuilder valueBuilder = new StringBuilder();
         switch (type) {
+            case DDF_EMPTY:
+            case DDF_POINTER:
+                if (ch != 0x0A) {
+                    throw new IOException("Empty/pointer record not terminated by linefeed");
+                }
+                // Nothing else to do, it's already empty.
+                return obj;
+            
             case DDF_STRING:
             case DDF_STRING_UNSAFE:
-            case DDF_INT:
-            case DDF_FLOAT:
+                if (ch == 0x0A) {
+                    if (type == DDFType.DDF_STRING) {
+                        return obj.string(null);
+                    }
+                    return obj.unsafe_string(null);
+                } else if (ch != 0x20) {
+                    throw new IOException("Type field not followed by space character");
+                }
+                
                 while ((ch = is.read()) != -1 && !Character.isWhitespace(ch)) {
                     if (ch >= 0 && ch <= 127) {
                         // The int is a code point from 0..255, but our grammar constrains this to 0..127 so
@@ -1314,23 +1315,50 @@ public class DDF implements Iterable<DDF> {
                 try {
                     if (type == DDFType.DDF_STRING) {
                         // String values are handled as UTF-8.
-                        obj.string(URLDecoder.decode(valueBuilder.toString(), "UTF-8"));
-                    } else if (type == DDFType.DDF_STRING_UNSAFE) {
-                        // Unsafe string values are processed as ISO-8859-1.
-                        // They may be anything, but it will guarantee a single byte encoding.
-                        obj.unsafe_string(URLDecoder.decode(valueBuilder.toString(), "ISO-8859-1"));
-                    } else if (type == DDFType.DDF_INT) {
-                        obj.integer(valueBuilder.toString());
-                    } else if (type == DDFType.DDF_FLOAT) {
-                        obj.floating(valueBuilder.toString());
+                        return obj.string(URLDecoder.decode(valueBuilder.toString(), "UTF-8"));
                     }
+                    
+                    // Unsafe string values are processed as ISO-8859-1.
+                    // They may be anything, but it will guarantee a single byte encoding.
+                    return obj.unsafe_string(URLDecoder.decode(valueBuilder.toString(), "ISO-8859-1"));
+                    
                 } catch (final IllegalArgumentException e) {
                     throw new IOException(e);
                 }
-                return obj;
+
+            case DDF_INT:
+            case DDF_FLOAT:
+                if (ch != 0x20) {
+                    throw new IOException("Type field not followed by space character");
+                }
+                
+                while ((ch = is.read()) != -1 && !Character.isWhitespace(ch)) {
+                    if (ch >= 0 && ch <= 127) {
+                        // The int is a code point from 0..255, but our grammar constrains this to 0..127 so
+                        // this is a safe append, to promote the ASCII into Unicode.
+                        valueBuilder.appendCodePoint(ch);
+                    } else {
+                        throw new IOException("Invalid code point outside US-ASCII range");
+                    }
+                }
+                
+                if (ch != 0x0A) {
+                    throw new IOException("Numeric value not followed by linefeed");
+                } else if (valueBuilder.length() == 0) {
+                    throw new IOException("Numeric value missing");
+                }
+                
+                if (type == DDFType.DDF_INT) {
+                    return obj.integer(valueBuilder.toString());
+                }
+                return obj.floating(valueBuilder.toString());
                 
             case DDF_STRUCT:
             case DDF_LIST:
+                if (ch != 0x20) {
+                    throw new IOException("Type field not followed by space character");
+                }
+
                 while ((ch = is.read()) != -1 && Character.isDigit(ch)) {
                     // This is safe because the byte contract of the stream disallows
                     // any non-ASCII digit from satisfying the isDigit check.
@@ -1339,6 +1367,8 @@ public class DDF implements Iterable<DDF> {
                 
                 if (ch != 0x0A) {
                     throw new IOException("Record count not followed by linefeed");
+                } else if (valueBuilder.length() == 0) {
+                    throw new IOException("Record count missing");
                 }
                 
                 int count;
@@ -1358,7 +1388,6 @@ public class DDF implements Iterable<DDF> {
                     obj.add(deserialize(is));
                 }
                 return obj;
-                
 
             default:
                 throw new IOException("Unexpected record type");
