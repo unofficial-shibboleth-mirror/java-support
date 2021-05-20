@@ -1379,8 +1379,7 @@ public class DDF implements Iterable<DDF> {
     static void encode(@Nonnull final OutputStream os, @Nonnull final byte[] bytes) throws IOException {
         for (final byte b : bytes) {
             final int i = Byte.toUnsignedInt(b);
-            // 0x25 is the percent char itself.
-            if (i <= 0x20 || i >= 0x7F || i == 0x25) {
+            if (i < 0x30 || i > 0x7A) {
                 os.write('%');
                 os.write(hexchar(i >>> 4));
                 os.write(hexchar(i & 0x0F));
