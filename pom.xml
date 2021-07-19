@@ -18,6 +18,8 @@
 
     <properties>
         <automatic.module.name>net.shibboleth.utilities.java.support</automatic.module.name>
+        <!-- TODO: Remove when parent POM updated. -->
+        <shibboleth.site.deploy.url>//shibboleth.net/home/javasites/staging/</shibboleth.site.deploy.url>
     </properties>
 
     <repositories>
