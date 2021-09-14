@@ -81,7 +81,7 @@ public class RemotedHttpServletRequest implements HttpServletRequest {
     @Nonnull private final DDF obj;
     
     /** Cookie array. */
-    @Nullable @NonnullElements private ArrayList<Cookie> cookies;
+    @Nullable @NonnullElements private List<Cookie> cookies;
     
     /** Parameter map. */
     @Nullable private Map<String, String[]> parameters;
@@ -165,7 +165,7 @@ public class RemotedHttpServletRequest implements HttpServletRequest {
 
     /** {@inheritDoc} */
     public Map<String, String[]> getParameterMap() {
-        if (parameters != null) {
+        if (parameters == null) {
             parameters = new HashMap<>();
             final Multimap<String,String> multimap = ArrayListMultimap.create();
             final String qs = getQueryString();
@@ -285,8 +285,7 @@ public class RemotedHttpServletRequest implements HttpServletRequest {
 
     /** {@inheritDoc} */
     public int getLocalPort() {
-        // TODO: If we need this, should be configurable via the c'tor.
-        throw new UnsupportedOperationException();
+        return getServerPort();
     }
 
     /** {@inheritDoc} */
@@ -349,8 +348,16 @@ public class RemotedHttpServletRequest implements HttpServletRequest {
                             cookies.add(new Cookie(name, nvpair[1]));
                         }
                     }
+                } else {
+                    cookies = Collections.emptyList();
                 }
+            } else {
+                cookies = Collections.emptyList();
             }
+        }
+        
+        if (cookies.isEmpty()) {
+            return null;
         }
         return cookies.toArray(new Cookie[cookies.size()]);
     }
@@ -456,7 +463,8 @@ public class RemotedHttpServletRequest implements HttpServletRequest {
 
     /** {@inheritDoc} */
     public StringBuffer getRequestURL() {
-        return new StringBuffer(obj.getmember("url").string());
+        final String url = obj.getmember("url").string();
+        return new StringBuffer(url != null ? url : "");
     }
 
     /** {@inheritDoc} */
