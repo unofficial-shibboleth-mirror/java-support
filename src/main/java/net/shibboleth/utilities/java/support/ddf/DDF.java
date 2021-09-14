@@ -33,7 +33,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
@@ -802,12 +801,12 @@ public class DDF implements Iterable<DDF> {
      * @return immutable map, or null if the node is not a structure
      */
     @SuppressWarnings("unchecked")
-    @Nullable @NonnullElements @Unmodifiable @NotLive public Map<String,DDF> asMap() {
+    @Nonnull @NonnullElements @Unmodifiable @NotLive public Map<String,DDF> asMap() {
         if (isstruct()) {
             return Map.copyOf((Map<String,DDF>) value);
         }
         
-        return null;
+        return Collections.emptyMap();
     }
 
     /**
@@ -816,14 +815,14 @@ public class DDF implements Iterable<DDF> {
      * @return immutable list, or null if the node is not a structure or list
      */
     @SuppressWarnings("unchecked")
-    @Nullable @NonnullElements @Unmodifiable @NotLive public List<DDF> asList() {
+    @Nonnull @NonnullElements @Unmodifiable @NotLive public List<DDF> asList() {
         if (isstruct()) {
             return List.copyOf(((Map<String,DDF>) value).values());
         } else if (islist()) {
             return List.copyOf((List<DDF>) value);
         }
         
-        return null;
+        return Collections.emptyList();
     }
 
     /**
