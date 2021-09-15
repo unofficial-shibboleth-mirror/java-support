@@ -1,0 +1,438 @@
+/*
+ * Licensed to the University Corporation for Advanced Internet Development,
+ * Inc. (UCAID) under one or more contributor license agreements.  See the
+ * NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The UCAID licenses this file to You under the Apache
+ * License, Version 2.0 (the "License"); you may not use this file except in
+ * compliance with the License.  You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package net.shibboleth.utilities.java.support.ddf;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.HttpCookie;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.TimeZone;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.NotThreadSafe;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.WriteListener;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+
+/**
+ * Uses a {@link DDF} object to reflect an HTTP response back to a remote caller.
+ */
+@NotThreadSafe
+public class RemotedHttpServletResponse implements HttpServletResponse {
+
+    /** Underlying object for remoted data. */
+    @Nonnull private final DDF obj;
+    
+    /** Tracks committing of response. */
+    private boolean committed;
+    
+    /** A materialized output stream. */
+    @Nullable private BodyOutputStream outputStream;
+
+    /**
+     * Constructor.
+     *
+     * @param ddf object to capture response
+     */
+    public RemotedHttpServletResponse(final DDF ddf) {
+        obj = Constraint.isNotNull(ddf, "DDF cannot be null");
+    }
+    
+    /** {@inheritDoc} */
+    public String getCharacterEncoding() {
+        return "UTF-8";
+    }
+
+    /** {@inheritDoc} */
+    public String getContentType() {
+        return getHeader("Content-Type");
+    }
+
+    /** {@inheritDoc} */
+    public ServletOutputStream getOutputStream() throws IOException {
+        if (committed) {
+            throw new IllegalStateException("Response already committed");
+        }
+
+        if (outputStream == null) {
+            outputStream = new BodyOutputStream();
+        }
+        return outputStream;
+    }
+
+    /** {@inheritDoc} */
+    public PrintWriter getWriter() throws IOException {
+        return new PrintWriter(getOutputStream());
+    }
+
+    /** {@inheritDoc} */
+    public void setCharacterEncoding(final String charset) {
+        throw new UnsupportedOperationException();
+    }
+
+    /** {@inheritDoc} */
+    public void setContentLength(final int len) {
+        setIntHeader("Content-Length", len);
+    }
+
+    /** {@inheritDoc} */
+    public void setContentLengthLong(final long len) {
+        setHeader("Content-Length", Long.toString(len));
+    }
+
+    /** {@inheritDoc} */
+    public void setContentType(final String type) {
+        setHeader("Content-Type", type);
+    }
+
+    /** {@inheritDoc} */
+    public void setBufferSize(final int size) {
+        throw new UnsupportedOperationException();
+    }
+
+    /** {@inheritDoc} */
+    public int getBufferSize() {
+        throw new UnsupportedOperationException();
+    }
+
+    /** {@inheritDoc} */
+    public void flushBuffer() throws IOException {
+        // Just mark as committed to signal that status and headers are frozen.
+        committed = true;
+    }
+
+    /** {@inheritDoc} */
+    public void resetBuffer() {
+        if (committed) {
+            throw new IllegalStateException("Response already committed");
+        }
+        
+        if (outputStream != null) {
+            outputStream.reset();
+        }
+    }
+
+    /** {@inheritDoc} */
+    public boolean isCommitted() {
+        return committed;
+    }
+
+    /** {@inheritDoc} */
+    public void reset() {
+        if (committed) {
+            throw new IllegalStateException("Response already committed");
+        }
+        outputStream = null;
+        obj.structure();
+    }
+
+    /** {@inheritDoc} */
+    public void setLocale(final Locale loc) {
+        throw new UnsupportedOperationException();
+    }
+
+    /** {@inheritDoc} */
+    public Locale getLocale() {
+        throw new UnsupportedOperationException();
+    }
+
+    /** {@inheritDoc} */
+    public void addCookie(final Cookie cookie) {
+        // Use HttpCookie class to generate the header.
+        // The C++ side already manages SameSite independently, so we'll likely continue that.
+        final HttpCookie helper = new HttpCookie(cookie.getName(), cookie.getValue());
+        helper.setDomain(cookie.getDomain());
+        helper.setHttpOnly(cookie.isHttpOnly());
+        helper.setMaxAge(cookie.getMaxAge());
+        helper.setPath(cookie.getPath());
+        helper.setSecure(cookie.getSecure());
+        helper.setVersion(cookie.getVersion());
+        addHeader("Cookie", helper.toString());
+    }
+
+    /** {@inheritDoc} */
+    public boolean containsHeader(final String name) {
+        for (final DDF header : obj.getmember("headers").asList()) {
+            if (name.equals(header.name())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** {@inheritDoc} */
+    public String encodeURL(final String url) {
+        return url;
+    }
+
+    /** {@inheritDoc} */
+    public String encodeRedirectURL(final String url) {
+        return url;
+    }
+
+    /** {@inheritDoc} */
+    public String encodeUrl(final String url) {
+        return url;
+    }
+
+    /** {@inheritDoc} */
+    public String encodeRedirectUrl(final String url) {
+        return url;
+    }
+
+    /** {@inheritDoc} */
+    public void sendError(final int sc, final String msg) throws IOException {
+        throw new UnsupportedOperationException();
+    }
+
+    /** {@inheritDoc} */
+    public void sendError(final int sc) throws IOException {
+        throw new UnsupportedOperationException();
+    }
+
+    /** {@inheritDoc} */
+    public void sendRedirect(final String location) throws IOException {
+        if (committed) {
+            throw new IllegalStateException("Response already committed");
+        }
+
+        if (!obj.isstruct()) {
+            obj.structure();
+        } else {
+            obj.getmember("response").remove();
+        }
+        obj.addmember("redirect").unsafe_string(location);
+        committed = true;
+        outputStream = null;
+    }
+
+    /** {@inheritDoc} */
+    public void setDateHeader(final String name, final long date) {
+        unsetHeader(name);
+        addDateHeader(name, date);
+    }
+
+    /** {@inheritDoc} */
+    public void addDateHeader(final String name, final long date) {
+        final SimpleDateFormat formatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz");
+        formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
+        addHeader(name, formatter.format(Date.from(Instant.ofEpochMilli(date))));
+    }
+
+    /** {@inheritDoc} */
+    public void setHeader(final String name, final String value) {
+        unsetHeader(name);
+        addHeader(name, value);
+    }
+
+    /** {@inheritDoc} */
+    public void addHeader(final String name, final String value) {
+        getHeaderList().add(new DDF(name).unsafe_string(value));
+    }
+
+    /** {@inheritDoc} */
+    public void setIntHeader(final String name, final int value) {
+        unsetHeader(name);
+        addIntHeader(name, value);
+    }
+
+    /** {@inheritDoc} */
+    public void addIntHeader(final String name, final int value) {
+        getHeaderList().add(new DDF(name).integer(value));
+    }
+
+    /** {@inheritDoc} */
+    public void setStatus(final int sc) {
+        if (!obj.isstruct()) {
+            obj.structure();
+        }
+        obj.addmember("response.status").integer(sc);
+    }
+
+    /** {@inheritDoc} */
+    public void setStatus(final int sc, final String sm) {
+        setStatus(sc);
+        obj.addmember("response.status_message").string(sm);
+    }
+
+    /** {@inheritDoc} */
+    public int getStatus() {
+        final Integer i = obj.getmember("response.status").integer();
+        return i != null ? i : -1;
+    }
+
+    /** {@inheritDoc} */
+    public String getHeader(final String name) {
+        final Optional<DDF> header =
+                obj.getmember("headers").asList()
+                    .stream()
+                    .filter(ddf -> name.equalsIgnoreCase(ddf.name()))
+                    .findFirst();
+        if (header.isPresent()) {
+            return header.orElseThrow().string();
+        }
+        
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    public Collection<String> getHeaders(final String name) {
+        return obj.getmember("headers").asList()
+            .stream()
+            .filter(ddf -> name.equalsIgnoreCase(ddf.name()))
+            .map(DDF::string)
+            .collect(Collectors.toUnmodifiableList());
+    }
+
+    /** {@inheritDoc} */
+    public Collection<String> getHeaderNames() {
+        return obj.getmember("headers").asList()
+                .stream()
+                .map(DDF::name)
+                .collect(Collectors.toUnmodifiableSet());
+    }
+    
+    /**
+     * Removes any existing header(s) of this type.
+     * 
+     * @param name name of header to remove
+     */
+    private void unsetHeader(final @Nonnull @NotEmpty String name) {
+        
+        if (committed) {
+            throw new IllegalStateException("Response already committed");
+        }
+        
+        // This is safe because the asList copy is divorced from the original list
+        // but the DDF child objects are the same.
+        obj.getmember("headers").asList()
+            .stream()
+            .filter(ddf -> name.equalsIgnoreCase(ddf.name()))
+            .forEach(DDF::remove);
+    }
+    
+    /**
+     * Get the list node to which headers should be added.
+     * 
+     * @return a pre-existing list or a new one for mutation.
+     */
+    @Nonnull private DDF getHeaderList() {
+        
+        if (committed) {
+            throw new IllegalStateException("Response already committed");
+        }
+        final DDF headers = obj.getmember("headers");
+        if (!headers.islist()) {
+            headers.list();
+        }
+        return headers;
+    }
+
+    /** Wrapper allowing use of containers of arrays. */
+    private static final class ByteArrayWrapper {
+        
+        /** Current write position. */
+        private int offset;
+        
+        /** Wrapped array. */
+        private final byte[] buffer;
+        
+        private ByteArrayWrapper() {
+            buffer = new byte[1024];
+            offset = 0;
+        }
+        
+        private boolean write(final int b) {
+            if (offset < 1024) {
+                buffer[offset++] = Integer.valueOf(b).byteValue();
+                return true;
+            }
+            
+            return false;
+        }
+    }
+
+    private class BodyOutputStream extends ServletOutputStream {
+
+        
+        /** Internal buffers. */
+        @Nonnull @NonnullElements private final ArrayList<ByteArrayWrapper> bufferList;
+        
+        /** The currently filling buffer. */
+        @Nonnull private ByteArrayWrapper currentBuffer;
+        
+        /** Constructor. */
+        public BodyOutputStream() {
+            currentBuffer = new ByteArrayWrapper();
+            bufferList = new ArrayList<>(1);
+            bufferList.add(currentBuffer);
+        }
+        
+        @Override
+        public boolean isReady() {
+            return true;
+        }
+
+        @Override
+        public void setWriteListener(final WriteListener writeListener) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void write(final int b) throws IOException {
+            if (!currentBuffer.write(b)) {
+                currentBuffer = new ByteArrayWrapper();
+                bufferList.add(currentBuffer);
+                Constraint.isTrue(currentBuffer.write(b), "Fresh buffer cannot fail to accept data");
+            }
+        }
+
+        @Override
+        public void flush() throws IOException {
+            for (final ByteArrayWrapper buffers : bufferList) {
+                
+            }
+        }
+
+        @Override
+        public void close() throws IOException {
+            flush();
+        }
+
+        /** Clear all data written. */
+        private void reset() {
+            currentBuffer = new ByteArrayWrapper();
+            bufferList.clear();
+            bufferList.add(currentBuffer);
+        }
+    }
+
+}
