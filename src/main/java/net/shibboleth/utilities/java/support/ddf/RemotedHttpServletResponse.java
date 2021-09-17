@@ -20,6 +20,7 @@ package net.shibboleth.utilities.java.support.ddf;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.HttpCookie;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -51,6 +52,9 @@ public class RemotedHttpServletResponse implements HttpServletResponse {
     /** Underlying object for remoted data. */
     @Nonnull private final DDF obj;
     
+    /** Size of each character buffer for output. */
+    private int bufferSize;
+    
     /** Tracks committing of response. */
     private boolean committed;
     
@@ -64,6 +68,7 @@ public class RemotedHttpServletResponse implements HttpServletResponse {
      */
     public RemotedHttpServletResponse(final DDF ddf) {
         obj = Constraint.isNotNull(ddf, "DDF cannot be null");
+        bufferSize = 1024;
     }
     
     /** {@inheritDoc} */
@@ -90,7 +95,7 @@ public class RemotedHttpServletResponse implements HttpServletResponse {
 
     /** {@inheritDoc} */
     public PrintWriter getWriter() throws IOException {
-        return new PrintWriter(getOutputStream());
+        return new PrintWriter(getOutputStream(), false, Charset.forName(getCharacterEncoding()));
     }
 
     /** {@inheritDoc} */
@@ -115,12 +120,12 @@ public class RemotedHttpServletResponse implements HttpServletResponse {
 
     /** {@inheritDoc} */
     public void setBufferSize(final int size) {
-        throw new UnsupportedOperationException();
+        bufferSize = size;
     }
 
     /** {@inheritDoc} */
     public int getBufferSize() {
-        throw new UnsupportedOperationException();
+        return bufferSize;
     }
 
     /** {@inheritDoc} */
@@ -365,18 +370,24 @@ public class RemotedHttpServletResponse implements HttpServletResponse {
         /** Wrapped array. */
         private final byte[] buffer;
         
-        private ByteArrayWrapper() {
-            buffer = new byte[1024];
+        private ByteArrayWrapper(final int size) {
+            buffer = new byte[size];
             offset = 0;
         }
         
         private boolean write(final int b) {
-            if (offset < 1024) {
+            if (offset < buffer.length) {
                 buffer[offset++] = Integer.valueOf(b).byteValue();
                 return true;
             }
             
             return false;
+        }
+        
+        private void flush(@Nonnull final StringBuffer sink) {
+            for (int i = 0; i < offset; i++) {
+                sink.appendCodePoint(buffer[i]);
+            }
         }
     }
 
@@ -391,7 +402,7 @@ public class RemotedHttpServletResponse implements HttpServletResponse {
         
         /** Constructor. */
         public BodyOutputStream() {
-            currentBuffer = new ByteArrayWrapper();
+            currentBuffer = new ByteArrayWrapper(bufferSize);
             bufferList = new ArrayList<>(1);
             bufferList.add(currentBuffer);
         }
@@ -409,7 +420,7 @@ public class RemotedHttpServletResponse implements HttpServletResponse {
         @Override
         public void write(final int b) throws IOException {
             if (!currentBuffer.write(b)) {
-                currentBuffer = new ByteArrayWrapper();
+                currentBuffer = new ByteArrayWrapper(bufferSize);
                 bufferList.add(currentBuffer);
                 Constraint.isTrue(currentBuffer.write(b), "Fresh buffer cannot fail to accept data");
             }
@@ -417,9 +428,9 @@ public class RemotedHttpServletResponse implements HttpServletResponse {
 
         @Override
         public void flush() throws IOException {
-            for (final ByteArrayWrapper buffers : bufferList) {
-                
-            }
+            final StringBuffer sink = new StringBuffer();
+            bufferList.forEach(b -> b.flush(sink));
+            obj.addmember("response.data").unsafe_string(sink.toString());
         }
 
         @Override
@@ -429,7 +440,7 @@ public class RemotedHttpServletResponse implements HttpServletResponse {
 
         /** Clear all data written. */
         private void reset() {
-            currentBuffer = new ByteArrayWrapper();
+            currentBuffer = new ByteArrayWrapper(bufferSize);
             bufferList.clear();
             bufferList.add(currentBuffer);
         }
