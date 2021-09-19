@@ -20,7 +20,6 @@ package net.shibboleth.utilities.java.support.ddf;
 import static org.testng.Assert.*;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.Cookie;

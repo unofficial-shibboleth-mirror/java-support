@@ -19,7 +19,6 @@ package net.shibboleth.utilities.java.support.ddf;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.HttpCookie;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -68,6 +67,7 @@ public class RemotedHttpServletResponse implements HttpServletResponse {
      */
     public RemotedHttpServletResponse(final DDF ddf) {
         obj = Constraint.isNotNull(ddf, "DDF cannot be null");
+        obj.structure();
         bufferSize = 1024;
     }
     
@@ -171,16 +171,27 @@ public class RemotedHttpServletResponse implements HttpServletResponse {
 
     /** {@inheritDoc} */
     public void addCookie(final Cookie cookie) {
-        // Use HttpCookie class to generate the header.
         // The C++ side already manages SameSite independently, so we'll likely continue that.
-        final HttpCookie helper = new HttpCookie(cookie.getName(), cookie.getValue());
-        helper.setDomain(cookie.getDomain());
-        helper.setHttpOnly(cookie.isHttpOnly());
-        helper.setMaxAge(cookie.getMaxAge());
-        helper.setPath(cookie.getPath());
-        helper.setSecure(cookie.getSecure());
-        helper.setVersion(cookie.getVersion());
-        addHeader("Cookie", helper.toString());
+        final StringBuffer buffer = new StringBuffer(cookie.getName()).append('=');
+        if (cookie.getValue() != null) {
+            buffer.append(cookie.getValue());
+        }
+        if (cookie.getMaxAge() >= 0) {
+            buffer.append("; MaxAge=").append(cookie.getMaxAge());
+        }
+        if (cookie.getPath() != null) {
+            buffer.append("; ").append("Path=").append(cookie.getPath());
+        }
+        if (cookie.getDomain() != null) {
+            buffer.append("; ").append("Domain=").append(cookie.getDomain());
+        }
+        if (cookie.getSecure()) {
+            buffer.append("; Secure");
+        }
+        if (cookie.isHttpOnly()) {
+            buffer.append("; HttpOnly");
+        }
+        addHeader("Set-Cookie", buffer.toString());
     }
 
     /** {@inheritDoc} */
@@ -229,11 +240,7 @@ public class RemotedHttpServletResponse implements HttpServletResponse {
             throw new IllegalStateException("Response already committed");
         }
 
-        if (!obj.isstruct()) {
-            obj.structure();
-        } else {
-            obj.getmember("response").remove();
-        }
+        obj.getmember("response").remove();
         obj.addmember("redirect").unsafe_string(location);
         committed = true;
         outputStream = null;
@@ -276,9 +283,6 @@ public class RemotedHttpServletResponse implements HttpServletResponse {
 
     /** {@inheritDoc} */
     public void setStatus(final int sc) {
-        if (!obj.isstruct()) {
-            obj.structure();
-        }
         obj.addmember("response.status").integer(sc);
     }
 
@@ -302,7 +306,10 @@ public class RemotedHttpServletResponse implements HttpServletResponse {
                     .filter(ddf -> name.equalsIgnoreCase(ddf.name()))
                     .findFirst();
         if (header.isPresent()) {
-            return header.orElseThrow().string();
+            if (header.orElseThrow().isstring()) {
+                return header.orElseThrow().string();
+            }
+            return header.orElseThrow().integer().toString();
         }
         
         return null;
@@ -354,11 +361,12 @@ public class RemotedHttpServletResponse implements HttpServletResponse {
         if (committed) {
             throw new IllegalStateException("Response already committed");
         }
+        
         final DDF headers = obj.getmember("headers");
-        if (!headers.islist()) {
-            headers.list();
+        if (headers.islist()) {
+            return headers;
         }
-        return headers;
+        return obj.addmember("headers").list();
     }
 
     /** Wrapper allowing use of containers of arrays. */
@@ -431,6 +439,7 @@ public class RemotedHttpServletResponse implements HttpServletResponse {
             final StringBuffer sink = new StringBuffer();
             bufferList.forEach(b -> b.flush(sink));
             obj.addmember("response.data").unsafe_string(sink.toString());
+            committed = true;
         }
 
         @Override
