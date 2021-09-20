@@ -92,12 +92,12 @@ public class RemotedHttpServletResponseTest {
         resp.setBufferSize(3);
         resp.setStatus(200);
         try (final OutputStream os = resp.getOutputStream()) {
-            os.write("zorkmid".getBytes());
+            os.write("zorkmid".getBytes("UTF-8"));
         }
         
         assertTrue(resp.isCommitted());
         assertEquals(obj.getmember("response.status").integer(), Integer.valueOf(200));
-        assertEquals(obj.getmember("response.data").string(), "zorkmid");
+        assertEquals(obj.getmember("response.data").unsafe_string(), "zorkmid".getBytes("UTF-8"));
     }
     
     @Test
@@ -110,7 +110,7 @@ public class RemotedHttpServletResponseTest {
         
         assertTrue(resp.isCommitted());
         assertEquals(obj.getmember("response.status").integer(), Integer.valueOf(200));
-        assertEquals(obj.getmember("response.data").string().getBytes("ISO-8859-1"), "zorkmid☯️".getBytes("ISO-8859-1"));
+        assertEquals(obj.getmember("response.data").unsafe_string(), "zorkmid☯️".getBytes("ISO-8859-1"));
     }
     
     @Test
@@ -123,10 +123,10 @@ public class RemotedHttpServletResponseTest {
         
         assertTrue(resp.isCommitted());
         assertEquals(obj.getmember("response.status").integer(), Integer.valueOf(200));
-        assertEquals(obj.getmember("response.data").string(), "zorkmid");
+        assertEquals(obj.getmember("response.data").unsafe_string(), "zorkmid".getBytes("UTF-8"));
     }
 
-    @Test(enabled=false)
+    @Test
     public void testWriter2() throws IOException {
         resp.setBufferSize(3);
         resp.setStatus(200);
@@ -136,6 +136,6 @@ public class RemotedHttpServletResponseTest {
         
         assertTrue(resp.isCommitted());
         assertEquals(obj.getmember("response.status").integer(), Integer.valueOf(200));
-        assertEquals(obj.getmember("response.data").string(), "zorkmid☯️");
+        assertEquals(obj.getmember("response.data").unsafe_string(), "zorkmid☯️".getBytes("UTF-8"));
     }
 }

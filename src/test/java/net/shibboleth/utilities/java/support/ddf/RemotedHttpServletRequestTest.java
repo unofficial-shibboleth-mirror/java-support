@@ -71,8 +71,9 @@ public class RemotedHttpServletRequestTest {
         obj.addmember("port").integer(80);
         obj.addmember("client_addr").string("127.0.0.1");
         obj.addmember("remote_user").string("jdoe");
-        obj.addmember("uri").string("/endpoint");
-        obj.addmember("url").string("http://localhost/endpoint");
+        obj.addmember("hostname").unsafe_string("localhost".getBytes("UTF-8"));
+        obj.addmember("uri").unsafe_string("/endpoint".getBytes("UTF-8"));
+        obj.addmember("url").unsafe_string("http://localhost/endpoint".getBytes("UTF-8"));
         obj.addmember("scheme").string("http");
         
         assertEquals(req.getContentLength(), 100);
@@ -85,6 +86,7 @@ public class RemotedHttpServletRequestTest {
         assertEquals(req.getQueryString(), null);
         assertEquals(req.getRemoteAddr(), "127.0.0.1");
         assertEquals(req.getRemoteUser(), "jdoe");
+        assertEquals(req.getServerName(), "localhost");
         assertEquals(req.getRequestURI(), "/endpoint");
         assertEquals(req.getRequestURL().toString(), "http://localhost/endpoint");
         assertEquals(req.getScheme(), "http");
@@ -130,8 +132,8 @@ public class RemotedHttpServletRequestTest {
     @Test
     public void testHeaders() throws IOException {
         obj.structure();
-        obj.addmember("headers.foo").string("bar");
-        obj.addmember("headers.zork").string("grue");
+        obj.addmember("headers.foo").unsafe_string("bar".getBytes("UTF-8"));
+        obj.addmember("headers.zork").unsafe_string("grue".getBytes("UTF-8"));
         
         assertEquals(req.getHeaders("foo").nextElement(), "bar");
         assertEquals(req.getHeader("zork"), "grue");
@@ -141,7 +143,7 @@ public class RemotedHttpServletRequestTest {
     @Test
     public void testCookie() throws IOException {
         obj.structure();
-        obj.addmember("headers.Cookie").string("foo=bar;");
+        obj.addmember("headers.Cookie").unsafe_string("foo=bar;".getBytes("UTF-8"));
         
         final Cookie[] cookies = req.getCookies();
         
@@ -153,7 +155,7 @@ public class RemotedHttpServletRequestTest {
     @Test
     public void testCookies() throws IOException {
         obj.structure();
-        obj.addmember("headers.Cookie").string("foo=bar; zork=grue");
+        obj.addmember("headers.Cookie").unsafe_string("foo=bar; zork=grue".getBytes("UTF-8"));
         
         final Cookie[] cookies = req.getCookies();
         

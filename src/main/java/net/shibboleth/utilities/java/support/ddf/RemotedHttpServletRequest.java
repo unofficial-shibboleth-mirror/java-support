@@ -23,6 +23,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CodingErrorAction;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -77,6 +82,18 @@ public class RemotedHttpServletRequest implements HttpServletRequest {
     /** Empty byte array for empty bodies. */
     @Nonnull private static final byte[] EMPTY_BODY = new byte[0];
     
+    /** UTF-8 decoder. */
+    @Nonnull private static final CharsetDecoder UTF_8 =
+            Charset.forName("UTF-8").newDecoder()
+                .onMalformedInput(CodingErrorAction.REPORT)
+                .onUnmappableCharacter(CodingErrorAction.REPORT);
+
+    /** ISO single byte decoder. */
+    @Nonnull private static final CharsetDecoder ISO_8859_1 =
+            Charset.forName("ISO-8859-1").newDecoder()
+                .onMalformedInput(CodingErrorAction.REPORT)
+                .onUnmappableCharacter(CodingErrorAction.REPORT);
+
     /** Underlying object containing remoted data. */
     @Nonnull private final DDF obj;
     
@@ -207,7 +224,7 @@ public class RemotedHttpServletRequest implements HttpServletRequest {
 
     /** {@inheritDoc} */
     public String getServerName() {
-        return obj.getmember("hostname").string();
+        return decodeUnsafeString(obj.getmember("hostname").unsafe_string());
     }
 
     /** {@inheritDoc} */
@@ -383,12 +400,12 @@ public class RemotedHttpServletRequest implements HttpServletRequest {
 
     /** {@inheritDoc} */
     public String getHeader(final String name) {
-        return obj.getmember("headers").getmember(name).string();
+        return decodeUnsafeString(obj.getmember("headers").getmember(name).unsafe_string());
     }
 
     /** {@inheritDoc} */
     public Enumeration<String> getHeaders(final String name) {
-        final String s = obj.getmember("headers").getmember(name).string();
+        final String s = decodeUnsafeString(obj.getmember("headers").getmember(name).unsafe_string());
         if (s != null) {
             return Collections.enumeration(Collections.singletonList(s));
         }
@@ -404,7 +421,7 @@ public class RemotedHttpServletRequest implements HttpServletRequest {
     public int getIntHeader(final String name) {
         final DDF h = obj.getmember("headers").getmember(name);
         if (h.isstring()) {
-            return Integer.parseInt(h.string());
+            return Integer.parseInt(decodeUnsafeString(h.unsafe_string()));
         }
         return -1;
     }
@@ -458,12 +475,12 @@ public class RemotedHttpServletRequest implements HttpServletRequest {
 
     /** {@inheritDoc} */
     public String getRequestURI() {
-        return obj.getmember("uri").string();
+        return decodeUnsafeString(obj.getmember("uri").unsafe_string());
     }
 
     /** {@inheritDoc} */
     public StringBuffer getRequestURL() {
-        final String url = obj.getmember("url").string();
+        final String url = decodeUnsafeString(obj.getmember("url").unsafe_string());
         return new StringBuffer(url != null ? url : "");
     }
 
@@ -539,6 +556,36 @@ public class RemotedHttpServletRequest implements HttpServletRequest {
     /** {@inheritDoc} */
     public <T extends HttpUpgradeHandler> T upgrade(final Class<T> handlerClass) throws IOException, ServletException {
         throw new UnsupportedOperationException();
+    }
+    
+    /**
+     * Helper method to decode a byte buffer into either UTF-8 or ISO-8859-1.
+     * 
+     * @param buffer input buffer
+     * 
+     * @return encoded String form of the data
+     */
+    @Nullable private static String decodeUnsafeString(final byte[] buffer) {
+        
+        if (buffer == null) {
+            return null;
+        }
+        
+        final ByteBuffer wrapper = ByteBuffer.wrap(buffer);
+        
+        try {
+            return UTF_8.decode(wrapper).toString();
+        } catch (final CharacterCodingException e) {
+            
+        }
+        
+        try {
+            return ISO_8859_1.decode(wrapper).toString();
+        } catch (final CharacterCodingException e) {
+            
+        }
+        
+        return null;
     }
 
     /** Helper class cribbed from Spring. */

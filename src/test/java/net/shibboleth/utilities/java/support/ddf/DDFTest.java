@@ -23,6 +23,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 
 import javax.annotation.Nonnull;
 
@@ -33,7 +34,6 @@ import net.shibboleth.utilities.java.support.collection.Pair;
 /**
  * DDF unit tests.
  */
-@SuppressWarnings("javadoc")
 public class DDFTest {
 
     @Test
@@ -63,7 +63,7 @@ public class DDFTest {
     }
 
     @Test
-    public void testConversions() {
+    public void testConversions() throws UnsupportedEncodingException {
         final DDF obj = new DDF("foo");
         obj.string("bar");
         assertTrue(obj.isstring());
@@ -98,7 +98,7 @@ public class DDFTest {
         assertEquals(obj.integer(), Integer.valueOf(42));
         assertEquals(obj.floating(), Double.valueOf(42.42));
         
-        obj.unsafe_string("bar");
+        obj.unsafe_string("bar".getBytes("ISO-8859-1"));
         System.out.print(obj);
     }
     
@@ -220,7 +220,7 @@ public class DDFTest {
             sink.reset();
 
             final byte[] unsafe = {102, 111, 111, -128, 98, 97, 114};
-            obj.unsafe_string(new String(unsafe, "ISO-8859-1"));
+            obj.unsafe_string(unsafe);
             obj.serialize(sink);
             assertEquals(sink.toByteArray(), testFile("unsafestring-name.ddf"));
             sink.reset();
@@ -285,10 +285,10 @@ public class DDFTest {
 
         try (final InputStream is = getClass().getResourceAsStream("unsafestring-name.ddf")) {
             final DDF obj = DDF.deserialize(is);
-            assertTrue(obj.isstring());
+            assertTrue(obj.isunsafestring());
             assertEquals(obj.name(), "foo bar");
             final byte[] unsafe = {102, 111, 111, -128, 98, 97, 114};
-            assertEquals(obj.string(), new String(unsafe, "ISO-8859-1"));
+            assertEquals(obj.unsafe_string(), unsafe);
         }
 
         try (final InputStream is = getClass().getResourceAsStream("int-name.ddf")) {

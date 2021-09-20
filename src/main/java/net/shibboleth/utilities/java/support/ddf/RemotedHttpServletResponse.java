@@ -241,7 +241,7 @@ public class RemotedHttpServletResponse implements HttpServletResponse {
         }
 
         obj.getmember("response").remove();
-        obj.addmember("redirect").unsafe_string(location);
+        obj.addmember("redirect").string(location);
         committed = true;
         outputStream = null;
     }
@@ -267,7 +267,7 @@ public class RemotedHttpServletResponse implements HttpServletResponse {
 
     /** {@inheritDoc} */
     public void addHeader(final String name, final String value) {
-        getHeaderList().add(new DDF(name).unsafe_string(value));
+        getHeaderList().add(new DDF(name).string(value));
     }
 
     /** {@inheritDoc} */
@@ -383,6 +383,14 @@ public class RemotedHttpServletResponse implements HttpServletResponse {
             offset = 0;
         }
         
+        @Nonnull private byte[] getBuffer() {
+            return buffer;
+        }
+        
+        private int getOffset() {
+            return offset;
+        }
+        
         private boolean write(final int b) {
             if (offset < buffer.length) {
                 buffer[offset++] = Integer.valueOf(b).byteValue();
@@ -390,12 +398,6 @@ public class RemotedHttpServletResponse implements HttpServletResponse {
             }
             
             return false;
-        }
-        
-        private void flush(@Nonnull final StringBuffer sink) {
-            for (int i = 0; i < offset; i++) {
-                sink.appendCodePoint(buffer[i]);
-            }
         }
     }
 
@@ -436,9 +438,16 @@ public class RemotedHttpServletResponse implements HttpServletResponse {
 
         @Override
         public void flush() throws IOException {
-            final StringBuffer sink = new StringBuffer();
-            bufferList.forEach(b -> b.flush(sink));
-            obj.addmember("response.data").unsafe_string(sink.toString());
+            
+            int offset = 0;
+            final byte[] copy = new byte[((bufferList.size() - 1) * bufferSize) +
+                                         bufferList.get(bufferList.size() - 1).getOffset()];
+
+            for (final ByteArrayWrapper b : bufferList) {
+                System.arraycopy(b.getBuffer(), 0, copy, offset, b.getOffset());
+                offset += b.getOffset();
+            }
+            obj.addmember("response.data").unsafe_string(copy);
             committed = true;
         }
 

@@ -214,6 +214,19 @@ public class DDF implements Iterable<DDF> {
      * <p>For compatibility, the name is constrained to <= 255 characters.</p>
      *
      * @param n node name
+     * @param val byte array value, handled without knowledge of the encoding
+     */
+    public DDF(@Nullable @NotEmpty final String n, @Nullable final byte[] val) {
+        this(n);
+        unsafe_string(val);
+    }
+
+    /**
+     * Constructor.
+     *
+     * <p>For compatibility, the name is constrained to <= 255 characters.</p>
+     *
+     * @param n node name
      * @param val integer value
      */
     public DDF(@Nullable @NotEmpty final String n, final int val) {
@@ -284,7 +297,7 @@ public class DDF implements Iterable<DDF> {
                 break;
                 
             case DDF_STRING_UNSAFE:
-                dup.unsafe_string((String) value);
+                dup.unsafe_string((byte[]) value);
                 break;
                 
             case DDF_INT:
@@ -366,12 +379,21 @@ public class DDF implements Iterable<DDF> {
     }
 
     /**
-     * Returns true iff the node is a string (safe or not).
+     * Returns true iff the node is a string.
      * 
-     * @return true iff the node is a string (safe or not)
+     * @return true iff the node is a string
      */
     public boolean isstring() {
-        return type == DDFType.DDF_STRING || type == DDFType.DDF_STRING_UNSAFE;
+        return type == DDFType.DDF_STRING;
+    }
+
+    /**
+     * Returns true iff the node is an unsafe string.
+     * 
+     * @return true iff the node is an unsafe string
+     */
+    public boolean isunsafestring() {
+        return type == DDFType.DDF_STRING_UNSAFE;
     }
 
     /**
@@ -429,6 +451,17 @@ public class DDF implements Iterable<DDF> {
     @Nullable public String string() {
         return isstring() ? (String) value : null;
     }
+
+    /**
+     * Get the byte array value of this node if an unsafe string.
+     * 
+     * @return the byte array value or null
+     */
+// Checkstyle: MethodName OFF
+    @Nullable public byte[] unsafe_string() {
+        return isunsafestring() ? (byte[]) value : null;
+    }
+// Checkstyle: MethodName ON
 
     /**
      * Get the integer value of this node.
@@ -542,7 +575,7 @@ public class DDF implements Iterable<DDF> {
      * @return this object
      */
 // Checkstyle: MethodName OFF
-    @Nonnull public DDF unsafe_string(@Nullable final String val) {
+    @Nonnull public DDF unsafe_string(@Nullable final byte[] val) {
         empty();
         value = val;
         type = DDFType.DDF_STRING_UNSAFE;
@@ -1032,15 +1065,15 @@ public class DDF implements Iterable<DDF> {
                 break;
                 
             case DDF_STRING_UNSAFE:
-                builder.append("char[]");
+                builder.append("byte[]");
                 if (name != null) {
                     builder.append(' ').append(name);
                 }
                 builder.append(" = ");
                 if (value != null) {
                     builder.append('{');
-                    for (final char c : ((String) value).toCharArray()) {
-                        builder.append(Integer.toHexString(c)).append(", ");
+                    for (final byte b : (byte[]) value) {
+                        builder.append(Integer.toHexString(b)).append(", ");
                     }
                     builder.append('}');
                 } else {
@@ -1160,7 +1193,7 @@ public class DDF implements Iterable<DDF> {
                     os.write(Integer.toString(type.getValue()).getBytes("UTF8"));
                     if (value != null) {
                         os.write(' ');
-                        encode(os, ((String) value).getBytes("ISO-8859-1"));
+                        encode(os, (byte[]) value);
                     }
                     os.write('\n');
                     break;
@@ -1319,7 +1352,8 @@ public class DDF implements Iterable<DDF> {
                     
                     // Unsafe string values are processed as ISO-8859-1.
                     // They may be anything, but it will guarantee a single byte encoding.
-                    return obj.unsafe_string(URLDecoder.decode(valueBuilder.toString(), "ISO-8859-1"));
+                    return obj.unsafe_string(
+                            URLDecoder.decode(valueBuilder.toString(), "ISO-8859-1").getBytes("ISO-8859-1"));
                     
                 } catch (final IllegalArgumentException e) {
                     throw new IOException(e);
