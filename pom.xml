@@ -167,10 +167,10 @@
             </activation>
             <dependencies>
                 <dependency>
-		    <groupId>org.openjdk.nashorn</groupId>
-		    <artifactId>nashorn-core</artifactId>
-		    <version>${nashorn.jdk.version}</version>
-		    <scope>test</scope>
+                    <groupId>org.openjdk.nashorn</groupId>
+                    <artifactId>nashorn-core</artifactId>
+                    <version>${nashorn.jdk.version}</version>
+                    <scope>test</scope>
                 </dependency>
             </dependencies>
         </profile>
