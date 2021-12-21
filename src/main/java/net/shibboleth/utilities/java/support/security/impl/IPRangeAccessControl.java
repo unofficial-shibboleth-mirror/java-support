@@ -23,7 +23,6 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.servlet.ServletRequest;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
@@ -37,6 +36,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.net.InetAddresses;
+
+import jakarta.servlet.ServletRequest;
 
 /**
  * Simple access control implementation based on IP address checking.
