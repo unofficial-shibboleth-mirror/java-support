@@ -17,14 +17,14 @@
 
 package net.shibboleth.utilities.java.support.net;
 
-import javax.servlet.http.Cookie;
-
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import jakarta.servlet.http.Cookie;
 
 /** {@link CookieManager} unit test. */
 public class CookieManagerTest {

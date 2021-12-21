@@ -19,7 +19,8 @@ package net.shibboleth.utilities.java.support.security;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.servlet.ServletRequest;
+
+import jakarta.servlet.ServletRequest;
 
 /**
  * A policy that evaluates a {@link ServletRequest} and determines whether access to a named resource
