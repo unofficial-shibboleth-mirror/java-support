@@ -7,7 +7,7 @@
     <parent>
         <groupId>net.shibboleth</groupId>
         <artifactId>parent</artifactId>
-        <version>11.3.3</version>
+        <version>17.0.0-SNAPSHOT</version>
     </parent>
 
     <name>java-support</name>
@@ -17,7 +17,7 @@
          build (to populate the javadoc, which is consumed by the
          Jenkins 'nightly' builds).
     -->
-    <version>8.3.2-SNAPSHOT</version>
+    <version>9.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -135,6 +135,12 @@
 
         <!-- Test Dependencies -->
         <dependency>
+            <groupId>org.openjdk.nashorn</groupId>
+            <artifactId>nashorn-core</artifactId>
+            <version>${nashorn.jdk.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <scope>test</scope>
@@ -156,27 +162,6 @@
         </dependency>
 
     </dependencies>
-
-    <profiles>
-        <!--
-            Pull in a Javascript engine for testing in Java
-            versions where the JDK doesn't provide one.
-        -->
-        <profile>
-            <id>get-nashorn</id>
-            <activation>
-                <jdk>[15,</jdk>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>org.openjdk.nashorn</groupId>
-                    <artifactId>nashorn-core</artifactId>
-                    <version>${nashorn.jdk.version}</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-    </profiles>
 
     <distributionManagement>
         <site>
