@@ -88,4 +88,34 @@ public final class BiFunctionSupport {
         return predicate::test;
     }
     
+    /**
+     * Adapts a {@link Function} into a {BiFunction} that ignores the second argument.
+     * 
+     * @param <A> input type of function
+     * @param <B> ignored argument type
+     * @param <C> return type
+     * @param function the function to apply
+     * 
+     * @return the adapted object
+     */
+    @Nonnull public static <A,B,C> BiFunction<A,B,C> forFunctionOfFirstArg(
+            @Nonnull @ParameterName(name="function") final Function<? super A,? extends C> function) {
+        return (a,b) -> function.apply(a);
+    }
+
+    /**
+     * Adapts a {@link Function} into a {BiFunction} that ignores the first argument.
+     * 
+     * @param <A> ignored argument type
+     * @param <B> input type of function
+     * @param <C> return type
+     * @param function the function to apply
+     * 
+     * @return the adapted object
+     */
+    @Nonnull public static <A,B,C> BiFunction<A,B,C> forFunctionOfSecondArg(
+            @Nonnull @ParameterName(name="function") final Function<? super B,? extends C> function) {
+        return (a,b) -> function.apply(b);
+    }
+
 }
