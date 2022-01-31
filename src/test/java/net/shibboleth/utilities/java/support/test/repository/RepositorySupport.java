@@ -19,26 +19,40 @@ package net.shibboleth.utilities.java.support.test.repository;
 
 import javax.annotation.Nonnull;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-/**
- * Support class for working with the project version control repository.
- */
+/** Support class for working with the project version control repository. */
 public final class RepositorySupport {
     
     /** Constructor. */
     private RepositorySupport() { } 
     
     /**
-     * Build an HTTPS resource URL for the selected repository name and path.
+     * Build an HTTPS resource URL for the selected repository name and path on the main branch.
      * 
      * @param repoName the repository name.  If Git, do not include the ".git" suffix.
      * @param resourcePath The relative resource path within the repository, e.g. "foo/bar/baz/file.txt"
+     * 
      * @return the HTTPS resource URL
      */
     public static String buildHTTPSResourceURL(@Nonnull final String repoName, @Nonnull final String resourcePath) {
         return buildHTTPResourceURL(repoName, resourcePath, true);
+    }
+    
+    /**
+     * Build an HTTP/HTTPS resource URL for the selected repository name and path on the main branch.
+     * 
+     * @param repoName the repository name.  If Git, do not include a trailing ".git" suffix for bare repos.
+     * @param resourcePath The relative resource path within the repository, e.g. "foo/bar/baz/file.txt"
+     * @param https if true, use https if possible, otherwise use http
+     * 
+     * @return the HTTP(S) resource URL
+     */
+    public static String buildHTTPResourceURL(@Nonnull final String repoName, @Nonnull final String resourcePath, 
+            final boolean https) {
+        return buildHTTPResourceURL(repoName, resourcePath, true, "HEAD");
     }
     
     /**
@@ -47,10 +61,14 @@ public final class RepositorySupport {
      * @param repoName the repository name.  If Git, do not include a trailing ".git" suffix for bare repos.
      * @param resourcePath The relative resource path within the repository, e.g. "foo/bar/baz/file.txt"
      * @param https if true, use https if possible, otherwise use http
+     * @param branch code branch
+     * 
      * @return the HTTP(S) resource URL
+     * 
+     * @since 8.2.0
      */
     public static String buildHTTPResourceURL(@Nonnull final String repoName, @Nonnull final String resourcePath, 
-            final boolean https) {
+            final boolean https, @Nonnull @NotEmpty final String branch) {
         
         final String repo = Constraint.isNotNull(StringSupport.trimOrNull(repoName), 
                 "Repository name was null or empty");
@@ -62,10 +80,9 @@ public final class RepositorySupport {
         }
         
         if (https) {
-            return String.format("https://test.shibboleth.net/git/view/?p=%s.git&a=blob_plain&f=%s&hb=HEAD", repo, path);
+            return String.format("https://test.shibboleth.net/git/view/?p=%s.git&a=blob_plain&f=%s&hb=%s", repo, path, branch);
         }
-        return String.format("http://git.shibboleth.net/view/?p=%s.git&a=blob_plain&f=%s&hb=HEAD", repo, path);
-        
+        return String.format("http://git.shibboleth.net/view/?p=%s.git&a=blob_plain&f=%s&hb=%s", repo, branch);
     }
 
 }
