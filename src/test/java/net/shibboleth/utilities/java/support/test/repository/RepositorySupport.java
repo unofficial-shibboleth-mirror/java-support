@@ -38,7 +38,7 @@ public final class RepositorySupport {
      * @return the HTTPS resource URL
      */
     public static String buildHTTPSResourceURL(@Nonnull final String repoName, @Nonnull final String resourcePath) {
-        return buildHTTPResourceURL(repoName, resourcePath, true);
+        return buildHTTPResourceURL(repoName, resourcePath, true, "HEAD");
     }
     
     /**
@@ -52,7 +52,7 @@ public final class RepositorySupport {
      */
     public static String buildHTTPResourceURL(@Nonnull final String repoName, @Nonnull final String resourcePath, 
             final boolean https) {
-        return buildHTTPResourceURL(repoName, resourcePath, true, "HEAD");
+        return buildHTTPResourceURL(repoName, resourcePath, https, "HEAD");
     }
     
     /**
@@ -82,7 +82,7 @@ public final class RepositorySupport {
         if (https) {
             return String.format("https://test.shibboleth.net/git/view/?p=%s.git&a=blob_plain&f=%s&hb=%s", repo, path, branch);
         }
-        return String.format("http://git.shibboleth.net/view/?p=%s.git&a=blob_plain&f=%s&hb=%s", repo, branch);
+        return String.format("http://git.shibboleth.net/view/?p=%s.git&a=blob_plain&f=%s&hb=%s", repo, path, branch);
     }
 
 }
