@@ -469,7 +469,7 @@ public final class AttributeSupport {
      * @return true if the element has an attribute with the given name, false otherwise
      */
     public static boolean hasAttribute(@Nullable final Element element, @Nullable final QName name) {
-        if (element == name || name == null) {
+        if (element == null || name == null) {
             return false;
         }
 

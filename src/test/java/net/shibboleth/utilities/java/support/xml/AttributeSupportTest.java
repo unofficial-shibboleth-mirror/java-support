@@ -297,6 +297,10 @@ public class AttributeSupportTest {
     }
 
     @Test public void testHasAttribute() {
+        // either parameter null means a false result, not an NPE
+        Assert.assertFalse(AttributeSupport.hasAttribute(null, idAttrQName));
+        Assert.assertFalse(AttributeSupport.hasAttribute(createdElement, null));
+
         Assert.assertFalse(AttributeSupport.hasAttribute(createdElement, idAttrQName), "Attribute lookup by QName");
 
         Assert.assertTrue(AttributeSupport.hasAttribute(goodBaseIdSpaceLang, XMLConstants.XML_BASE_ATTRIB_NAME),
