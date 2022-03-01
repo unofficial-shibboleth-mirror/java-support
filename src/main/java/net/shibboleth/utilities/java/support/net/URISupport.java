@@ -31,8 +31,6 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.google.common.annotations.Beta;
-
 import net.shibboleth.utilities.java.support.collection.LazyList;
 import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
