@@ -20,6 +20,7 @@ package net.shibboleth.utilities.java.support.logic;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.google.common.base.Functions;
 
@@ -46,7 +47,7 @@ public final class FunctionSupport {
      * 
      * @return the constructed function
      */
-    @Nonnull public static <T1,T2> Function<T1,T2> constant(@Nonnull @ParameterName(name="target") final T2 target) {
+    @Nonnull public static <T1,T2> Function<T1,T2> constant(@Nullable @ParameterName(name="target") final T2 target) {
         return (Function<T1, T2>) Functions.constant(target);
     }
 
