@@ -27,6 +27,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.time.Duration;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -347,6 +349,18 @@ public class BasicKeystoreKeyStrategy extends AbstractInitializableComponent imp
             if (keystorePassword == null || keyPassword == null) {
                 log.info("Passwords not supplied, keystore left locked");
                 return;
+            }
+            
+            if (defaultKey == null) {
+                // Check for outdated key.
+                try {
+                    final long lastModified = keyVersionResource.lastModified();
+                    if (lastModified < Instant.now().minus(30, ChronoUnit.DAYS).toEpochMilli()) {
+                        log.warn("Keystore version resource unmodified in 30 days, consider rotating key");
+                    }
+                } catch (final IOException e) {
+                    log.debug("Unable to obtain keystore version resource modification time");
+                }
             }
             
             try (final InputStream is = keyVersionResource.getInputStream()) {
