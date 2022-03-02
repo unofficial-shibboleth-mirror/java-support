@@ -232,7 +232,7 @@ public class DataSealer extends AbstractInitializableComponent {
         
         try {
             final byte[] in;
-            if (wrapped.startsWith(MAGIC_STRING)) {
+            if (nodePrefix != null && wrapped.startsWith(MAGIC_STRING)) {
                 if (wrapped.regionMatches(MAGIC_STRING.length(), nodePrefix, 0, nodePrefix.length())) {
                     in = decoder.decode(wrapped.substring(MAGIC_STRING.length() +
                             nodePrefix.length()).getBytes(StandardCharsets.UTF_8));
