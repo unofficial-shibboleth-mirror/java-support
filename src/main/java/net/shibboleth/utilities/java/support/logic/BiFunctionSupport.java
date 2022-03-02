@@ -97,6 +97,8 @@ public final class BiFunctionSupport {
      * @param function the function to apply
      * 
      * @return the adapted object
+     * 
+     * @since 8.3.0
      */
     @Nonnull public static <A,B,C> BiFunction<A,B,C> forFunctionOfFirstArg(
             @Nonnull @ParameterName(name="function") final Function<? super A,? extends C> function) {
@@ -112,6 +114,8 @@ public final class BiFunctionSupport {
      * @param function the function to apply
      * 
      * @return the adapted object
+     * 
+     * @since 8.3.0
      */
     @Nonnull public static <A,B,C> BiFunction<A,B,C> forFunctionOfSecondArg(
             @Nonnull @ParameterName(name="function") final Function<? super B,? extends C> function) {
