@@ -45,6 +45,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.apache.commons.codec.BinaryDecoder;
 import org.apache.commons.codec.BinaryEncoder;
@@ -61,6 +62,9 @@ import org.slf4j.LoggerFactory;
  */
 public class DataSealer extends AbstractInitializableComponent {
 
+    /** Magic string to signal use of per-node prefix feature. */
+    @Nonnull @NotEmpty public static final String MAGIC_STRING = "PXR5";
+    
     /** Size of UTF-8 data chunks to read/write. */
     private static final int CHUNK_SIZE = 60000;
     
@@ -81,6 +85,9 @@ public class DataSealer extends AbstractInitializableComponent {
 
     /** Decodes encrypted string to bytes. */
     @Nonnull private BinaryDecoder decoder;
+    
+    /** Optional per-server node prefix to affix to encoded values. */
+    @Nullable private String nodePrefix;
     
     /** Constructor. */
     public DataSealer() {
@@ -148,6 +155,22 @@ public class DataSealer extends AbstractInitializableComponent {
         
         decoder = Constraint.isNotNull(d, "Decoder cannot be null");
     }
+    
+    /**
+     * Set a prefix to affix to wrapped values to support signaling to load balancers, etc.
+     * 
+     * <p>The prefix will itself be prefixed by {@link #MAGIC_STRING} for compatibility with
+     * unprefixed values.</p>
+     * 
+     * @param prefix node prefix
+     * 
+     * @since 8.3.0
+     */
+    public void setNodePrefix(@Nullable @NotEmpty final String prefix) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        nodePrefix = StringSupport.trimOrNull(prefix);
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -167,7 +190,11 @@ public class DataSealer extends AbstractInitializableComponent {
                 // Before we finish initialization, make sure that things are working.
                 testEncryption(keyStrategy.getDefaultKey().getSecond());
             }
-
+            
+            if (nodePrefix != null) {
+                log.info("DataSealer will attach prefix of {} + {} to wrapped values", MAGIC_STRING, nodePrefix);
+            }
+            
         } catch (final KeyException e) {
             log.error(e.getMessage());
             throw new ComponentInitializationException("Exception loading the keystore", e);
@@ -204,7 +231,17 @@ public class DataSealer extends AbstractInitializableComponent {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
         try {
-            final byte[] in = decoder.decode(wrapped.getBytes(StandardCharsets.UTF_8));
+            final byte[] in;
+            if (wrapped.startsWith(MAGIC_STRING)) {
+                if (wrapped.regionMatches(MAGIC_STRING.length(), nodePrefix, 0, nodePrefix.length())) {
+                    in = decoder.decode(wrapped.substring(MAGIC_STRING.length() +
+                            nodePrefix.length()).getBytes(StandardCharsets.UTF_8));
+                } else {
+                    throw new DataSealerException("Data was node-prefixed but prefix did not match the expected value");
+                }
+            } else {
+                in = decoder.decode(wrapped.getBytes(StandardCharsets.UTF_8));
+            }
 
             // Note: we don't technically need try-with-resources here b/c BAIS close() is a no-op
             // and DIS close() just calls close() on the wrapped stream. But do for consistency.
@@ -308,6 +345,7 @@ public class DataSealer extends AbstractInitializableComponent {
         return wrap(data, null);
     }
     
+// Checkstyle: MethodLength OFF
     /**
      * Encodes data into an AEAD-encrypted blob, gzip(exp|data)
      * 
@@ -380,6 +418,14 @@ public class DataSealer extends AbstractInitializableComponent {
                     finalDataStream.flush();
                     finalByteStream.flush();
 
+                    if (nodePrefix != null) {
+                        final StringBuilder builder = new StringBuilder(MAGIC_STRING)
+                                .append(nodePrefix)
+                                .append(new String(encoder.encode(finalByteStream.toByteArray()),
+                                        StandardCharsets.UTF_8));
+                        return builder.toString();
+                    }
+                    
                     return new String(encoder.encode(finalByteStream.toByteArray()), StandardCharsets.UTF_8);
                 }
             }
@@ -390,7 +436,8 @@ public class DataSealer extends AbstractInitializableComponent {
         }
 
     }
-
+// Checkstyle: MethodLength ON
+    
     /**
      * Run a test over the configured bean properties.
      * 

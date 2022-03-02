@@ -28,6 +28,7 @@ import java.time.Instant;
 import java.util.Arrays;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.springframework.core.io.ClassPathResource;
 import org.testng.Assert;
@@ -67,7 +68,8 @@ public class DataSealerTest {
         version2Resource = TestResourceConverter.of(resource);
     }
 
-    private DataSealer createDataSealer() throws DataSealerException, ComponentInitializationException {
+    private DataSealer createDataSealer(@Nullable @NotEmpty final String nodePrefix)
+            throws DataSealerException, ComponentInitializationException {
         final BasicKeystoreKeyStrategy strategy = new BasicKeystoreKeyStrategy();
         
         strategy.setKeyAlias("secret");
@@ -82,6 +84,7 @@ public class DataSealerTest {
         
         final DataSealer sealer = new DataSealer();
         sealer.setKeyStrategy(strategy);
+        sealer.setNodePrefix(nodePrefix);
         sealer.initialize();
         return sealer;
     }
@@ -106,7 +109,7 @@ public class DataSealerTest {
     }
 
     @Test public void encodeDecode() throws DataSealerException, ComponentInitializationException {
-        final DataSealer sealer = createDataSealer();
+        final DataSealer sealer = createDataSealer(null);
 
         final String encoded = sealer.wrap(THE_DATA);
         final StringBuffer alias = new StringBuffer(); 
@@ -114,8 +117,28 @@ public class DataSealerTest {
         Assert.assertEquals(alias.toString(), "secret1");
     }
 
+
+    @Test public void encodeDecodePrefixed() throws DataSealerException, ComponentInitializationException {
+        final DataSealer sealer = createDataSealer("serverA");
+
+        final String encoded = sealer.wrap(THE_DATA);
+        final StringBuffer alias = new StringBuffer(); 
+        Assert.assertEquals(sealer.unwrap(encoded, alias), THE_DATA);
+        Assert.assertEquals(alias.toString(), "secret1");
+    }
+
+
+    @Test(expectedExceptions=DataSealerException.class)
+    public void encodeDecodePrefixedWrong() throws DataSealerException, ComponentInitializationException {
+        final DataSealer sealer = createDataSealer("serverA");
+
+        final String encoded = sealer.wrap(THE_DATA);
+        final StringBuffer alias = new StringBuffer(); 
+        sealer.unwrap(encoded.replaceFirst("serverA", "serverB"), alias);
+    }
+
     @Test public void encodeDecodeWithExp() throws DataSealerException, ComponentInitializationException {
-        final DataSealer sealer = createDataSealer();
+        final DataSealer sealer = createDataSealer(null);
 
         final String encoded = sealer.wrap(THE_DATA, Instant.now().plusSeconds(50));
         final StringBuffer alias = new StringBuffer(); 
@@ -124,7 +147,7 @@ public class DataSealerTest {
     }
 
     @Test public void encodeDecodeSecondKey() throws DataSealerException, ComponentInitializationException {
-        final DataSealer sealer = createDataSealer();
+        final DataSealer sealer = createDataSealer(null);
         final DataSealer sealer2 = createDataSealer2();
 
         final StringBuffer alias = new StringBuffer(); 
@@ -137,7 +160,7 @@ public class DataSealerTest {
     }
     
     @Test public void timeOut() throws DataSealerException, InterruptedException, ComponentInitializationException {
-        final DataSealer sealer = createDataSealer();
+        final DataSealer sealer = createDataSealer(null);
 
         String encoded = sealer.wrap(THE_DATA, Instant.now().plus(THE_DELAY));
         Thread.sleep(THE_DELAY.toMillis() + 150);
@@ -150,7 +173,7 @@ public class DataSealerTest {
     }
 
     @Test public void encodeDecodeLong() throws DataSealerException, ComponentInitializationException {
-        final DataSealer sealer = createDataSealer();
+        final DataSealer sealer = createDataSealer(null);
         
         char[] buffer = new char[1000000];
         Arrays.fill(buffer, 'x');
@@ -171,7 +194,7 @@ public class DataSealerTest {
 
         }
 
-        sealer = createDataSealer();
+        sealer = createDataSealer(null);
 
         try {
             sealer.unwrap("");
