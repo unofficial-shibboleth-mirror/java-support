@@ -64,7 +64,10 @@ public class DataSealer extends AbstractInitializableComponent {
 
     /** Magic string to signal use of per-node prefix feature. */
     @Nonnull @NotEmpty public static final String MAGIC_STRING = "PXR5";
-    
+
+    /** Length of padded prefix. */
+    private static final int PREFIX_LEN = 10;
+
     /** Size of UTF-8 data chunks to read/write. */
     private static final int CHUNK_SIZE = 60000;
     
@@ -170,6 +173,14 @@ public class DataSealer extends AbstractInitializableComponent {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         nodePrefix = StringSupport.trimOrNull(prefix);
+        if (nodePrefix != null) {
+            if (nodePrefix.length() > PREFIX_LEN) {
+                throw new ConstraintViolationException(
+                        "DataSealer nodePrefix cannot be longer than " + Integer.toString(PREFIX_LEN) + " characters");
+            } else if (nodePrefix.length() < PREFIX_LEN) {
+                nodePrefix = nodePrefix.concat(new String("X").repeat(PREFIX_LEN - nodePrefix.length()));
+            }
+        }
     }
 
     /** {@inheritDoc} */
@@ -230,15 +241,18 @@ public class DataSealer extends AbstractInitializableComponent {
             throws DataSealerException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
+        final int magicLen = MAGIC_STRING.length();
+        
         try {
             final byte[] in;
-            if (nodePrefix != null && wrapped.startsWith(MAGIC_STRING)) {
-                if (wrapped.regionMatches(MAGIC_STRING.length(), nodePrefix, 0, nodePrefix.length())) {
-                    in = decoder.decode(wrapped.substring(MAGIC_STRING.length() +
-                            nodePrefix.length()).getBytes(StandardCharsets.UTF_8));
-                } else {
-                    throw new DataSealerException("Data was node-prefixed but prefix did not match the expected value");
+            if (wrapped.startsWith(MAGIC_STRING)) {
+                if (nodePrefix == null) {
+                    log.warn("Data was prefixed but no node prefix is configured");
+                } else if (!wrapped.regionMatches(magicLen, nodePrefix, 0, PREFIX_LEN)) {
+                    log.warn("Data was prefixed with {} but configured prefix is {}",
+                            wrapped.substring(magicLen, magicLen + PREFIX_LEN), nodePrefix);
                 }
+                in = decoder.decode(wrapped.substring(magicLen + PREFIX_LEN).getBytes(StandardCharsets.UTF_8));
             } else {
                 in = decoder.decode(wrapped.getBytes(StandardCharsets.UTF_8));
             }

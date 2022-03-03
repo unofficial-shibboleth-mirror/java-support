@@ -19,6 +19,7 @@ package net.shibboleth.utilities.java.support.security;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import net.shibboleth.utilities.java.support.resource.Resource;
 import net.shibboleth.utilities.java.support.security.impl.BasicKeystoreKeyStrategy;
 import net.shibboleth.utilities.java.support.test.resource.TestResourceConverter;
@@ -128,13 +129,14 @@ public class DataSealerTest {
     }
 
 
-    @Test(expectedExceptions=DataSealerException.class)
+    @Test
     public void encodeDecodePrefixedWrong() throws DataSealerException, ComponentInitializationException {
         final DataSealer sealer = createDataSealer("serverA");
 
         final String encoded = sealer.wrap(THE_DATA);
         final StringBuffer alias = new StringBuffer(); 
-        sealer.unwrap(encoded.replaceFirst("serverA", "serverB"), alias);
+        Assert.assertEquals(sealer.unwrap(encoded.replaceFirst("serverA", "serverB"), alias), THE_DATA);
+        Assert.assertEquals(alias.toString(), "secret1");
     }
 
     @Test public void encodeDecodeWithExp() throws DataSealerException, ComponentInitializationException {
@@ -194,19 +196,26 @@ public class DataSealerTest {
 
         }
 
+        try {
+            sealer = createDataSealer("prefixistoolong");
+            Assert.fail("allowed prefix too long");
+        } catch (final ConstraintViolationException e) {
+            // OK
+        }
+        
         sealer = createDataSealer(null);
-
+        
         try {
             sealer.unwrap("");
             Assert.fail("no data");
-        } catch (DataSealerException e) {
+        } catch (final DataSealerException e) {
             // OK
         }
 
         try {
             sealer.unwrap("RandomGarbage");
             Assert.fail("random data");
-        } catch (DataSealerException e) {
+        } catch (final DataSealerException e) {
             // OK
         }
 
@@ -217,14 +226,14 @@ public class DataSealerTest {
         try {
             sealer.unwrap(corrupted);
             Assert.fail("corrupted data");
-        } catch (DataSealerException e) {
+        } catch (final DataSealerException e) {
             // OK
         }
 
         try {
             sealer.wrap(nullValue(), Instant.ofEpochMilli(10));
             Assert.fail("no data");
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             // OK
         }
     }
