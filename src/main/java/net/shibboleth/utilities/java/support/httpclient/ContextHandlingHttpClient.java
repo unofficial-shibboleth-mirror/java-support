@@ -18,7 +18,6 @@
 package net.shibboleth.utilities.java.support.httpclient;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -82,7 +81,7 @@ class ContextHandlingHttpClient extends CloseableHttpClient {
      * @param client the wrapped client instance
      */
     public ContextHandlingHttpClient(@Nonnull final CloseableHttpClient client) {
-        this(client, null);
+        this(client, List.of());
     }
 
     /**
@@ -94,7 +93,7 @@ class ContextHandlingHttpClient extends CloseableHttpClient {
     public ContextHandlingHttpClient(@Nonnull final CloseableHttpClient client, 
             @Nonnull final List<HttpClientContextHandler> staticHandlers) {
         httpClient = Constraint.isNotNull(client, "HttpClient was null");
-        handlers = staticHandlers != null ? staticHandlers : Collections.emptyList();
+        handlers = Constraint.isNotNull(staticHandlers, "staticHandlers was null");
     }
 
     /** {@inheritDoc} */
