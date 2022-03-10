@@ -22,7 +22,6 @@
 
     <properties>
         <automatic.module.name>net.shibboleth.utilities.java.support</automatic.module.name>
-        <net.shibboleth.maven.enforcer.rules.checkM2>false</net.shibboleth.maven.enforcer.rules.checkM2>
     </properties>
 
     <repositories>
@@ -200,44 +199,6 @@
                     </archive>
                 </configuration>
              </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <dependencies>
-                    <dependency>
-                        <groupId>net.shibboleth.maven.enforcer.rules</groupId>
-                        <artifactId>maven-dist-enforcer</artifactId>
-                        <version>3.1.1-SNAPSHOT</version>
-                    </dependency>
-                </dependencies>
-                <executions>
-                    <execution>
-                        <id>idp-enforce</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                                <jarEnforcer implementation="net.shibboleth.mvn.enforcer.impl.JarEnforcer">
-                                    <dataGroupId>net.shibboleth.maven.enforcer.rules</dataGroupId>
-                                    <dataArtifactId>maven-dist-enforcer-data</dataArtifactId>
-                                    <dataVersion>1.0.1-SNAPSHOT</dataVersion>
-                                    <dataKeyRing>${basedir}/src/main/enforcer/shibbolethKeys.gpg</dataKeyRing>
-                                    <parentPomDir>.</parentPomDir>
-                                    <zipFiles/>
-                                    <tgzFiles/>
-                                    <checkSignatures>false</checkSignatures>
-                                    <checkDependencies>false</checkDependencies>
-				    <compileRuntimeArtifactFatal>false</compileRuntimeArtifactFatal>
-                                    <listJarSources>false</listJarSources>
-                                    <checkM2>${net.shibboleth.maven.enforcer.rules.checkM2}</checkM2>
-                                </jarEnforcer>
-                            </rules>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 
