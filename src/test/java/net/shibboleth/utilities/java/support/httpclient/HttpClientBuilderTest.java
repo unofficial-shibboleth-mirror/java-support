@@ -30,6 +30,7 @@ import org.testng.annotations.Test;
 
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
+@SuppressWarnings("javadoc")
 public class HttpClientBuilderTest {
     
     // Default timeouts

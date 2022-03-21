@@ -26,6 +26,7 @@ import org.apache.http.client.protocol.HttpClientContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+@SuppressWarnings("javadoc")
 public class HttpClientSupportTest {
 
 

@@ -41,6 +41,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+@SuppressWarnings("javadoc")
 public class ContextHandlingHttpClientTest {
     
     public static final CloseableHttpResponse STATIC_RESPONSE_HTTP = new MockCloseableHttpResponse(new ProtocolVersion("HTTP", 1, 1), HttpStatus.SC_OK, "OK");

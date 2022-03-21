@@ -28,6 +28,7 @@ import org.testng.annotations.Test;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 
 /** {@link IdleConnectionSweeper} unit test. */
+@SuppressWarnings("javadoc")
 public class IdleConectionSweeperTest {
 
     private final Duration SWEEP_INTERVAL = Duration.ofMillis(50);
@@ -71,7 +72,7 @@ public class IdleConectionSweeperTest {
                 // Windows sometimes takes its time...
                 Thread.sleep(SWEEP_INTERVAL.toMillis());
                 Thread.yield();
-                Assert.assertTrue(++loopCount != 5); // 5 time 50 ms is quarter of a second
+                Assert.assertTrue(++loopCount != 5); // 5 timed 50 ms is quarter of a second
             }
         }
 

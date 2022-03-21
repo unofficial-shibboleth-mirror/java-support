@@ -20,6 +20,7 @@ package net.shibboleth.utilities.java.support.httpclient;
 import org.apache.http.client.HttpClient;
 import org.testng.annotations.Test;
 
+@SuppressWarnings("javadoc")
 public class FileCachingHttpClientBuilderTest {
     
     @Test
