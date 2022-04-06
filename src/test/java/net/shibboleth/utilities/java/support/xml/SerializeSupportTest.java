@@ -30,6 +30,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.w3c.dom.Attr;
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -214,6 +215,42 @@ public class SerializeSupportTest {
         Assert.assertEquals(SerializeSupport.nodeToString(dom.getFirstChild()), SerializeSupport.nodeToString(parent),
                 "Should serialize to same output");
         assertEquals(dom.getFirstChild(), parent);
-
     }
+
+    /**
+     * This test should in fact fail because the default XML version of 1.0 should not allow for
+     * the ASCII 25 code point in the text node.
+     * 
+     * @throws XMLParserException
+     */
+    @Test(enabled=false) public void testXMLVersion() throws XMLParserException {
+        
+        final Document doc = parserPool.newDocument();
+        final Element root = doc.createElementNS(null, "test");
+        doc.appendChild(root);
+        final StringBuilder data = new StringBuilder("foo");
+        data.append((char) 25);
+        data.append("bar");
+        final Text text = doc.createTextNode(data.toString());
+        root.appendChild(text);
+        
+        final DOMImplementationLS domLS = SerializeSupport.getDOMImplementationLS(parent);
+        final LSSerializer serializer = SerializeSupport.getLSSerializer(domLS, null);
+        // Should be the default.
+        //serializer.getDomConfig().setParameter("well-formed", true);
+
+        final LSOutput serializerOut = domLS.createLSOutput();
+        final ByteArrayOutputStream output = new ByteArrayOutputStream();
+        serializerOut.setByteStream(output);
+
+        try {
+            serializer.write(doc, serializerOut);
+            Assert.fail("Should have thrown a DOM error.");
+        } catch (final DOMException e) {
+            // expected
+        }
+        
+        //System.out.println(output.toString());
+    }
+    
 }
