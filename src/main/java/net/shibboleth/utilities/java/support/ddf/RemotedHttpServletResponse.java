@@ -65,10 +65,19 @@ public class RemotedHttpServletResponse implements HttpServletResponse {
      *
      * @param ddf object to capture response
      */
-    public RemotedHttpServletResponse(final DDF ddf) {
+    public RemotedHttpServletResponse(@Nonnull final DDF ddf) {
         obj = Constraint.isNotNull(ddf, "DDF cannot be null");
         obj.structure();
         bufferSize = 1024;
+    }
+    
+    /**
+     * Gets the underlying object containing the response data.
+     * 
+     * @return remoted data object
+     */
+    @Nonnull public DDF getDDF() {
+        return obj;
     }
     
     /** {@inheritDoc} */

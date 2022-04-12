@@ -112,6 +112,15 @@ public class RemotedHttpServletRequest implements HttpServletRequest {
         obj = Constraint.isNotNull(ddf, "DDF cannot be null");
     }
     
+    /**
+     * Gets the underlying object containing the remoted data.
+     * 
+     * @return remoted data object
+     */
+    @Nonnull public DDF getDDF() {
+        return obj;
+    }
+    
     /** {@inheritDoc} */
     public Object getAttribute(final String name) {
         // TODO: might use this to expose certain "standard" pieces of information
