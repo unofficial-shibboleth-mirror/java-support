@@ -17,7 +17,7 @@
          build (to populate the javadoc, which is consumed by the
          Jenkins 'nightly' builds).
     -->
-    <version>8.3.0</version>
+    <version>8.3.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <properties>
