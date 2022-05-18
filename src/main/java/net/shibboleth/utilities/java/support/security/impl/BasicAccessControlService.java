@@ -31,7 +31,6 @@ import jakarta.servlet.ServletRequest;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.security.AccessControl;
 import net.shibboleth.utilities.java.support.security.AccessControlService;
@@ -56,17 +55,20 @@ public class BasicAccessControlService extends AbstractIdentifiableInitializable
      * 
      * @param map map of named policies
      */
-    public void setPolicyMap(@Nonnull @NonnullElements final Map<String,AccessControl> map) {
+    public void setPolicyMap(@Nullable @NonnullElements final Map<String,AccessControl> map) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        Constraint.isNotNull(map, "Policy map cannot be null");
         
-        policyMap = new HashMap<>(map.size());
-        
-        for (final Map.Entry<String,AccessControl> entry : map.entrySet()) {
-            final String trimmed = StringSupport.trimOrNull(entry.getKey());
-            if (trimmed != null && entry.getValue() != null) {
-                policyMap.put(trimmed, entry.getValue());
+        if (map != null) {
+            policyMap = new HashMap<>(map.size());
+            
+            for (final Map.Entry<String,AccessControl> entry : map.entrySet()) {
+                final String trimmed = StringSupport.trimOrNull(entry.getKey());
+                if (trimmed != null && entry.getValue() != null) {
+                    policyMap.put(trimmed, entry.getValue());
+                }
             }
+        } else {
+            policyMap = Collections.emptyMap();
         }
     }
 
