@@ -77,7 +77,7 @@ public class DDF implements Iterable<DDF> {
         /** A string value. */
         DDF_STRING(1),
         
-        /** An integral value. */
+        /** An integral value of no more than 32-bits. */
         DDF_INT(2),
         
         /** A floating point value. */
@@ -93,7 +93,10 @@ public class DDF implements Iterable<DDF> {
         DDF_POINTER(6),
         
         /** A string that cannot be assumed to be UTF-8 (see above docs). */
-        DDF_STRING_UNSAFE(7);
+        DDF_STRING_UNSAFE(7),
+        
+        /** An integral value of no more than 64-bits. */
+        DDF_LONG(8);
         
         /** Type value. */
         private final int value;
@@ -162,6 +165,10 @@ public class DDF implements Iterable<DDF> {
                     
                 case 7:
                     type = DDF_STRING_UNSAFE;
+                    break;
+                
+                case 8:
+                    type = DDF_LONG;
                     break;
                     
                 default:
@@ -240,6 +247,19 @@ public class DDF implements Iterable<DDF> {
      * <p>For compatibility, the name is constrained to <= 255 characters.</p>
      *
      * @param n node name
+     * @param val long integer value
+     */
+    public DDF(@Nullable @NotEmpty final String n, final long val) {
+        this(n);
+        longinteger(val);
+    }
+
+    /**
+     * Constructor.
+     *
+     * <p>For compatibility, the name is constrained to <= 255 characters.</p>
+     *
+     * @param n node name
      * @param val floating value
      */
     public DDF(@Nullable @NotEmpty final String n, final double val) {
@@ -302,6 +322,10 @@ public class DDF implements Iterable<DDF> {
                 
             case DDF_INT:
                 dup.integer((Integer) value);
+                break;
+
+            case DDF_LONG:
+                dup.longinteger((Long) value);
                 break;
                 
             case DDF_FLOAT:
@@ -406,6 +430,15 @@ public class DDF implements Iterable<DDF> {
     }
 
     /**
+     * Returns true iff the node is a long integer.
+     * 
+     * @return true iff the node is a long integer
+     */
+    public boolean islong() {
+        return type == DDFType.DDF_LONG;
+    }
+    
+    /**
      * Returns true iff the node is a floating point.
      * 
      * @return true iff the node is a floating point
@@ -476,6 +509,8 @@ public class DDF implements Iterable<DDF> {
         switch(type) {
             case DDF_INT:
                 return (Integer) value;
+            case DDF_LONG:
+                return ((Long) value).intValue();
             case DDF_FLOAT:
                 return ((Double) value).intValue();
             case DDF_STRING:
@@ -489,6 +524,41 @@ public class DDF implements Iterable<DDF> {
                 return ((Map<?,?>) value).size();
             case DDF_LIST:
                 return ((List<?>) value).size();
+            default:
+                break;
+        }
+        
+        return null;
+    }
+
+    /**
+     * Get the long integer value of this node.
+     * 
+     * <p>Longs are coerced from other types based on numeric conversions
+     * or the count of a structure or list.</p> 
+     * 
+     * @return the long integer value or null
+     */
+    @Nullable public Long longinteger() {
+        
+        switch(type) {
+            case DDF_INT:
+                return ((Integer) value).longValue();
+            case DDF_LONG:
+                return (Long) value;
+            case DDF_FLOAT:
+                return ((Double) value).longValue();
+            case DDF_STRING:
+                try {
+                    return Long.valueOf((String) value);
+                } catch (final NumberFormatException e) {
+                    // Swallow.
+                    return null;
+                }
+            case DDF_STRUCT:
+                return (long) ((Map<?,?>) value).size();
+            case DDF_LIST:
+                return (long) ((List<?>) value).size();
             default:
                 break;
         }
@@ -509,6 +579,8 @@ public class DDF implements Iterable<DDF> {
         switch(type) {
             case DDF_INT:
                 return ((Integer) value).doubleValue();
+            case DDF_LONG:
+                return ((Long) value).doubleValue();
             case DDF_FLOAT:
                 return (Double) value;
             case DDF_STRING:
@@ -601,6 +673,17 @@ public class DDF implements Iterable<DDF> {
      * 
      * @return this object
      */
+    @Nonnull public DDF string(final long val) {
+        return string(Long.toString(val));
+    }
+    
+    /**
+     * Converts this node to a string type/value based on the converted form of the input.
+     * 
+     * @param val input value
+     * 
+     * @return this object
+     */
     @Nonnull public DDF string(final double val) {
         return string(Double.toString(val));
     }
@@ -634,6 +717,38 @@ public class DDF implements Iterable<DDF> {
             return integer(Integer.valueOf(val));
         } catch (final NumberFormatException e) {
             return integer(0);
+        }
+    }
+
+    /**
+     * Converts this node to a long integer type/value.
+     * 
+     * @param val value to inject
+     * 
+     * @return this object
+     */
+    @Nonnull public DDF longinteger(final long val) {
+        empty();
+        value = Long.valueOf(val);
+        type = DDFType.DDF_LONG;
+        return this;
+    }
+
+    /**
+     * Converts this node to a long integer type/value based on the converted form of the input.
+     * 
+     * <p>A conversion error will assign zero as the value.</p>
+     * 
+     * @param val value to inject
+     * 
+     * @return this object
+     */
+    @Nonnull public DDF longinteger(@Nonnull @NotEmpty final String val) {
+        empty();
+        try {
+            return longinteger(Long.valueOf(val));
+        } catch (final NumberFormatException e) {
+            return longinteger(0);
         }
     }
 
@@ -1089,6 +1204,14 @@ public class DDF implements Iterable<DDF> {
                 builder.append(" = ").append(value);
                 break;
 
+            case DDF_LONG:
+                builder.append("Long");
+                if (name != null) {
+                    builder.append(' ').append(name);
+                }
+                builder.append(" = ").append(value);
+                break;
+
             case DDF_FLOAT:
                 builder.append("Double");
                 if (name != null) {
@@ -1202,6 +1325,13 @@ public class DDF implements Iterable<DDF> {
                     os.write(Integer.toString(type.getValue()).getBytes("UTF8"));
                     os.write(' ');
                     os.write(Integer.toString((Integer) value).getBytes("UTF8"));
+                    os.write('\n');
+                    break;
+
+                case DDF_LONG:
+                    os.write(Integer.toString(type.getValue()).getBytes("UTF8"));
+                    os.write(' ');
+                    os.write(Long.toString((Long) value).getBytes("UTF8"));
                     os.write('\n');
                     break;
 
@@ -1360,6 +1490,7 @@ public class DDF implements Iterable<DDF> {
                 }
 
             case DDF_INT:
+            case DDF_LONG:
             case DDF_FLOAT:
                 if (ch != 0x20) {
                     throw new IOException("Type field not followed by space character");
@@ -1383,6 +1514,8 @@ public class DDF implements Iterable<DDF> {
                 
                 if (type == DDFType.DDF_INT) {
                     return obj.integer(valueBuilder.toString());
+                } else if (type == DDFType.DDF_LONG) {
+                    return obj.longinteger(valueBuilder.toString());
                 }
                 return obj.floating(valueBuilder.toString());
                 

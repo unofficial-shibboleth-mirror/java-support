@@ -56,6 +56,11 @@ public class DDFTest {
         assertTrue(obj.isint());
         assertEquals(obj.integer(), Integer.valueOf(42));
 
+        obj = new DDF("foo", 42000000000L);
+        assertEquals(obj.name(), "foo");
+        assertTrue(obj.islong());
+        assertEquals(obj.longinteger(), Long.valueOf(42000000000L));
+
         obj = new DDF("foo", 42.42);
         assertEquals(obj.name(), "foo");
         assertTrue(obj.isfloat());
@@ -92,7 +97,17 @@ public class DDFTest {
         assertTrue(obj.isint());
         assertEquals(obj.integer(), Integer.valueOf(42));
         assertEquals(obj.floating(), Double.valueOf(42));
-        
+                
+        obj.longinteger(42000000000L);
+        assertTrue(obj.islong());
+        assertEquals(obj.longinteger(), Long.valueOf(42000000000L));
+        assertEquals(obj.floating(), Double.valueOf(42000000000L));
+
+        obj.longinteger("42000000000");
+        assertTrue(obj.islong());
+        assertEquals(obj.longinteger(), Long.valueOf(42000000000L));
+        assertEquals(obj.floating(), Double.valueOf(42000000000L));
+
         obj.floating(42.42);
         assertTrue(obj.isfloat());
         assertEquals(obj.integer(), Integer.valueOf(42));
@@ -230,6 +245,11 @@ public class DDFTest {
             assertEquals(sink.toByteArray(), testFile("int-name.ddf"));
             sink.reset();
 
+            obj.longinteger(42000000000L);
+            obj.serialize(sink);
+            assertEquals(sink.toByteArray(), testFile("long-name.ddf"));
+            sink.reset();
+
             obj.floating(42.1315927);
             obj.serialize(sink);
             assertEquals(sink.toByteArray(), testFile("float-name.ddf"));
@@ -296,6 +316,13 @@ public class DDFTest {
             assertTrue(obj.isint());
             assertEquals(obj.name(), "foo bar");
             assertEquals(obj.integer(), Integer.valueOf(42));
+        }
+        
+        try (final InputStream is = getClass().getResourceAsStream("long-name.ddf")) {
+            final DDF obj = DDF.deserialize(is);
+            assertTrue(obj.islong());
+            assertEquals(obj.name(), "foo bar");
+            assertEquals(obj.longinteger(), Long.valueOf(42000000000L));
         }
 
         try (final InputStream is = getClass().getResourceAsStream("float-name.ddf")) {
@@ -446,7 +473,6 @@ public class DDFTest {
         } catch (final IOException e) {
             
         }
-
     }
     
 }
