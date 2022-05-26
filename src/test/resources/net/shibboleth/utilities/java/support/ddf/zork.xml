@@ -1,0 +1,5 @@
+<root foo="bar">
+    <zork zorkmids="10" underground="true" />
+    
+    <frobnitz>grue</frobnitz>
+</root>
