@@ -35,10 +35,10 @@ import net.shibboleth.utilities.java.support.xml.ElementSupport;
 public final class DDFSupport {
 
     /** Name of child element member created by {@link #fromElement(Element)} method. */
-    @Nonnull @NotEmpty static final String CHILD_ELEMENTS_MEMBER = "_children";
+    @Nonnull @NotEmpty public static final String CHILD_ELEMENTS_MEMBER = "_children";
 
     /** Name of content member created by {@link #fromElement(Element)} method. */
-    @Nonnull @NotEmpty static final String CONTENT_MEMBER = "_content";
+    @Nonnull @NotEmpty public static final String CONTENT_MEMBER = "_content";
 
     /** Private constructor. */
     private DDFSupport() {
@@ -62,7 +62,7 @@ public final class DDFSupport {
      * 
      * @return the converted object
      */
-    static @Nonnull DDF fromElement(@Nonnull final Element element) {
+    @Nonnull public static DDF fromElement(@Nonnull final Element element) {
         
         Constraint.isNotNull(element, "Element cannot be null");
         

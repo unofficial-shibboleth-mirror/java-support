@@ -37,7 +37,7 @@ import net.shibboleth.utilities.java.support.xml.XMLParserException;
  */
 public class DDFSupportTest {
     
-    @Nullable BasicParserPool parserPool;
+    @Nullable private BasicParserPool parserPool;
     
     /**
      * Init parser.
