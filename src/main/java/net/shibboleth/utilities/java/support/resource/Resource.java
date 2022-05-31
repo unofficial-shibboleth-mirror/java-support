@@ -139,18 +139,18 @@ public interface Resource {
 
     /**
      * Determine a filename for this resource, i.e. typically the last part of the path: for example, "myfile.txt".
-     * <p>
-     * 
+     *
      * @return {@code null} if this type of resource does not have a filename, otherwise the file name.
-     * 
      */
     String getFilename();
 
     /**
      * Return a description for this resource, to be used for error output when working with the resource.
+     *
      * <p>
      * Implementations are also encouraged to return this value from their {@code toString} method.
-     * 
+     * </p>
+     *
      * @see Object#toString()
      * @return a description for this resource.
      */
