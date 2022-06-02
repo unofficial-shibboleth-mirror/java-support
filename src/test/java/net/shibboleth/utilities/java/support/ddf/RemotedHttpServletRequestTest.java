@@ -22,7 +22,7 @@ import static org.testng.Assert.*;
 import java.io.IOException;
 import java.util.List;
 
-import javax.servlet.http.Cookie;
+import jakarta.servlet.http.Cookie;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;

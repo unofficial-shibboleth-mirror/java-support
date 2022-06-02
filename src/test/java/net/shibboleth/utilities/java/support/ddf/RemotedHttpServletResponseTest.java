@@ -25,7 +25,7 @@ import java.io.PrintWriter;
 import java.time.Instant;
 import java.util.Set;
 
-import javax.servlet.http.Cookie;
+import jakarta.servlet.http.Cookie;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
