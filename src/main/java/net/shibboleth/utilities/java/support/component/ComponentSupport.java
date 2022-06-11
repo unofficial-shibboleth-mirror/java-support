@@ -24,6 +24,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /** Support class for working with {@link Component} objects. */
+@Deprecated
 public final class ComponentSupport {
 
     /** Constructor. */
