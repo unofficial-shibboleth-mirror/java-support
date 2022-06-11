@@ -41,6 +41,40 @@ public abstract class AbstractIdentifiedInitializableComponent extends AbstractI
     @Nullable @NonnullAfterInit public synchronized String getId() {
         return id;
     }
+    
+    /**
+     * Checks if the component is destroyed and, if so, throws a {@link DestroyedComponentException}.
+     */
+    protected final void ifDestroyedThrowDestroyedComponentException() {
+        if (isDestroyed()) {
+            throw new DestroyedComponentException("Component '"
+                    + StringSupport.trimOrNull(getId())
+                    + "' has already been destroyed and can no longer be used.");
+        }
+    }
+
+    /**
+     * Checks if a component has not been initialized and, if so, throws a {@link UninitializedComponentException}.
+     */
+    protected final void ifNotInitializedThrowUninitializedComponentException() {
+        if (!isInitialized()) {
+            throw new UninitializedComponentException("Component '"
+                    + StringSupport.trimOrNull(getId())
+                    + "' has not yet been initialized and cannot be used.");
+        }
+    }
+
+    /**
+     * Checks if a component has been initialized and, if so, throws a {@link UnmodifiableComponentException}.
+     */
+    protected final void ifInitializedThrowUnmodifiabledComponentException() {
+        if (isInitialized()) {
+            throw new UnmodifiableComponentException("Component '"
+                    + StringSupport.trimOrNull(getId())
+                    + "' has already been initialized and can no longer be modified");
+        }
+    }
+
 
     /**
      * Sets the ID of this component. The component must not yet be initialized.
@@ -48,7 +82,7 @@ public abstract class AbstractIdentifiedInitializableComponent extends AbstractI
      * @param componentId ID of the component
      */
     protected synchronized void setId(@Nonnull @NotEmpty final String componentId) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
 
         id = Constraint.isNotNull(StringSupport.trimOrNull(componentId), "Component ID can not be null or empty");
     }

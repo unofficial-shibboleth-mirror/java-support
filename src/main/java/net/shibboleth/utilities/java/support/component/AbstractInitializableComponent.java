@@ -57,13 +57,60 @@ public abstract class AbstractInitializableComponent implements DestructableComp
     /** {@inheritDoc} */
     @Override
     public final synchronized void initialize() throws ComponentInitializationException {
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+        ifDestroyedThrowDestroyedComponentException();
         if (isInitialized()) {
             return;
         }
 
         doInitialize();
         isInitialized = true;
+    }
+    
+    /**
+     * Checks if the component is destroyed and, if so, throws a {@link DestroyedComponentException}.
+     */
+    protected void ifDestroyedThrowDestroyedComponentException() {
+        if (isDestroyed()) {
+            throw new DestroyedComponentException(
+                    "Unidentified Component has already been destroyed and can no longer be used.");
+        }
+    }
+
+    /**
+     * Checks if a component has not been initialized and, if so, throws a {@link UninitializedComponentException}.
+     */
+    protected void ifNotInitializedThrowUninitializedComponentException() {
+        if (!isInitialized()) {
+            throw new UninitializedComponentException(
+                    "Unidentified Component has not yet been initialized and cannot be used.");
+        }
+    }
+
+    /**
+     * Checks if a component has been initialized and, if so, throws a {@link UnmodifiableComponentException}.
+     */
+    protected void ifInitializedThrowUnmodifiabledComponentException() {
+        if (isInitialized()) {
+            throw new UnmodifiableComponentException(
+                    "Unidentified Component has already been initialized and can no longer be modified");
+        }
+    }
+
+    /**
+     * Helper for a setter method to check the standard preconditions.
+     */
+    protected final void throwSetterPreconditionExceptions() {
+        ifDestroyedThrowDestroyedComponentException();
+        ifInitializedThrowUnmodifiabledComponentException();
+    }
+
+    /**
+     * Helper for any method to throw appropriate exceptions if we are either
+     * not initialized, or have been destroyed.
+     */
+    protected final void throwComponentStateExceptions() {
+        ifDestroyedThrowDestroyedComponentException();
+        ifNotInitializedThrowUninitializedComponentException();
     }
 
     /**
