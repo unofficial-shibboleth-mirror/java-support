@@ -37,12 +37,14 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.crypto.SecretKey;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -50,9 +52,6 @@ import net.shibboleth.utilities.java.support.primitive.TimerSupport;
 import net.shibboleth.utilities.java.support.resource.Resource;
 import net.shibboleth.utilities.java.support.security.DataSealerKeyStrategy;
 import net.shibboleth.utilities.java.support.security.KeyNotFoundException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -119,7 +118,7 @@ public class BasicKeystoreKeyStrategy extends AbstractInitializableComponent imp
      * @param type the keystore type
      */
     public void setKeystoreType(@Nonnull @NotEmpty final String type) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         
         keystoreType = Constraint.isNotNull(StringSupport.trimOrNull(type), "Keystore type cannot be null or empty");
     }
@@ -130,7 +129,7 @@ public class BasicKeystoreKeyStrategy extends AbstractInitializableComponent imp
      * @param resource the keystore resource
      */
     public void setKeystoreResource(@Nonnull @NotEmpty final Resource resource) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         
         keystoreResource = Constraint.isNotNull(resource, "Keystore resource cannot be null");
     }
@@ -141,7 +140,7 @@ public class BasicKeystoreKeyStrategy extends AbstractInitializableComponent imp
      * @param resource the key version resource
      */
     public void setKeyVersionResource(@Nonnull @NotEmpty final Resource resource) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         
         keyVersionResource = Constraint.isNotNull(resource, "Key version resource cannot be null");
     }
@@ -175,7 +174,7 @@ public class BasicKeystoreKeyStrategy extends AbstractInitializableComponent imp
      * @param alias the encryption key alias base
      */
     public void setKeyAlias(@Nonnull @NotEmpty final String alias) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         
         keyAlias = Constraint.isNotNull(StringSupport.trimOrNull(alias),
                 "Key alias base cannot be null or empty");
@@ -213,7 +212,7 @@ public class BasicKeystoreKeyStrategy extends AbstractInitializableComponent imp
      * @param interval time between key update checks
      */
     public void setUpdateInterval(@Nonnull final Duration interval) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         
         Constraint.isNotNull(interval, "Interval cannot be null");
         Constraint.isFalse(interval.isNegative(), "Interval cannot be negative");
@@ -229,7 +228,7 @@ public class BasicKeystoreKeyStrategy extends AbstractInitializableComponent imp
      * @param timer timer used to schedule update tasks
      */
     public void setUpdateTaskTimer(@Nullable final Timer timer) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
 
         updateTaskTimer = timer;
     }
@@ -291,7 +290,7 @@ public class BasicKeystoreKeyStrategy extends AbstractInitializableComponent imp
     /** {@inheritDoc} */
     @Override
     @Nonnull public Pair<String,SecretKey> getDefaultKey() throws KeyException {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        throwComponentStateExceptions();
         
         synchronized(this) {
             if (defaultKey != null) {

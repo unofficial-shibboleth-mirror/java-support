@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 import jakarta.servlet.ServletRequest;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.security.AccessControl;
 import net.shibboleth.utilities.java.support.security.AccessControlService;
@@ -55,8 +55,8 @@ public class BasicAccessControlService extends AbstractIdentifiableInitializable
      * 
      * @param map map of named policies
      */
-    public void setPolicyMap(@Nullable @NonnullElements final Map<String,AccessControl> map) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+    public void setPolicyMap(@Nonnull @NonnullElements final Map<String,AccessControl> map) {
+        throwSetterPreconditionExceptions();
         
         if (map != null) {
             policyMap = new HashMap<>(map.size());

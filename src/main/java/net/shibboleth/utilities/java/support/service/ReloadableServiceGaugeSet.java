@@ -16,6 +16,13 @@
  */
 package net.shibboleth.utilities.java.support.service;
 
+import java.time.Instant;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.annotation.Nonnull;
+
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.Metric;
 import com.codahale.metrics.MetricFilter;
@@ -29,15 +36,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-
-import java.time.Instant;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.annotation.Nonnull;
 
 /**
  * A set of gauges for a reloadable service.
@@ -106,7 +105,7 @@ public class ReloadableServiceGaugeSet<T> extends AbstractInitializableComponent
      * @param svc service instance
      */
     public void setService(@Nonnull final ReloadableService<T> svc) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         
         service = Constraint.isNotNull(svc, "ReloadableService cannot be null");
     }

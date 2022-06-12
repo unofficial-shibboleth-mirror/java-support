@@ -24,20 +24,18 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.net.HttpServletSupport;
-import net.shibboleth.utilities.java.support.net.IPRange;
-import net.shibboleth.utilities.java.support.security.AccessControl;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.net.InetAddresses;
 
 import jakarta.servlet.ServletRequest;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.net.HttpServletSupport;
+import net.shibboleth.utilities.java.support.net.IPRange;
+import net.shibboleth.utilities.java.support.security.AccessControl;
 
 /**
  * Simple access control implementation based on IP address checking.
@@ -64,7 +62,7 @@ public class IPRangeAccessControl extends AbstractIdentifiableInitializableCompo
      * @param ranges ranges to allow
      */
     public void setAllowedRanges(@Nonnull @NonnullElements final Collection<IPRange> ranges) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         Constraint.isNotNull(ranges, "IPRange collection cannot be null");
         
         allowedRanges = List.copyOf(ranges);

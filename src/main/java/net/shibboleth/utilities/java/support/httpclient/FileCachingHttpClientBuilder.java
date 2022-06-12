@@ -25,15 +25,6 @@ import java.util.TimerTask;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.component.DestructableComponent;
-import net.shibboleth.utilities.java.support.component.InitializableComponent;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.primitive.TimerSupport;
-
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.client.ClientProtocolException;
@@ -47,6 +38,17 @@ import org.apache.http.impl.client.cache.ManagedHttpCacheStorage;
 import org.apache.http.protocol.HttpContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
+import net.shibboleth.utilities.java.support.component.DestructableComponent;
+import net.shibboleth.utilities.java.support.component.InitializableComponent;
+import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.primitive.TimerSupport;
 
 /**
  * An {@link org.apache.http.client.HttpClient} builder that supports RFC 2616 caching.
@@ -301,12 +303,27 @@ public class FileCachingHttpClientBuilder extends HttpClientBuilder {
            maintenanceTaskInterval = taskInterval;
         }
 
+        /**
+         * Common code (exbedded from {@link AbstractInitializableComponent} to check
+         * component state.
+         */
+        protected final void throwComponentStateExceptions() {
+            if (!isInitialized()) {
+                throw new UninitializedComponentException(
+                        "StorageManagingHttpClient has not yet been initialized and cannot be used.");
+            }
+            if (isDestroyed()) {
+                throw new DestroyedComponentException(
+                        "StorageManagingHttpClient has already been destroyed and can no longer be used.");
+            }
+        }
+
+
         /** {@inheritDoc} */
         protected CloseableHttpResponse doExecute(final HttpHost target, final HttpRequest request,
                 final HttpContext context)
                 throws IOException, ClientProtocolException {
-            ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-            ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+            throwComponentStateExceptions();
             return httpClient.execute(target, request, context);
         }
 
@@ -314,8 +331,7 @@ public class FileCachingHttpClientBuilder extends HttpClientBuilder {
         @Override
         @Deprecated
         public org.apache.http.params.HttpParams getParams() {
-            ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-            ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+            throwComponentStateExceptions();
             return httpClient.getParams();
         }
         
@@ -323,16 +339,14 @@ public class FileCachingHttpClientBuilder extends HttpClientBuilder {
         @Override
         @Deprecated
         public org.apache.http.conn.ClientConnectionManager getConnectionManager() {
-            ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-            ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+            throwComponentStateExceptions();
             return httpClient.getConnectionManager();
         }
 
         /** {@inheritDoc} */
         @Override
         public void close() throws IOException {
-            ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-            ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+            throwComponentStateExceptions();
             httpClient.close();
         }
 

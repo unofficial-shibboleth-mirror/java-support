@@ -37,22 +37,21 @@ import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.collection.Pair;
-import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
 import org.apache.commons.codec.BinaryDecoder;
 import org.apache.commons.codec.BinaryEncoder;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.collection.Pair;
+import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 
 /**
@@ -109,7 +108,7 @@ public class DataSealer extends AbstractInitializableComponent {
      * @since 7.4.0
      */
     public void setLockedAtStartup(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         
         lockedAtStartup = flag;
     }
@@ -120,7 +119,7 @@ public class DataSealer extends AbstractInitializableComponent {
      * @param strategy key strategy
      */
     public void setKeyStrategy(@Nonnull final DataSealerKeyStrategy strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         
         keyStrategy = Constraint.isNotNull(strategy, "DataSealerKeyStrategy cannot be null");
     }
@@ -131,7 +130,7 @@ public class DataSealer extends AbstractInitializableComponent {
      * @param r the pseudorandom generator to set
      */
     public void setRandom(@Nonnull final SecureRandom r) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         
         random = Constraint.isNotNull(r, "SecureRandom cannot be null");
     }
@@ -143,7 +142,7 @@ public class DataSealer extends AbstractInitializableComponent {
      * @param e Byte-to-string encoder.
      */
     public void setEncoder(@Nonnull final BinaryEncoder e) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         
         encoder = Constraint.isNotNull(e, "Encoder cannot be null");
     }
@@ -154,7 +153,7 @@ public class DataSealer extends AbstractInitializableComponent {
      * @param d String-to-byte decoder.
      */
     public void setDecoder(@Nonnull final BinaryDecoder d) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         
         decoder = Constraint.isNotNull(d, "Decoder cannot be null");
     }
@@ -170,7 +169,7 @@ public class DataSealer extends AbstractInitializableComponent {
      * @since 8.3.0
      */
     public void setNodePrefix(@Nullable @NotEmpty final String prefix) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         
         nodePrefix = StringSupport.trimOrNull(prefix);
         if (nodePrefix != null) {
@@ -239,8 +238,8 @@ public class DataSealer extends AbstractInitializableComponent {
      */
     @Nonnull public String unwrap(@Nonnull @NotEmpty final String wrapped, @Nullable final StringBuffer keyUsed)
             throws DataSealerException {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        
+        throwComponentStateExceptions();
+
         final int magicLen = MAGIC_STRING.length();
         
         try {
@@ -379,8 +378,8 @@ public class DataSealer extends AbstractInitializableComponent {
      */
     @Nonnull public String wrap(@Nonnull @NotEmpty final String data, @Nullable final Instant exp)
             throws DataSealerException {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        
+        throwComponentStateExceptions();
+
         if (data == null || data.length() == 0) {
             throw new IllegalArgumentException("Data must be supplied for the wrapping operation");
         }

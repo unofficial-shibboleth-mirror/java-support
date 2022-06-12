@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -79,8 +78,7 @@ public class ScriptedRunnable extends AbstractIdentifiableInitializableComponent
      * @param object the custom object
      */
     public void setCustomObject(@Nullable final Object object) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+        throwSetterPreconditionExceptions();
 
         customObject = object;
     }
@@ -100,8 +98,7 @@ public class ScriptedRunnable extends AbstractIdentifiableInitializableComponent
      * @param matcherScript the script to be evaluated
      */
     public void setScript(@Nonnull final EvaluableScript matcherScript) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+        throwSetterPreconditionExceptions();
 
         script = Constraint.isNotNull(matcherScript, "Attribute value matching script cannot be null");
     }
