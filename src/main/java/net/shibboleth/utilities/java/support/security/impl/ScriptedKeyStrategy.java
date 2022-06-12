@@ -31,20 +31,19 @@ import javax.script.ScriptContext;
 import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.TimerSupport;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 import net.shibboleth.utilities.java.support.security.DataSealerKeyStrategy;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -100,8 +99,7 @@ public class ScriptedKeyStrategy extends AbstractInitializableComponent implemen
      * @param script script to run
      */
     public void setKeyScript(@Nonnull final EvaluableScript script) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+        throwSetterPreconditionExceptions();
         
         keyScript = Constraint.isNotNull(script, "Script cannot be null");
     }
@@ -113,8 +111,7 @@ public class ScriptedKeyStrategy extends AbstractInitializableComponent implemen
      * @param object the custom object
      */
     public void setCustomObject(@Nullable final Object object) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+        throwSetterPreconditionExceptions();
 
         customObject = object;
     }
@@ -128,8 +125,7 @@ public class ScriptedKeyStrategy extends AbstractInitializableComponent implemen
      * @param interval time between key update checks
      */
     public void setUpdateInterval(@Nonnull final Duration interval) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+        throwSetterPreconditionExceptions();
         
         Constraint.isNotNull(interval, "Interval cannot be null");
         Constraint.isFalse(interval.isNegative(), "Interval cannot be negative");
@@ -145,8 +141,7 @@ public class ScriptedKeyStrategy extends AbstractInitializableComponent implemen
      * @param timer timer used to schedule update tasks
      */
     public void setUpdateTaskTimer(@Nullable final Timer timer) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+        throwSetterPreconditionExceptions();
 
         updateTaskTimer = timer;
     }
@@ -159,8 +154,7 @@ public class ScriptedKeyStrategy extends AbstractInitializableComponent implemen
      * @param size size of cache
      */
     public void setCacheSize(@NonNegative final long size) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+        throwSetterPreconditionExceptions();
 
         cacheSize = Constraint.isGreaterThanOrEqual(0, size, "Key cache size cannot be negative");
     }
@@ -217,8 +211,8 @@ public class ScriptedKeyStrategy extends AbstractInitializableComponent implemen
 
     /** {@inheritDoc} */
     @Nonnull public Pair<String,SecretKey> getDefaultKey() throws KeyException {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        
+        throwComponentStateExceptions();
+
         synchronized(this) {
             if (defaultKey != null) {
                 return new Pair<>(currentAlias, defaultKey);

@@ -36,16 +36,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.validation.Schema;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
-import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.DOMImplementation;
@@ -58,6 +48,15 @@ import org.xml.sax.SAXException;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 //TODO(lajoie) see if we can use either java.util.concurrent or Guava 
 // classes for the pool so we don't have to manage synchronicity
@@ -151,7 +150,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
     /** {@inheritDoc} */
     @Override
     @Nonnull public DocumentBuilder getBuilder() throws XMLParserException {
-        checkInitializedNotDestroyed();
+        throwComponentStateExceptions();
 
         DocumentBuilder builder = null;
 
@@ -178,7 +177,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
 //CheckStyle: ReturnCount OFF
     /** {@inheritDoc} */
     @Override public void returnBuilder(@Nullable final DocumentBuilder builder) {
-        checkInitializedNotDestroyed();
+        throwComponentStateExceptions();
 
         if (builder == null || !(builder instanceof DocumentBuilderProxy)) {
             return;
@@ -216,7 +215,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
     /** {@inheritDoc} */
     @Override
     @Nonnull public Document newDocument() throws XMLParserException {
-        checkInitializedNotDestroyed();
+        throwComponentStateExceptions();
 
         DocumentBuilder builder = null;
         final Document document;
@@ -238,7 +237,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
     /** {@inheritDoc} */
     @Override
     @Nonnull public Document parse(@Nonnull final InputStream input) throws XMLParserException {
-        checkInitializedNotDestroyed();
+        throwComponentStateExceptions();
 
         Constraint.isNotNull(input, "Input stream can not be null");
 
@@ -261,7 +260,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
     /** {@inheritDoc} */
     @Override
     @Nonnull public Document parse(@Nonnull final Reader input) throws XMLParserException {
-        checkInitializedNotDestroyed();
+        throwComponentStateExceptions();
 
         Constraint.isNotNull(input, "Input reader can not be null");
 
@@ -290,7 +289,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
      * @param name name of attribute
      */
     public void setSecurityManagerAttributeName(@Nullable final String name) {
-        checkNotInitializedNotDestroyed();
+        throwSetterPreconditionExceptions();
         
         securityManagerAttributeName = StringSupport.trimOrNull(name);
     }
@@ -310,7 +309,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
      * @param newSize max number of builders the pool will hold
      */
     public void setMaxPoolSize(final int newSize) {
-        checkNotInitializedNotDestroyed();
+        throwSetterPreconditionExceptions();
 
         maxPoolSize = (int) Constraint.isGreaterThan(0, newSize, "New maximum pool size must be greater than 0");
     }
@@ -330,7 +329,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
      * @param newAttributes builder attributes used when creating builders
      */
     public void setBuilderAttributes(@Nullable @NullableElements final Map<String, Object> newAttributes) {
-        checkNotInitializedNotDestroyed();
+        throwSetterPreconditionExceptions();
 
         if (newAttributes == null) {
             builderAttributes = Collections.emptyMap();
@@ -354,7 +353,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
      * @param isCoalescing whether the builders are coalescing
      */
     public void setCoalescing(final boolean isCoalescing) {
-        checkNotInitializedNotDestroyed();
+        throwSetterPreconditionExceptions();
 
         coalescing = isCoalescing;
     }
@@ -374,7 +373,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
      * @param expand whether builders expand entity references
      */
     public void setExpandEntityReferences(final boolean expand) {
-        checkNotInitializedNotDestroyed();
+        throwSetterPreconditionExceptions();
 
         expandEntityReferences = expand;
     }
@@ -394,7 +393,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
      * @param newFeatures the builders' features
      */
     public void setBuilderFeatures(@Nullable @NullableElements final Map<String, Boolean> newFeatures) {
-        checkNotInitializedNotDestroyed();
+        throwSetterPreconditionExceptions();
 
         if (newFeatures == null) {
             builderFeatures = Collections.emptyMap();
@@ -418,7 +417,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
      * @param ignore The ignoreComments to set.
      */
     public void setIgnoreComments(final boolean ignore) {
-        checkNotInitializedNotDestroyed();
+        throwSetterPreconditionExceptions();
 
         ignoreComments = ignore;
     }
@@ -438,7 +437,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
      * @param ignore whether the builders ignore element content whitespace
      */
     public void setIgnoreElementContentWhitespace(final boolean ignore) {
-        checkNotInitializedNotDestroyed();
+        throwSetterPreconditionExceptions();
 
         ignoreElementContentWhitespace = ignore;
     }
@@ -458,7 +457,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
      * @param isNamespaceAware whether the builders are namespace aware
      */
     public void setNamespaceAware(final boolean isNamespaceAware) {
-        checkNotInitializedNotDestroyed();
+        throwSetterPreconditionExceptions();
 
         namespaceAware = isNamespaceAware;
     }
@@ -478,7 +477,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
      * @param newSchema schema used to validate the XML document during the parsing process
      */
     public void setSchema(@Nullable final Schema newSchema) {
-        checkNotInitializedNotDestroyed();
+        throwSetterPreconditionExceptions();
 
         schema = newSchema;
         if (schema != null) {
@@ -503,7 +502,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
      * @param resolver the new entity resolver, may be null
      */
     public void setEntityResolver(@Nullable final EntityResolver resolver) {
-        checkNotInitializedNotDestroyed();
+        throwSetterPreconditionExceptions();
         entityResolver = resolver;
     }
 
@@ -522,7 +521,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
      * @param handler the new error handler
      */
     public void setErrorHandler(@Nonnull final ErrorHandler handler) {
-        checkNotInitializedNotDestroyed();
+        throwSetterPreconditionExceptions();
         errorHandler = Constraint.isNotNull(handler, "ErrorHandler may not be null");
     }
 
@@ -541,7 +540,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
      * @param isValidating whether the builders are validating
      */
     public void setDTDValidating(final boolean isValidating) {
-        checkNotInitializedNotDestroyed();
+        throwSetterPreconditionExceptions();
 
         dtdValidating = isValidating;
     }
@@ -561,7 +560,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
      * @param isXIncludeAware whether the builders are XInclude aware
      */
     public void setXincludeAware(final boolean isXIncludeAware) {
-        checkNotInitializedNotDestroyed();
+        throwSetterPreconditionExceptions();
 
         xincludeAware = isXIncludeAware;
     }
@@ -583,7 +582,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
      * @throws XMLParserException thrown if their is a configuration error with the builder factory
      */
     @Nonnull protected DocumentBuilder createBuilder() throws XMLParserException {
-        checkInitializedNotDestroyed();
+        throwComponentStateExceptions();
 
         try {
             final DocumentBuilder builder = builderFactory.newDocumentBuilder();
@@ -662,18 +661,6 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
     protected void doDestroy() {
         builderPool.clear();
         super.doDestroy();
-    }
-
-    /** Helper method to test class state. */
-    private void checkInitializedNotDestroyed() {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-    }
-
-    /** Helper method to test class state. */
-    private void checkNotInitializedNotDestroyed() {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
     }
     
     /**

@@ -26,7 +26,6 @@ import org.slf4j.LoggerFactory;
 import jakarta.servlet.ServletRequest;
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.security.AccessControl;
 import net.shibboleth.utilities.java.support.security.AccessControlService;
@@ -59,7 +58,7 @@ public class DelegatingAccessControlService extends AbstractIdentifiableInitiali
     /** {@inheritDoc} */
     @Override
     @Nonnull public AccessControl getInstance(@Nonnull final String name) {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        throwComponentStateExceptions();
         ServiceableComponent<AccessControlService> component = null;
         try {
             component = service.getServiceableComponent();

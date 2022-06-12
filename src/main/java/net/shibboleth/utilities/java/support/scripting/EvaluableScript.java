@@ -35,20 +35,19 @@ import javax.script.ScriptException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.io.Files;
+
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.resource.Resource;
-
-import com.google.common.io.Files;
 
 /** This is a helper class that takes care of reading in, optionally compiling, and evaluating a script. */
 public final class EvaluableScript extends AbstractInitializableComponent {
@@ -358,7 +357,7 @@ public final class EvaluableScript extends AbstractInitializableComponent {
      * @throws ScriptException thrown if there was a problem evaluating the script
      */
     @Nullable public Object eval(@Nonnull final Bindings scriptBindings) throws ScriptException {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        throwComponentStateExceptions();
         if (compiledScript != null) {
             return compiledScript.eval(scriptBindings);
         }
@@ -375,7 +374,7 @@ public final class EvaluableScript extends AbstractInitializableComponent {
      * @throws ScriptException thrown if there was a problem evaluating the script
      */
     @Nullable public Object eval(@Nonnull final ScriptContext scriptContext) throws ScriptException {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        throwComponentStateExceptions();
         if (compiledScript != null) {
             return compiledScript.eval(scriptContext);
         }

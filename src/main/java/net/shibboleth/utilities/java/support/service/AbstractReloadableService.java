@@ -25,16 +25,15 @@ import java.util.TimerTask;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.TimerSupport;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Base class for {@link ReloadableService}. This base class will use a background thread that will perform a periodic
@@ -105,7 +104,7 @@ public abstract class AbstractReloadableService<T> extends AbstractIdentifiableI
      * @param delay between one reload check and another
      */
     public void setReloadCheckDelay(@Nonnull final Duration delay) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
 
         reloadCheckDelay = Constraint.isNotNull(delay, "Delay cannot be null");
     }
@@ -127,7 +126,7 @@ public abstract class AbstractReloadableService<T> extends AbstractIdentifiableI
      * @param timer timer used to schedule configuration reload tasks
      */
     public void setReloadTaskTimer(@Nullable final Timer timer) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
 
         reloadTaskTimer = timer;
     }
@@ -162,7 +161,7 @@ public abstract class AbstractReloadableService<T> extends AbstractIdentifiableI
      * @param value what to set.
      */
     public void setFailFast(final boolean value) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         failFast = value;
     }
 
