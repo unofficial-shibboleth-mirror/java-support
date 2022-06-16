@@ -31,7 +31,6 @@ import net.shibboleth.utilities.java.support.component.AbstractInitializableComp
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import java.time.Instant;
 import java.util.Collections;
@@ -46,9 +45,6 @@ import javax.annotation.Nonnull;
  */
 public class ReloadableServiceGaugeSet<T> extends AbstractInitializableComponent implements MetricSet, MetricFilter {
 
-    /** Default prefix for metrics. */
-    @Nonnull @NotEmpty protected static final String DEFAULT_METRIC_NAME = "net.shibboleth.idp";
-
     /** The map of gauges. */
     @NonnullAfterInit @NonnullElements private Map<String,Metric> gauges;
     
@@ -58,9 +54,6 @@ public class ReloadableServiceGaugeSet<T> extends AbstractInitializableComponent
     /** The metric Prefix. */
     @Nonnull @NotEmpty private final String metricPrefix;
 
-    /** The default metric name. */
-    @Nonnull @NotEmpty private String defaultMetricName;
-
     /**
      * Constructor.
      * 
@@ -68,27 +61,6 @@ public class ReloadableServiceGaugeSet<T> extends AbstractInitializableComponent
      */
     public ReloadableServiceGaugeSet(@Nonnull @NotEmpty @ParameterName(name="metricName") final String metricName) {
         metricPrefix = Constraint.isNotEmpty(metricName, "Metric name cannot be null or empty");
-    }
-
-    /**
-     * Get the default metric name.
-     * 
-     * @return default metric name
-     */
-    @NonnullAfterInit @NotEmpty public String getDefaultMetricName() {
-        return defaultMetricName;
-    }
-    
-    /**
-     * Set the default metric name.
-     * 
-     * @param name the name
-     */
-    public void setDefaultMetricName(@Nonnull @NotEmpty final String name) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
-        defaultMetricName = Constraint.isNotNull(StringSupport.trimOrNull(name),
-                "Default metric name cannot be null or empty");
     }
     
     /**
@@ -121,7 +93,7 @@ public class ReloadableServiceGaugeSet<T> extends AbstractInitializableComponent
         gauges = new HashMap<>();
 
         gauges.put(
-                MetricRegistry.name(defaultMetricName, metricPrefix, "reload", "success"),
+                MetricRegistry.name(metricPrefix, "reload", "success"),
                 new Gauge<Instant>() {
                     public Instant getValue() {
                         return service.getLastSuccessfulReloadInstant();
@@ -129,7 +101,7 @@ public class ReloadableServiceGaugeSet<T> extends AbstractInitializableComponent
                 });
         
         gauges.put(
-                MetricRegistry.name(defaultMetricName, metricPrefix, "reload", "attempt"),
+                MetricRegistry.name(metricPrefix, "reload", "attempt"),
                 new Gauge<Instant>() {
                     public Instant getValue() {
                         return service.getLastReloadAttemptInstant();
@@ -137,7 +109,7 @@ public class ReloadableServiceGaugeSet<T> extends AbstractInitializableComponent
                 });
 
         gauges.put(
-                MetricRegistry.name(defaultMetricName, metricPrefix, "reload", "error"),
+                MetricRegistry.name(metricPrefix, "reload", "error"),
                 new Gauge<String>() {
                     public String getValue() {
                         return service.getReloadFailureCause() != null
