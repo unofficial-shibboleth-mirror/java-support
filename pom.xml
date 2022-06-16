@@ -123,6 +123,12 @@
             <artifactId>bcpkix-jdk15on</artifactId>
             <optional>true</optional>
         </dependency>
+        <dependency>
+            <!-- Required if using the metrics service class. -->
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-core</artifactId>
+            <optional>true</optional>
+        </dependency>
 
         <!-- Provided Dependencies -->
         <dependency>
