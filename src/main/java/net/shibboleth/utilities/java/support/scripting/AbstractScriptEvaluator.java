@@ -30,8 +30,6 @@ import javax.script.SimpleScriptContext;
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.slf4j.Logger;
@@ -43,7 +41,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @since 7.4.0
  */
-public abstract class AbstractScriptEvaluator extends AbstractInitializableComponent {
+public abstract class AbstractScriptEvaluator {
 
     /** The default language is Javascript. */
     @Nonnull @NotEmpty public static final String DEFAULT_ENGINE = "JavaScript";
@@ -97,8 +95,6 @@ public abstract class AbstractScriptEvaluator extends AbstractInitializableCompo
      * @param prefix log prefix
      */
     public void setLogPrefix(@Nullable final String prefix) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
         logPrefix = prefix;
     }
     
@@ -116,9 +112,7 @@ public abstract class AbstractScriptEvaluator extends AbstractInitializableCompo
      * 
      * @param type output type
      */
-    protected void setOutputType(@Nullable final Class<?> type) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+    protected void setOutputType(@Nullable final Class<?> type) {        
         outputType = type;
     }
     
@@ -136,9 +130,7 @@ public abstract class AbstractScriptEvaluator extends AbstractInitializableCompo
      * 
      * @param object the custom object
      */
-    public void setCustomObject(@Nullable final Object object) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+    public void setCustomObject(@Nullable final Object object) {        
         customObject = object;
     }
 
@@ -157,8 +149,6 @@ public abstract class AbstractScriptEvaluator extends AbstractInitializableCompo
      * @param flag flag to set
      */
     public void setHideExceptions(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
         hideExceptions = flag;
     }
 
@@ -177,8 +167,6 @@ public abstract class AbstractScriptEvaluator extends AbstractInitializableCompo
      * @param value value to return
      */
     protected void setReturnOnError(@Nullable final Object value) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
         returnOnError = value;
     }
     
@@ -190,7 +178,6 @@ public abstract class AbstractScriptEvaluator extends AbstractInitializableCompo
      * @since 9.0.0
      */
     public void setContextExtenders(@Nullable @NonnullElements final Collection<ScriptContextExtender> extenders) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         if (extenders != null) {
             contextExtenders = List.copyOf(extenders);
@@ -207,7 +194,6 @@ public abstract class AbstractScriptEvaluator extends AbstractInitializableCompo
      * @return script result
      */
     @Nullable protected Object evaluate(@Nullable final Object... input) {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
         final SimpleScriptContext scriptContext = new SimpleScriptContext();
         scriptContext.setAttribute("custom", getCustomObject(), ScriptContext.ENGINE_SCOPE);
