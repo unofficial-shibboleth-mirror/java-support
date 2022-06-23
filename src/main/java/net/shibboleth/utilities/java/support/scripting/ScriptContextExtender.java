@@ -38,9 +38,8 @@ public interface ScriptContextExtender {
      * <p>Extenders should generally ensure that they do not overwrite existing context variables with
      * the same name, but may do so if the semantics are understood.</p>
      * 
-     * @param scriptedClass the class of the calling component
      * @param scriptContext the context, as decorated by the calling component
      */
-    void extendContext(@Nonnull final Class<?> scriptedClass, @Nonnull final ScriptContext scriptContext);
+    void extendContext(@Nonnull final ScriptContext scriptContext);
 
 }

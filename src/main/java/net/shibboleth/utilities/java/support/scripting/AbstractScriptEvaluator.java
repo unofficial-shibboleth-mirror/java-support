@@ -200,7 +200,7 @@ public abstract class AbstractScriptEvaluator {
         
         prepareContext(scriptContext, input);
         
-        contextExtenders.forEach(x -> x.extendContext(getClass(), scriptContext));
+        contextExtenders.forEach(x -> x.extendContext(scriptContext));
 
         try {
             final Object result = script.eval(scriptContext);
