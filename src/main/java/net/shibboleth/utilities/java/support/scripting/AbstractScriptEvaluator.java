@@ -177,7 +177,8 @@ public abstract class AbstractScriptEvaluator {
      * 
      * @since 9.0.0
      */
-    public void setContextExtenders(@Nullable @NonnullElements final Collection<ScriptContextExtender> extenders) {
+    public void setContextExtenders(
+            @Nullable @NonnullElements final Collection<? extends ScriptContextExtender> extenders) {
         
         if (extenders != null) {
             contextExtenders = List.copyOf(extenders);
