@@ -61,35 +61,7 @@ public class ReloadableServiceGaugeSet<T> extends AbstractInitializableComponent
      */
     public ReloadableServiceGaugeSet(@Nonnull @NotEmpty @ParameterName(name="metricName") final String metricName) {
         metricPrefix = Constraint.isNotEmpty(metricName, "Metric name cannot be null or empty");
-    }
-    
-    /**
-     * Get the service to report on.
-     * 
-     * @return service to report on
-     */
-    @NonnullAfterInit public ReloadableService<T> getService() {
-        return service;
-    }
-    
-    /**
-     * Set the service to report on.
-     * 
-     * @param svc service instance
-     */
-    public void setService(@Nonnull final ReloadableService<T> svc) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        service = Constraint.isNotNull(svc, "ReloadableService cannot be null");
-    }
-    
-    /** {@inheritDoc} */
-    @Override
-    protected void doInitialize() throws ComponentInitializationException {
-        if (service == null) {
-            throw new ComponentInitializationException("Injected ReloadableService cannot be null");
-        }
-
         gauges = new HashMap<>();
 
         gauges.put(
@@ -117,7 +89,36 @@ public class ReloadableServiceGaugeSet<T> extends AbstractInitializableComponent
                     }
                 });
 
+    }
+    
+    /**
+     * Get the service to report on.
+     * 
+     * @return service to report on
+     */
+    @NonnullAfterInit public ReloadableService<T> getService() {
+        return service;
+    }
+    
+    /**
+     * Set the service to report on.
+     * 
+     * @param svc service instance
+     */
+    public void setService(@Nonnull final ReloadableService<T> svc) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        service = Constraint.isNotNull(svc, "ReloadableService cannot be null");
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
+
+        if (service == null) {
+            throw new ComponentInitializationException("ReloadableService cannot be null");
+        }
     }
 
     /** {@inheritDoc} */
