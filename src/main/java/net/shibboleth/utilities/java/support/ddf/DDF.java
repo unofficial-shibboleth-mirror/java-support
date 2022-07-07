@@ -128,6 +128,7 @@ public class DDF implements Iterable<DDF> {
          * 
          * @throws IllegalArgumentException if the type is out of range
          */
+// Checkstyle: CyclomaticComplexity OFF
         public static DDFType valueOf(final int val) throws IllegalArgumentException {
             final DDFType type;
             switch (val) {
@@ -178,6 +179,7 @@ public class DDF implements Iterable<DDF> {
         }
         
     };
+// Checkstyle: CyclomaticComplexity ON
     
     /** Node type. */
     @Nonnull private DDFType type;
@@ -193,7 +195,7 @@ public class DDF implements Iterable<DDF> {
     /**
      * Constructor.
      *
-     * <p>For compatibility, the name is constrained to <= 255 characters.</p>
+     * <p>For compatibility, the name is constrained to no more than 255 characters.</p>
      *
      * @param n node name
      */
@@ -205,7 +207,7 @@ public class DDF implements Iterable<DDF> {
     /**
      * Constructor.
      *
-     * <p>For compatibility, the name is constrained to <= 255 characters.</p>
+     * <p>For compatibility, the name is constrained to no more than 255 characters.</p>
      *
      * @param n node name
      * @param val string value, assumed to be "safe" Unicode
@@ -218,7 +220,7 @@ public class DDF implements Iterable<DDF> {
     /**
      * Constructor.
      *
-     * <p>For compatibility, the name is constrained to <= 255 characters.</p>
+     * <p>For compatibility, the name is constrained to no more than 255 characters.</p>
      *
      * @param n node name
      * @param val byte array value, handled without knowledge of the encoding
@@ -231,7 +233,7 @@ public class DDF implements Iterable<DDF> {
     /**
      * Constructor.
      *
-     * <p>For compatibility, the name is constrained to <= 255 characters.</p>
+     * <p>For compatibility, the name is constrained to no more than 255 characters.</p>
      *
      * @param n node name
      * @param val integer value
@@ -244,7 +246,7 @@ public class DDF implements Iterable<DDF> {
     /**
      * Constructor.
      *
-     * <p>For compatibility, the name is constrained to <= 255 characters.</p>
+     * <p>For compatibility, the name is constrained to no more than 255 characters.</p>
      *
      * @param n node name
      * @param val long integer value
@@ -257,7 +259,7 @@ public class DDF implements Iterable<DDF> {
     /**
      * Constructor.
      *
-     * <p>For compatibility, the name is constrained to <= 255 characters.</p>
+     * <p>For compatibility, the name is constrained to no more than 255 characters.</p>
      *
      * @param n node name
      * @param val floating value
@@ -270,7 +272,7 @@ public class DDF implements Iterable<DDF> {
     /**
      * Constructor.
      *
-     * <p>For compatibility, the name is constrained to <= 255 characters.</p>
+     * <p>For compatibility, the name is constrained to no more than 255 characters.</p>
      *
      * @param n node name
      * @param val object value
@@ -1383,6 +1385,7 @@ public class DDF implements Iterable<DDF> {
      * 
      * @throws IOException if an error occurs
      */
+// Checkstyle: ReturnCount OFF
     @Nonnull public static DDF deserialize(@Nonnull final InputStream is) throws IOException {
         
         int ch;
@@ -1559,7 +1562,7 @@ public class DDF implements Iterable<DDF> {
                 throw new IOException("Unexpected record type");
         }
     }
-// Checkstyle: MethodLength|CyclomaticComplexity ON
+// Checkstyle: MethodLength|CyclomaticComplexity|ReturnCount ON
 
     /**
      * A simple encoder for non-ASCII characters.

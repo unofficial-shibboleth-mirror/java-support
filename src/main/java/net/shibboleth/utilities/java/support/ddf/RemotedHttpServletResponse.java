@@ -387,19 +387,41 @@ public class RemotedHttpServletResponse implements HttpServletResponse {
         /** Wrapped array. */
         private final byte[] buffer;
         
+        /**
+         * Constructor.
+         *
+         * @param size buffer size
+         */
         private ByteArrayWrapper(final int size) {
             buffer = new byte[size];
             offset = 0;
         }
         
+        /**
+         * Gets the buffer.
+         * 
+         * @return the buffer
+         */
         @Nonnull private byte[] getBuffer() {
             return buffer;
         }
         
+        /**
+         * Gets the offset.
+         * 
+         * @return the offset
+         */
         private int getOffset() {
             return offset;
         }
         
+        /**
+         * Writes a byte to the buffer.
+         * 
+         * @param b byte to write
+         * 
+         * @return true iff the buffer was large enough to accommodate the byte
+         */
         private boolean write(final int b) {
             if (offset < buffer.length) {
                 buffer[offset++] = Integer.valueOf(b).byteValue();
@@ -410,6 +432,7 @@ public class RemotedHttpServletResponse implements HttpServletResponse {
         }
     }
 
+    /** A pseudo {@link ServletOutputStream} to catch output. */
     private class BodyOutputStream extends ServletOutputStream {
 
         
@@ -426,16 +449,19 @@ public class RemotedHttpServletResponse implements HttpServletResponse {
             bufferList.add(currentBuffer);
         }
         
+        /** {@inheritDoc} */
         @Override
         public boolean isReady() {
             return true;
         }
 
+        /** {@inheritDoc} */
         @Override
         public void setWriteListener(final WriteListener writeListener) {
             throw new UnsupportedOperationException();
         }
 
+        /** {@inheritDoc} */
         @Override
         public void write(final int b) throws IOException {
             if (!currentBuffer.write(b)) {
@@ -445,6 +471,7 @@ public class RemotedHttpServletResponse implements HttpServletResponse {
             }
         }
 
+        /** {@inheritDoc} */
         @Override
         public void flush() throws IOException {
             
@@ -460,6 +487,7 @@ public class RemotedHttpServletResponse implements HttpServletResponse {
             committed = true;
         }
 
+        /** {@inheritDoc} */
         @Override
         public void close() throws IOException {
             flush();
