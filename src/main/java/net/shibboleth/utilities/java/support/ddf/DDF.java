@@ -367,7 +367,7 @@ public class DDF implements Iterable<DDF> {
     /**
      * Set the node name.
      * 
-     * <p>For compatibility, the name is constrained to <= 255 characters.</p>
+     * <p>For compatibility, the name is constrained to no more than 255 characters.</p>
      * 
      * <p>The name will not be set if the node is already a child of a structure.</p>
      * 
@@ -1587,6 +1587,13 @@ public class DDF implements Iterable<DDF> {
         }
     }
     
+    /**
+     * Converts a byte into a hex character.
+     * 
+     * @param b input byte
+     * 
+     * @return the hex character equivalent (capitalized)
+     */
     private static int hexchar(final int b) {
         // 48 is '0' and 65 is 'A'
         return (b <= 9) ? (48 + b) : (65 + b - 10);

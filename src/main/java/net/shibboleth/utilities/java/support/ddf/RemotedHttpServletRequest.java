@@ -603,65 +603,82 @@ public class RemotedHttpServletRequest implements HttpServletRequest {
         /** Underlying stream. */
         @Nonnull private final InputStream delegate;
 
+        /**
+         * Constructor.
+         *
+         * @param body body data
+         */
         public BodyInputStream(final byte[] body) {
             delegate = new ByteArrayInputStream(body);
         }
 
+        /** {@inheritDoc} */
         @Override
         public boolean isFinished() {
             return false;
         }
 
+        /** {@inheritDoc} */
         @Override
         public boolean isReady() {
             return true;
         }
 
+        /** {@inheritDoc} */
         @Override
         public void setReadListener(final ReadListener readListener) {
             throw new UnsupportedOperationException();
         }
 
+        /** {@inheritDoc} */
         @Override
         public int read() throws IOException {
             return delegate.read();
         }
 
+        /** {@inheritDoc} */
         @Override
         public int read(final byte[] b, final int off, final int len) throws IOException {
             return delegate.read(b, off, len);
         }
 
+        /** {@inheritDoc} */
         @Override
         public int read(final byte[] b) throws IOException {
             return delegate.read(b);
         }
 
+        /** {@inheritDoc} */
         @Override
         public long skip(final long n) throws IOException {
             return delegate.skip(n);
         }
 
+        /** {@inheritDoc} */
         @Override
         public int available() throws IOException {
             return delegate.available();
         }
 
+        /** {@inheritDoc} */
         @Override
         public void close() throws IOException {
             delegate.close();
         }
 
+        /** {@inheritDoc} */
         @Override
         public synchronized void mark(final int readlimit) {
             delegate.mark(readlimit);
         }
 
+        /** {@inheritDoc} */
         @Override
         public synchronized void reset() throws IOException {
             delegate.reset();
         }
 
+        /** {@inheritDoc} */
         @Override
         public boolean markSupported() {
             return delegate.markSupported();
