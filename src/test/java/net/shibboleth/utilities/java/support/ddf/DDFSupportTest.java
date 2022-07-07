@@ -25,6 +25,7 @@ import javax.annotation.Nullable;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
 import org.w3c.dom.Document;
 
@@ -35,6 +36,7 @@ import net.shibboleth.utilities.java.support.xml.XMLParserException;
 /**
  * Unit test for {@link DDFSupport}.
  */
+@Ignore
 public class DDFSupportTest {
     
     @Nullable private BasicParserPool parserPool;

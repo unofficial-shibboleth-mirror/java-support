@@ -28,11 +28,13 @@ import java.util.Set;
 import jakarta.servlet.http.Cookie;
 
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
 
 /**
  * Unit test for {@link RemotedHttpServletResponse}.
  */
+@Ignore
 public class RemotedHttpServletResponseTest {
     
     private DDF obj;

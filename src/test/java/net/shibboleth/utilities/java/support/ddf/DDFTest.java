@@ -27,6 +27,7 @@ import java.io.UnsupportedEncodingException;
 
 import javax.annotation.Nonnull;
 
+import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
 
 import net.shibboleth.utilities.java.support.collection.Pair;
@@ -34,6 +35,7 @@ import net.shibboleth.utilities.java.support.collection.Pair;
 /**
  * DDF unit tests.
  */
+@Ignore
 public class DDFTest {
 
     @Test

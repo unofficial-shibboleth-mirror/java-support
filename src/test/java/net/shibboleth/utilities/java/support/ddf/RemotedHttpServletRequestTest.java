@@ -25,12 +25,14 @@ import java.util.List;
 import jakarta.servlet.http.Cookie;
 
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
 import org.testng.reporters.Files;
 
 /**
  * Unit test for {@link RemotedHttpServletRequest}.
  */
+@Ignore
 public class RemotedHttpServletRequestTest {
     
     private DDF obj;
