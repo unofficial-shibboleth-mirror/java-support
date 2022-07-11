@@ -55,7 +55,7 @@ public class BasicAccessControlService extends AbstractIdentifiableInitializable
      * 
      * @param map map of named policies
      */
-    public void setPolicyMap(@Nonnull @NonnullElements final Map<String,AccessControl> map) {
+    public void setPolicyMap(@Nullable @NonnullElements final Map<String,AccessControl> map) {
         throwSetterPreconditionExceptions();
         
         if (map != null) {
