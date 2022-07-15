@@ -357,7 +357,7 @@ public final class EvaluableScript extends AbstractInitializableComponent {
      * @throws ScriptException thrown if there was a problem evaluating the script
      */
     @Nullable public Object eval(@Nonnull final Bindings scriptBindings) throws ScriptException {
-        throwComponentStateExceptions();
+        checkComponentActive();
         if (compiledScript != null) {
             return compiledScript.eval(scriptBindings);
         }
@@ -374,7 +374,7 @@ public final class EvaluableScript extends AbstractInitializableComponent {
      * @throws ScriptException thrown if there was a problem evaluating the script
      */
     @Nullable public Object eval(@Nonnull final ScriptContext scriptContext) throws ScriptException {
-        throwComponentStateExceptions();
+        checkComponentActive();
         if (compiledScript != null) {
             return compiledScript.eval(scriptContext);
         }

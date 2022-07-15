@@ -105,7 +105,7 @@ public class ReloadableServiceGaugeSet<T> extends AbstractInitializableComponent
      * @param svc service instance
      */
     public void setService(@Nonnull final ReloadableService<T> svc) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         
         service = Constraint.isNotNull(svc, "ReloadableService cannot be null");
     }

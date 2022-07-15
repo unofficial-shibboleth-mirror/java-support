@@ -104,7 +104,7 @@ public abstract class AbstractReloadableService<T> extends AbstractIdentifiableI
      * @param delay between one reload check and another
      */
     public void setReloadCheckDelay(@Nonnull final Duration delay) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
 
         reloadCheckDelay = Constraint.isNotNull(delay, "Delay cannot be null");
     }
@@ -126,7 +126,7 @@ public abstract class AbstractReloadableService<T> extends AbstractIdentifiableI
      * @param timer timer used to schedule configuration reload tasks
      */
     public void setReloadTaskTimer(@Nullable final Timer timer) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
 
         reloadTaskTimer = timer;
     }
@@ -161,7 +161,7 @@ public abstract class AbstractReloadableService<T> extends AbstractIdentifiableI
      * @param value what to set.
      */
     public void setFailFast(final boolean value) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         failFast = value;
     }
 

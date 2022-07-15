@@ -108,7 +108,7 @@ public class DataSealer extends AbstractInitializableComponent {
      * @since 7.4.0
      */
     public void setLockedAtStartup(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         
         lockedAtStartup = flag;
     }
@@ -119,7 +119,7 @@ public class DataSealer extends AbstractInitializableComponent {
      * @param strategy key strategy
      */
     public void setKeyStrategy(@Nonnull final DataSealerKeyStrategy strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         
         keyStrategy = Constraint.isNotNull(strategy, "DataSealerKeyStrategy cannot be null");
     }
@@ -130,7 +130,7 @@ public class DataSealer extends AbstractInitializableComponent {
      * @param r the pseudorandom generator to set
      */
     public void setRandom(@Nonnull final SecureRandom r) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         
         random = Constraint.isNotNull(r, "SecureRandom cannot be null");
     }
@@ -142,7 +142,7 @@ public class DataSealer extends AbstractInitializableComponent {
      * @param e Byte-to-string encoder.
      */
     public void setEncoder(@Nonnull final BinaryEncoder e) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         
         encoder = Constraint.isNotNull(e, "Encoder cannot be null");
     }
@@ -153,7 +153,7 @@ public class DataSealer extends AbstractInitializableComponent {
      * @param d String-to-byte decoder.
      */
     public void setDecoder(@Nonnull final BinaryDecoder d) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         
         decoder = Constraint.isNotNull(d, "Decoder cannot be null");
     }
@@ -169,7 +169,7 @@ public class DataSealer extends AbstractInitializableComponent {
      * @since 8.3.0
      */
     public void setNodePrefix(@Nullable @NotEmpty final String prefix) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         
         nodePrefix = StringSupport.trimOrNull(prefix);
         if (nodePrefix != null) {
@@ -238,7 +238,7 @@ public class DataSealer extends AbstractInitializableComponent {
      */
     @Nonnull public String unwrap(@Nonnull @NotEmpty final String wrapped, @Nullable final StringBuffer keyUsed)
             throws DataSealerException {
-        throwComponentStateExceptions();
+        checkComponentActive();
 
         final int magicLen = MAGIC_STRING.length();
         
@@ -378,7 +378,7 @@ public class DataSealer extends AbstractInitializableComponent {
      */
     @Nonnull public String wrap(@Nonnull @NotEmpty final String data, @Nullable final Instant exp)
             throws DataSealerException {
-        throwComponentStateExceptions();
+        checkComponentActive();
 
         if (data == null || data.length() == 0) {
             throw new IllegalArgumentException("Data must be supplied for the wrapping operation");

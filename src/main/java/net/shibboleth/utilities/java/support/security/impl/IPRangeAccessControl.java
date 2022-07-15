@@ -62,7 +62,7 @@ public class IPRangeAccessControl extends AbstractIdentifiableInitializableCompo
      * @param ranges ranges to allow
      */
     public void setAllowedRanges(@Nonnull @NonnullElements final Collection<IPRange> ranges) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         Constraint.isNotNull(ranges, "IPRange collection cannot be null");
         
         allowedRanges = List.copyOf(ranges);

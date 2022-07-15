@@ -58,7 +58,7 @@ public class DelegatingAccessControlService extends AbstractIdentifiableInitiali
     /** {@inheritDoc} */
     @Override
     @Nonnull public AccessControl getInstance(@Nonnull final String name) {
-        throwComponentStateExceptions();
+        checkComponentActive();
         ServiceableComponent<AccessControlService> component = null;
         try {
             component = service.getServiceableComponent();

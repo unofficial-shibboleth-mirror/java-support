@@ -150,7 +150,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
     /** {@inheritDoc} */
     @Override
     @Nonnull public DocumentBuilder getBuilder() throws XMLParserException {
-        throwComponentStateExceptions();
+        checkComponentActive();
 
         DocumentBuilder builder = null;
 
@@ -177,7 +177,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
 //CheckStyle: ReturnCount OFF
     /** {@inheritDoc} */
     @Override public void returnBuilder(@Nullable final DocumentBuilder builder) {
-        throwComponentStateExceptions();
+        checkComponentActive();
 
         if (builder == null || !(builder instanceof DocumentBuilderProxy)) {
             return;
@@ -215,7 +215,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
     /** {@inheritDoc} */
     @Override
     @Nonnull public Document newDocument() throws XMLParserException {
-        throwComponentStateExceptions();
+        checkComponentActive();
 
         DocumentBuilder builder = null;
         final Document document;
@@ -237,7 +237,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
     /** {@inheritDoc} */
     @Override
     @Nonnull public Document parse(@Nonnull final InputStream input) throws XMLParserException {
-        throwComponentStateExceptions();
+        checkComponentActive();
 
         Constraint.isNotNull(input, "Input stream can not be null");
 
@@ -260,7 +260,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
     /** {@inheritDoc} */
     @Override
     @Nonnull public Document parse(@Nonnull final Reader input) throws XMLParserException {
-        throwComponentStateExceptions();
+        checkComponentActive();
 
         Constraint.isNotNull(input, "Input reader can not be null");
 
@@ -289,7 +289,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
      * @param name name of attribute
      */
     public void setSecurityManagerAttributeName(@Nullable final String name) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         
         securityManagerAttributeName = StringSupport.trimOrNull(name);
     }
@@ -309,7 +309,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
      * @param newSize max number of builders the pool will hold
      */
     public void setMaxPoolSize(final int newSize) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
 
         maxPoolSize = (int) Constraint.isGreaterThan(0, newSize, "New maximum pool size must be greater than 0");
     }
@@ -329,7 +329,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
      * @param newAttributes builder attributes used when creating builders
      */
     public void setBuilderAttributes(@Nullable @NullableElements final Map<String, Object> newAttributes) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
 
         if (newAttributes == null) {
             builderAttributes = Collections.emptyMap();
@@ -353,7 +353,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
      * @param isCoalescing whether the builders are coalescing
      */
     public void setCoalescing(final boolean isCoalescing) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
 
         coalescing = isCoalescing;
     }
@@ -373,7 +373,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
      * @param expand whether builders expand entity references
      */
     public void setExpandEntityReferences(final boolean expand) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
 
         expandEntityReferences = expand;
     }
@@ -393,7 +393,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
      * @param newFeatures the builders' features
      */
     public void setBuilderFeatures(@Nullable @NullableElements final Map<String, Boolean> newFeatures) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
 
         if (newFeatures == null) {
             builderFeatures = Collections.emptyMap();
@@ -417,7 +417,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
      * @param ignore The ignoreComments to set.
      */
     public void setIgnoreComments(final boolean ignore) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
 
         ignoreComments = ignore;
     }
@@ -437,7 +437,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
      * @param ignore whether the builders ignore element content whitespace
      */
     public void setIgnoreElementContentWhitespace(final boolean ignore) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
 
         ignoreElementContentWhitespace = ignore;
     }
@@ -457,7 +457,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
      * @param isNamespaceAware whether the builders are namespace aware
      */
     public void setNamespaceAware(final boolean isNamespaceAware) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
 
         namespaceAware = isNamespaceAware;
     }
@@ -477,7 +477,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
      * @param newSchema schema used to validate the XML document during the parsing process
      */
     public void setSchema(@Nullable final Schema newSchema) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
 
         schema = newSchema;
         if (schema != null) {
@@ -502,7 +502,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
      * @param resolver the new entity resolver, may be null
      */
     public void setEntityResolver(@Nullable final EntityResolver resolver) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         entityResolver = resolver;
     }
 
@@ -521,7 +521,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
      * @param handler the new error handler
      */
     public void setErrorHandler(@Nonnull final ErrorHandler handler) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         errorHandler = Constraint.isNotNull(handler, "ErrorHandler may not be null");
     }
 
@@ -540,7 +540,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
      * @param isValidating whether the builders are validating
      */
     public void setDTDValidating(final boolean isValidating) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
 
         dtdValidating = isValidating;
     }
@@ -560,7 +560,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
      * @param isXIncludeAware whether the builders are XInclude aware
      */
     public void setXincludeAware(final boolean isXIncludeAware) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
 
         xincludeAware = isXIncludeAware;
     }
@@ -582,7 +582,7 @@ public class BasicParserPool extends AbstractInitializableComponent implements P
      * @throws XMLParserException thrown if their is a configuration error with the builder factory
      */
     @Nonnull protected DocumentBuilder createBuilder() throws XMLParserException {
-        throwComponentStateExceptions();
+        checkComponentActive();
 
         try {
             final DocumentBuilder builder = builderFactory.newDocumentBuilder();

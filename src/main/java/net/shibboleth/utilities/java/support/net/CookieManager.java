@@ -75,7 +75,7 @@ public final class CookieManager extends AbstractInitializableComponent {
      * @param path cookie path to use, or null for the default
      */
     public void setCookiePath(@Nullable final String path) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         
         cookiePath = StringSupport.trimOrNull(path);
     }
@@ -86,7 +86,7 @@ public final class CookieManager extends AbstractInitializableComponent {
      * @param domain the cookie domain to use, or null for the default
      */
     public void setCookieDomain(@Nullable final String domain) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         
         cookieDomain = StringSupport.trimOrNull(domain);
     }
@@ -97,7 +97,7 @@ public final class CookieManager extends AbstractInitializableComponent {
      * @param request servlet request
      */
     public void setHttpServletRequest(@Nonnull final HttpServletRequest request) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         
         httpRequest = Constraint.isNotNull(request, "HttpServletRequest cannot be null");
     }
@@ -108,7 +108,7 @@ public final class CookieManager extends AbstractInitializableComponent {
      * @param response servlet response
      */
     public void setHttpServletResponse(@Nonnull final HttpServletResponse response) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         
         httpResponse = Constraint.isNotNull(response, "HttpServletResponse cannot be null");
     }
@@ -119,7 +119,7 @@ public final class CookieManager extends AbstractInitializableComponent {
      * @param flag flag to set
      */
     public void setSecure(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         
         secure = flag;
     }
@@ -131,7 +131,7 @@ public final class CookieManager extends AbstractInitializableComponent {
      * @param flag flag to set
      */
     public void setHttpOnly(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
 
         httpOnly = flag;
     }
@@ -142,7 +142,7 @@ public final class CookieManager extends AbstractInitializableComponent {
      * @param age max age to set
      */
     public void setMaxAge(final int age) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
 
         maxAge = age;
     }
@@ -163,7 +163,7 @@ public final class CookieManager extends AbstractInitializableComponent {
      * @param value value of cookie
      */
     public void addCookie(@Nonnull @NotEmpty final String name, @Nonnull @NotEmpty final String value) {
-        throwComponentStateExceptions();
+        checkComponentActive();
         
         final Cookie cookie = new Cookie(name, value);
         cookie.setPath(cookiePath != null ? cookiePath : contextPathToCookiePath());
@@ -183,7 +183,7 @@ public final class CookieManager extends AbstractInitializableComponent {
      * @param name  name of cookie
      */
     public void unsetCookie(@Nonnull @NotEmpty final String name) {
-        throwComponentStateExceptions();
+        checkComponentActive();
         
         final Cookie cookie = new Cookie(name, null);
         cookie.setPath(cookiePath != null ? cookiePath : contextPathToCookiePath());
@@ -224,7 +224,7 @@ public final class CookieManager extends AbstractInitializableComponent {
      * @return cookie value
      */
     @Nullable public String getCookieValue(@Nonnull @NotEmpty final String name, @Nullable final String defValue) {
-        throwComponentStateExceptions();
+        checkComponentActive();
         
         final Cookie[] cookies = httpRequest.getCookies();
         if (cookies != null) {

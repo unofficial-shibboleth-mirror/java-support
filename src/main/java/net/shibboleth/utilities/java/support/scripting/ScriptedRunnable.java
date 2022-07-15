@@ -78,7 +78,7 @@ public class ScriptedRunnable extends AbstractIdentifiableInitializableComponent
      * @param object the custom object
      */
     public void setCustomObject(@Nullable final Object object) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
 
         customObject = object;
     }
@@ -98,7 +98,7 @@ public class ScriptedRunnable extends AbstractIdentifiableInitializableComponent
      * @param matcherScript the script to be evaluated
      */
     public void setScript(@Nonnull final EvaluableScript matcherScript) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
 
         script = Constraint.isNotNull(matcherScript, "Attribute value matching script cannot be null");
     }

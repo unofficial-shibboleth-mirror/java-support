@@ -82,7 +82,7 @@ public abstract class AbstractIdentifiedInitializableComponent extends AbstractI
      * @param componentId ID of the component
      */
     protected synchronized void setId(@Nonnull @NotEmpty final String componentId) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
 
         id = Constraint.isNotNull(StringSupport.trimOrNull(componentId), "Component ID can not be null or empty");
     }

@@ -99,7 +99,7 @@ public class ScriptedKeyStrategy extends AbstractInitializableComponent implemen
      * @param script script to run
      */
     public void setKeyScript(@Nonnull final EvaluableScript script) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         
         keyScript = Constraint.isNotNull(script, "Script cannot be null");
     }
@@ -111,7 +111,7 @@ public class ScriptedKeyStrategy extends AbstractInitializableComponent implemen
      * @param object the custom object
      */
     public void setCustomObject(@Nullable final Object object) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
 
         customObject = object;
     }
@@ -125,7 +125,7 @@ public class ScriptedKeyStrategy extends AbstractInitializableComponent implemen
      * @param interval time between key update checks
      */
     public void setUpdateInterval(@Nonnull final Duration interval) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         
         Constraint.isNotNull(interval, "Interval cannot be null");
         Constraint.isFalse(interval.isNegative(), "Interval cannot be negative");
@@ -141,7 +141,7 @@ public class ScriptedKeyStrategy extends AbstractInitializableComponent implemen
      * @param timer timer used to schedule update tasks
      */
     public void setUpdateTaskTimer(@Nullable final Timer timer) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
 
         updateTaskTimer = timer;
     }
@@ -154,7 +154,7 @@ public class ScriptedKeyStrategy extends AbstractInitializableComponent implemen
      * @param size size of cache
      */
     public void setCacheSize(@NonNegative final long size) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
 
         cacheSize = Constraint.isGreaterThanOrEqual(0, size, "Key cache size cannot be negative");
     }
@@ -211,7 +211,7 @@ public class ScriptedKeyStrategy extends AbstractInitializableComponent implemen
 
     /** {@inheritDoc} */
     @Nonnull public Pair<String,SecretKey> getDefaultKey() throws KeyException {
-        throwComponentStateExceptions();
+        checkComponentActive();
 
         synchronized(this) {
             if (defaultKey != null) {

@@ -118,7 +118,7 @@ public class BasicKeystoreKeyStrategy extends AbstractInitializableComponent imp
      * @param type the keystore type
      */
     public void setKeystoreType(@Nonnull @NotEmpty final String type) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         
         keystoreType = Constraint.isNotNull(StringSupport.trimOrNull(type), "Keystore type cannot be null or empty");
     }
@@ -129,7 +129,7 @@ public class BasicKeystoreKeyStrategy extends AbstractInitializableComponent imp
      * @param resource the keystore resource
      */
     public void setKeystoreResource(@Nonnull @NotEmpty final Resource resource) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         
         keystoreResource = Constraint.isNotNull(resource, "Keystore resource cannot be null");
     }
@@ -140,7 +140,7 @@ public class BasicKeystoreKeyStrategy extends AbstractInitializableComponent imp
      * @param resource the key version resource
      */
     public void setKeyVersionResource(@Nonnull @NotEmpty final Resource resource) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         
         keyVersionResource = Constraint.isNotNull(resource, "Key version resource cannot be null");
     }
@@ -174,7 +174,7 @@ public class BasicKeystoreKeyStrategy extends AbstractInitializableComponent imp
      * @param alias the encryption key alias base
      */
     public void setKeyAlias(@Nonnull @NotEmpty final String alias) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         
         keyAlias = Constraint.isNotNull(StringSupport.trimOrNull(alias),
                 "Key alias base cannot be null or empty");
@@ -212,7 +212,7 @@ public class BasicKeystoreKeyStrategy extends AbstractInitializableComponent imp
      * @param interval time between key update checks
      */
     public void setUpdateInterval(@Nonnull final Duration interval) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         
         Constraint.isNotNull(interval, "Interval cannot be null");
         Constraint.isFalse(interval.isNegative(), "Interval cannot be negative");
@@ -228,7 +228,7 @@ public class BasicKeystoreKeyStrategy extends AbstractInitializableComponent imp
      * @param timer timer used to schedule update tasks
      */
     public void setUpdateTaskTimer(@Nullable final Timer timer) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
 
         updateTaskTimer = timer;
     }
@@ -290,7 +290,7 @@ public class BasicKeystoreKeyStrategy extends AbstractInitializableComponent imp
     /** {@inheritDoc} */
     @Override
     @Nonnull public Pair<String,SecretKey> getDefaultKey() throws KeyException {
-        throwComponentStateExceptions();
+        checkComponentActive();
         
         synchronized(this) {
             if (defaultKey != null) {
