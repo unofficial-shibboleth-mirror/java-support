@@ -31,7 +31,7 @@ import javax.annotation.Nonnull;
  *  
  * @param <T> The underlying type of the component.
  */
-public interface ServiceableComponent<T> {
+public interface ServiceableComponent<T> extends AutoCloseable {
 
     /**
      * Extract the component that does the actual work.  Callers <em>MUST</em> have the ServiceableComponent
@@ -55,13 +55,20 @@ public interface ServiceableComponent<T> {
      * This undoes the work that is done by {@link #pinComponent()}.
      */
     void unpinComponent();
-    
 
     /**
      * This call will wait for all transient operations to complete and then
-     * calls dispose on the components.
+     * calls dispose/destroy on the component.
      *
      * <p>Implementations should avoid calling this with locks held.</p>
      */
     void unloadComponent();
+
+    /** {@inheritDoc}
+     * Although this method is the same as {@link #unpinComponent()} this is targeted at places where
+     * {@link ReloadableService#getServiceableComponent()} was called.
+     */
+     default void close() {
+        unpinComponent();
+     }
 }

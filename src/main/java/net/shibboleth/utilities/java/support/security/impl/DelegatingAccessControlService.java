@@ -59,19 +59,14 @@ public class DelegatingAccessControlService extends AbstractIdentifiableInitiali
     @Override
     @Nonnull public AccessControl getInstance(@Nonnull final String name) {
         checkComponentActive();
-        ServiceableComponent<AccessControlService> component = null;
-        try {
-            component = service.getServiceableComponent();
+
+        try (final ServiceableComponent<AccessControlService> component = service.getServiceableComponent()){
             if (null == component) {
                 log.error("AccessControlService '{}': Error accessing underlying component: Invalid configuration.",
                         getId());
             } else {
                 final AccessControlService svc = component.getComponent();
                 return svc.getInstance(name);
-            }
-        } finally {
-            if (null != component) {
-                component.unpinComponent();
             }
         }
 
