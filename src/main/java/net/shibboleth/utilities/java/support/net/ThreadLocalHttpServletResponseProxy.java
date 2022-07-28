@@ -231,5 +231,4 @@ public class ThreadLocalHttpServletResponseProxy implements HttpServletResponse 
         return Constraint.isNotNull(HttpServletRequestResponseContext.getResponse(),
                 "Current HttpServletResponse has not been loaded via HttpServletRequestResponseContext");
     }
-
 }
