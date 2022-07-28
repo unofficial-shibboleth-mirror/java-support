@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import javax.servlet.AsyncContext;
 import javax.servlet.DispatcherType;
@@ -47,7 +48,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
  * An implementation of {@link HttpServletRequest} which serves as a proxy for the 
  * current thread-local servlet request obtained from {@link HttpServletRequestResponseContext}.
  */
-public class ThreadLocalHttpServletRequestProxy implements HttpServletRequest {
+public class ThreadLocalHttpServletRequestProxy implements HttpServletRequest, Supplier<HttpServletRequest> {
 
     /** {@inheritDoc} */
     public Object getAttribute(final String name) {
@@ -404,6 +405,11 @@ public class ThreadLocalHttpServletRequestProxy implements HttpServletRequest {
     protected HttpServletRequest getCurrent() {
         return Constraint.isNotNull(HttpServletRequestResponseContext.getRequest(), 
                 "Current HttpServletRequest has not been loaded via HttpServletRequestResponseContext");
+    }
+
+    /** {@inheritDoc} */
+    public HttpServletRequest get() {
+        return getCurrent();
     }
 
 }

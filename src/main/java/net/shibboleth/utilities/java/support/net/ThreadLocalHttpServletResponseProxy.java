@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Locale;
+import java.util.function.Supplier;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
@@ -32,7 +33,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
  * An implementation of {@link HttpServletResponse} which serves as a proxy for the 
  * current thread-local servlet response obtained from {@link HttpServletRequestResponseContext}.
  */
-public class ThreadLocalHttpServletResponseProxy implements HttpServletResponse {
+public class ThreadLocalHttpServletResponseProxy implements HttpServletResponse, Supplier<HttpServletResponse> {
 
     /** {@inheritDoc} */
     public String getCharacterEncoding() {
@@ -230,6 +231,11 @@ public class ThreadLocalHttpServletResponseProxy implements HttpServletResponse 
     protected HttpServletResponse getCurrent() {
         return Constraint.isNotNull(HttpServletRequestResponseContext.getResponse(),
                 "Current HttpServletResponse has not been loaded via HttpServletRequestResponseContext");
+    }
+
+    /** {@inheritDoc} */
+    public HttpServletResponse get() {
+        return getCurrent();
     }
 
 }
