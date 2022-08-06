@@ -17,7 +17,11 @@
 
 package net.shibboleth.utilities.java.support.net;
 
+import java.util.function.Supplier;
+
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
@@ -44,8 +48,8 @@ public class CookieManagerTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
         
         CookieManager cm = new CookieManager();
-        cm.setHttpServletRequest(request);
-        cm.setHttpServletResponse(response);
+        cm.setHttpServletRequestSupplier(new Supplier<>() { public HttpServletRequest get() {return request;}});
+        cm.setHttpServletResponseSupplier(new Supplier<>() { public HttpServletResponse get() {return response;}});
         cm.initialize();
     }
 
@@ -54,13 +58,34 @@ public class CookieManagerTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
         
         CookieManager cm = new CookieManager();
+        cm.setHttpServletRequestSupplier(new Supplier<>() { public HttpServletRequest get() {return request;}});
+        cm.setHttpServletResponseSupplier(new Supplier<>() { public HttpServletResponse get() {return response;}});
+        cm.setCookiePath("/idp");
+        cm.initialize();
+
+        cm.addCookie("foo", "bar");
+
+        Cookie cookie = response.getCookie("foo");
+        Assert.assertNotNull(cookie);
+        Assert.assertEquals(cookie.getValue(), "bar");
+        Assert.assertEquals(cookie.getPath(), "/idp");
+        Assert.assertNull(cookie.getDomain());
+        Assert.assertTrue(cookie.getSecure());
+        Assert.assertEquals(cookie.getMaxAge(), -1);
+    }
+    
+    @Test public void testCookieWithPathOldSetters() throws ComponentInitializationException {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        
+        CookieManager cm = new CookieManager();
         cm.setHttpServletRequest(request);
         cm.setHttpServletResponse(response);
         cm.setCookiePath("/idp");
         cm.initialize();
-        
+
         cm.addCookie("foo", "bar");
-        
+
         Cookie cookie = response.getCookie("foo");
         Assert.assertNotNull(cookie);
         Assert.assertEquals(cookie.getValue(), "bar");
@@ -70,14 +95,15 @@ public class CookieManagerTest {
         Assert.assertEquals(cookie.getMaxAge(), -1);
     }
 
+
     @Test public void testCookieNoPath() throws ComponentInitializationException {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContextPath("/idp");
         MockHttpServletResponse response = new MockHttpServletResponse();
         
         CookieManager cm = new CookieManager();
-        cm.setHttpServletRequest(request);
-        cm.setHttpServletResponse(response);
+        cm.setHttpServletRequestSupplier(new Supplier<>() { public HttpServletRequest get() {return request;}});
+        cm.setHttpServletResponseSupplier(new Supplier<>() { public HttpServletResponse get() {return response;}});
         cm.initialize();
         
         cm.addCookie("foo", "bar");
@@ -98,8 +124,8 @@ public class CookieManagerTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
         
         CookieManager cm = new CookieManager();
-        cm.setHttpServletRequest(request);
-        cm.setHttpServletResponse(response);
+        cm.setHttpServletRequestSupplier(new Supplier<>() { public HttpServletRequest get() {return request;}});
+        cm.setHttpServletResponseSupplier(new Supplier<>() { public HttpServletResponse get() {return response;}});
         cm.initialize();
         
         cm.unsetCookie("foo");

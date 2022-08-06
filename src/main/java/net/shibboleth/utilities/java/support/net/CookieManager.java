@@ -17,11 +17,16 @@
 
 package net.shibboleth.utilities.java.support.net;
 
+import java.util.function.Supplier;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -29,7 +34,9 @@ import net.shibboleth.utilities.java.support.component.AbstractInitializableComp
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 /**
  * A helper class for managing one or more cookies on behalf of a component.
@@ -40,17 +47,20 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
  */
 public final class CookieManager extends AbstractInitializableComponent {
 
+    /** Log. */
+    private final Logger log = LoggerFactory.getLogger(CookieManager.class);
+
     /** Path of cookie. */
     @Nullable private String cookiePath;
 
     /** Domain of cookie. */
     @Nullable private String cookieDomain;
     
-    /** Servlet request to read from. */
-    @NonnullAfterInit private HttpServletRequest httpRequest;
+    /** Supplier for the servlet request to read from. */
+    @NonnullAfterInit private Supplier<HttpServletRequest> httpRequestSupplier;
 
-    /** Servlet response to write to. */
-    @NonnullAfterInit private HttpServletResponse httpResponse;
+    /** Supplier for the servlet response to write to. */
+    @NonnullAfterInit private Supplier<HttpServletResponse> httpResponseSupplier;
     
     /** Is cookie secure? */
     private boolean secure;
@@ -95,28 +105,94 @@ public final class CookieManager extends AbstractInitializableComponent {
     }
 
     /**
-     * Set the servlet request to read from.
-     * 
-     * @param request servlet request
+     * Set the Supplier for the servlet request to read from.
+     *
+     * @param requestSupplier servlet request supplier
      */
-    public void setHttpServletRequest(@Nonnull final HttpServletRequest request) {
+    public void setHttpServletRequestSupplier(@Nonnull final Supplier<HttpServletRequest> requestSupplier) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         
-        httpRequest = Constraint.isNotNull(request, "HttpServletRequest cannot be null");
+        httpRequestSupplier = Constraint.isNotNull(requestSupplier, "HttpServletRequest cannot be null");
+    }
+
+    /**
+     * Set the current HTTP request.
+     *
+     * @param request current HTTP request
+     */
+    @Deprecated(since = "4.3", forRemoval = true)
+    public void setHttpServletRequest(@Nullable final HttpServletRequest request) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        DeprecationSupport.warnOnce(ObjectType.METHOD, "setHttpServletReqest",
+                "CookieManager", "setHttpServletRequestSupplier");
+        if (request != null && !(request instanceof ThreadLocalHttpServletRequestProxy)) {
+            log.warn("Unsafe HttpServletRequest injected");
+        }
+        httpRequestSupplier = new Supplier<>() {
+            public HttpServletRequest get() {
+                return request;
+            };
+        };
+    }
+
+    /**
+     * Get the current HTTP request if available.
+     *
+     * @return current HTTP request
+     */
+    @NonnullAfterInit private HttpServletRequest getHttpServletRequest() {
+        if (httpRequestSupplier == null) {
+            return null;
+        }
+        return httpRequestSupplier.get();
+    }
+
+    /**
+     * Set the supplier for the servlet response to write to.
+     *
+     * @param responseSupplier servlet response
+     */
+    public void setHttpServletResponseSupplier(@Nonnull final Supplier<HttpServletResponse> responseSupplier) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+        
+        httpResponseSupplier = Constraint.isNotNull(responseSupplier, "HttpServletResponse cannot be null");
     }
 
     /**
      * Set the servlet response to write to.
-     * 
-     * @param response servlet response
+     *
+     * @param response current HTTP response
      */
-    public void setHttpServletResponse(@Nonnull final HttpServletResponse response) {
+    @Deprecated(since = "4.3", forRemoval = true)
+    public void setHttpServletResponse(@Nullable final HttpServletResponse response) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        
-        httpResponse = Constraint.isNotNull(response, "HttpServletResponse cannot be null");
+
+        DeprecationSupport.warnOnce(ObjectType.METHOD, "setHttpServletResponse",
+                "CookieManager", "setHttpServletResponseSupplier");
+        if (response != null && !(response instanceof ThreadLocalHttpServletResponseProxy)) {
+            log.warn("Unsafe HttpServletRequest injected");
+        }
+        httpResponseSupplier = new Supplier<>() {
+            public HttpServletResponse get() {
+                return response;
+            };
+        };
     }
+
+    /**
+     * Get the current HTTP response if available.
+     *
+     * @return current HTTP response or null
+     */
+    @NonnullAfterInit private HttpServletResponse getHttpServletResponse() {
+        if (httpResponseSupplier == null) {
+            return null;
+        }
+        return httpResponseSupplier.get();
+    }
+
 
     /**
      * Set the SSL-only flag.
@@ -159,7 +235,7 @@ public final class CookieManager extends AbstractInitializableComponent {
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         
-        if (httpRequest == null || httpResponse == null) {
+        if (getHttpServletRequest() == null || getHttpServletResponse() == null) {
             throw new ComponentInitializationException("Servlet request and response must be set");
         }
     }
@@ -183,7 +259,7 @@ public final class CookieManager extends AbstractInitializableComponent {
         cookie.setHttpOnly(httpOnly);
         cookie.setMaxAge(maxAge);
         
-        httpResponse.addCookie(cookie);
+        getHttpServletResponse().addCookie(cookie);
     }
 
     /**
@@ -204,7 +280,7 @@ public final class CookieManager extends AbstractInitializableComponent {
         cookie.setHttpOnly(httpOnly);
         cookie.setMaxAge(0);
         
-        httpResponse.addCookie(cookie);
+        getHttpServletResponse().addCookie(cookie);
     }
 
     /**
@@ -237,7 +313,7 @@ public final class CookieManager extends AbstractInitializableComponent {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         
-        final Cookie[] cookies = httpRequest.getCookies();
+        final Cookie[] cookies = getHttpServletRequest().getCookies();
         if (cookies != null) {
             for (final Cookie cookie : cookies) {
                 if (cookie.getName().equals(name)) {
@@ -255,6 +331,7 @@ public final class CookieManager extends AbstractInitializableComponent {
      * @return  the cookie path
      */
     @Nonnull @NotEmpty private String contextPathToCookiePath() {
+        final  HttpServletRequest httpRequest = getHttpServletRequest();
         return "".equals(httpRequest.getContextPath()) ? "/" : httpRequest.getContextPath();
     }
     
