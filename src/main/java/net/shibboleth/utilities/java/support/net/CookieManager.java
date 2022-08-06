@@ -25,17 +25,12 @@ import javax.annotation.Nullable;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 /**
  * A helper class for managing one or more cookies on behalf of a component.
@@ -45,9 +40,6 @@ import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.Object
  * common properties.</p>
  */
 public final class CookieManager extends AbstractInitializableComponent {
-
-    /** Log. */
-    private final Logger log = LoggerFactory.getLogger(CookieManager.class);
 
     /** Path of cookie. */
     @Nullable private String cookiePath;
@@ -184,7 +176,7 @@ public final class CookieManager extends AbstractInitializableComponent {
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         
-        if (getHttpServletRequest() == null || getHttpServletResponse() == null) {
+        if (httpRequestSupplier == null || httpResponseSupplier == null) {
             throw new ComponentInitializationException("Servlet request and response must be set");
         }
     }
