@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
- * An implementation of {@link Supplier<HttpServletRequest>} which looks up the current thread-local
+ * An implementation of {@link Supplier} of {@link HttpServletRequest}s which looks up the current thread-local
  * servlet request obtained from {@link HttpServletRequestResponseContext}.
  */
 public class ThreadLocalHttpServletRequestSupplier implements Supplier<HttpServletRequest> {

@@ -139,7 +139,6 @@ public interface Resource {
 
     /**
      * Determine a filename for this resource, i.e. typically the last part of the path: for example, "myfile.txt".
-     * <p>
      * 
      * @return {@code null} if this type of resource does not have a filename, otherwise the file name.
      * 
