@@ -235,7 +235,7 @@ public final class CookieManager extends AbstractInitializableComponent {
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         
-        if (getHttpServletRequest() == null || getHttpServletResponse() == null) {
+        if (httpRequestSupplier == null || httpResponseSupplier == null) {
             throw new ComponentInitializationException("Servlet request and response must be set");
         }
     }
