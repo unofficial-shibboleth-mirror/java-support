@@ -41,7 +41,10 @@ public final class DeprecationSupport {
     
     /** Tracks issued warnings. */
     @Nonnull @NonnullElements private static final Set<String> WARNED_SET = new HashSet<>();
-    
+
+    /** Tracks issued at-risks. */
+    @Nonnull @NonnullElements private static final Set<String> AT_RISK_SET = new HashSet<>();
+
     /** Constructor. */
     private DeprecationSupport() {
         
@@ -127,13 +130,13 @@ public final class DeprecationSupport {
                     type, name, context, replacement);
         } else if (context != null) {
             LOG.warn("{} '{}', ({}): This will be removed in the next major version of this software",
-                type, name, context);
+                    type, name, context);
         } else if (replacement != null) {
             LOG.warn("{} '{}':"
                     + " This will be removed in the next major version of this software; replacement is {}",
-                type, name, replacement);
+                    type, name, replacement);
         } else {
-            LOG.warn("{} '{}': This will be removed in the next major version of this software.",
+            LOG.warn("{} '{}': This will be removed in the next major version of this software",
                     type, name);
         }
     }
@@ -160,6 +163,49 @@ public final class DeprecationSupport {
     }
     
     /**
+     * Emit an at-risk warning for an object or feature of the system.
+     * 
+     * @param type type of object or feature
+     * @param name name of object or feature
+     * @param context surrounding context for at-risk warning
+     * 
+     * @since 4.3.0
+     */
+    public static void atRisk(@Nonnull final ObjectType type, @Nonnull @NotEmpty final String name,
+            @Nullable final String context) {
+        
+        if (context != null) {
+            LOG.warn("{} '{}', ({}): This feature is at-risk for removal in a future version",
+                    type, name, context);
+        } else {
+            LOG.warn("{} '{}': This feature is at-risk for removal in a future version",
+                    type, name);
+        }
+    }
+    
+    /**
+     * Emit a deprecation warning for an object or feature of the system but limit to a single warning
+     * for the life of the process or until state is cleared.
+     * 
+     * @param type type of object or feature
+     * @param name name of object or feature
+     * @param context surrounding context for deprecation warning
+     * 
+     * @since 4.3.0
+     */
+    public static void atRiskOnce(@Nonnull final ObjectType type, @Nonnull @NotEmpty final String name,
+            @Nullable final String context) {
+        
+        synchronized(AT_RISK_SET) {
+            if (!AT_RISK_SET.add(type.toString() + ':' + name)) {
+                return;
+            }
+        }
+        
+        atRisk(type, name, context);
+    }
+    
+    /**
      * Clear the previously warned state.
      */
     public static void clearWarningState() {
@@ -168,5 +214,18 @@ public final class DeprecationSupport {
             WARNED_SET.clear();
         }
     }
+
     
+    /**
+     * Clear the previously at-risk state.
+     * 
+     * @since 4.3.0
+     */
+    public static void clearAtRiskState() {
+        
+        synchronized(AT_RISK_SET) {
+            AT_RISK_SET.clear();
+        }
+    }
+
 }
