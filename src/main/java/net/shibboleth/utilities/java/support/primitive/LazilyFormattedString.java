@@ -26,7 +26,10 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
  * An object that represents a string containing a {@link java.util.Formatter} string and a set of values. When
  * {@link #toString()} is called the format string is filled in with the given values. This allows for lazy evaluation
  * of the value objects formatting function which may be expensive.
+ * 
+ * @deprecated
  */
+@Deprecated(since="8.3.0", forRemoval=true)
 public class LazilyFormattedString {
 
     /** The template that is filled in with the values. */
