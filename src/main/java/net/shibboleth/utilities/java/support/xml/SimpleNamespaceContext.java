@@ -36,7 +36,10 @@ import com.google.common.collect.ImmutableBiMap.Builder;
  * Simple implementation of {@link NamespaceContext} based on a map from prefix values to corresponding URIs. This
  * implementation only supports a single mapping for a given prefix, that is {@link #getPrefixes(String)} will always
  * contain at most 1 element.
+ * 
+ * @deprecated
  */
+@Deprecated(since="8.3.0",forRemoval=true)
 @ThreadSafe
 public class SimpleNamespaceContext implements NamespaceContext {
 
