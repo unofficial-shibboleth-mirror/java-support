@@ -28,7 +28,10 @@ import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrate
  *
  * This can be used in circumstances where there is no requirement that identifiers be
  * different from each other.
+ * 
+ * @deprecated
  */
+@Deprecated(since="8.4.0", forRemoval=true)
 public class FixedStringIdentifierGenerationStrategy implements IdentifierGenerationStrategy {
 
     /** Fixed identifier to use for all invocations. */
