@@ -17,7 +17,6 @@
 
 package net.shibboleth.utilities.java.support.security.impl;
 
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Random;
 
@@ -52,13 +51,7 @@ public class RandomIdentifierGenerationStrategy implements IdentifierGenerationS
      * bytes, and the encoder is set to a {@link Hex}.
      */
     public RandomIdentifierGenerationStrategy() {
-        try {
-            random = SecureRandom.getInstance("SHA1PRNG");
-            sizeOfIdentifier = 16;
-            encoder = new Hex();
-        } catch (final NoSuchAlgorithmException e) {
-            throw new RuntimeException("SHA1PRNG is required to be supported by the JVM but is not", e);
-        }
+        this(16);
     }
 
     /**
@@ -68,15 +61,11 @@ public class RandomIdentifierGenerationStrategy implements IdentifierGenerationS
      * @param identifierSize number of random bytes in identifier
      */
     public RandomIdentifierGenerationStrategy(final int identifierSize) {
-        try {
-            random = SecureRandom.getInstance("SHA1PRNG");
-            sizeOfIdentifier =
-                    Constraint.isGreaterThan(0, identifierSize,
-                            "Number of bytes in the identifier must be greater than 0");
-            encoder = new Hex();
-        } catch (final NoSuchAlgorithmException e) {
-            throw new RuntimeException("SHA1PRNG is required to be supported by the JVM but is not", e);
-        }
+        random = new SecureRandom();
+        sizeOfIdentifier =
+                Constraint.isGreaterThan(0, identifierSize,
+                        "Number of bytes in the identifier must be greater than 0");
+        encoder = new Hex();
     }
 
     /**
