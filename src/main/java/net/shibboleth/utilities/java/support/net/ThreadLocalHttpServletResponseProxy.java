@@ -27,11 +27,19 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 /**
  * An implementation of {@link HttpServletResponse} which serves as a proxy for the 
  * current thread-local servlet response obtained from {@link HttpServletRequestResponseContext}.
+ * 
+ * <p>This should be avoided in place of {@link ThreadLocalHttpServletResponseSupplier} which
+ * indirects the access to the interface.</p>
+ * 
+ * @deprecated
  */
+@Deprecated(since="8.4.0", forRemoval=true)
 public class ThreadLocalHttpServletResponseProxy implements HttpServletResponse {
 
     /** {@inheritDoc} */
@@ -130,13 +138,11 @@ public class ThreadLocalHttpServletResponseProxy implements HttpServletResponse 
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings("deprecation")
     public String encodeUrl(final String url) {
         return getCurrent().encodeUrl(url);
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings("deprecation")
     public String encodeRedirectUrl(final String url) {
         return getCurrent().encodeRedirectUrl(url);
     }
@@ -192,7 +198,6 @@ public class ThreadLocalHttpServletResponseProxy implements HttpServletResponse 
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings("deprecation")
     public void setStatus(final int sc, final String sm) {
         getCurrent().setStatus(sc, sm);
     }
@@ -228,6 +233,7 @@ public class ThreadLocalHttpServletResponseProxy implements HttpServletResponse 
      * @return the current response
      */
     protected HttpServletResponse getCurrent() {
+        DeprecationSupport.warn(ObjectType.BEAN, "shibboleth.HttpServletResponse", null, "shibboleth.HttpServletRespoonseSupplier");
         return Constraint.isNotNull(HttpServletRequestResponseContext.getResponse(),
                 "Current HttpServletResponse has not been loaded via HttpServletRequestResponseContext");
     }

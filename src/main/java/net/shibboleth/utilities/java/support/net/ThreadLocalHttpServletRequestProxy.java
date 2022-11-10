@@ -42,11 +42,19 @@ import javax.servlet.http.HttpUpgradeHandler;
 import javax.servlet.http.Part;
 
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 /**
  * An implementation of {@link HttpServletRequest} which serves as a proxy for the 
  * current thread-local servlet request obtained from {@link HttpServletRequestResponseContext}.
+ * 
+ * <p>This should be avoided in place of {@link ThreadLocalHttpServletRequestSupplier} which
+ * indirects the access to the interface.</p>
+ * 
+ * @deprecated
  */
+@Deprecated(since="8.4.0", forRemoval=true)
 public class ThreadLocalHttpServletRequestProxy implements HttpServletRequest {
 
     /** {@inheritDoc} */
@@ -170,7 +178,6 @@ public class ThreadLocalHttpServletRequestProxy implements HttpServletRequest {
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings("deprecation")
     public String getRealPath(final String path) {
         return getCurrent().getRealPath(path);
     }
@@ -316,7 +323,6 @@ public class ThreadLocalHttpServletRequestProxy implements HttpServletRequest {
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings("deprecation")
     public boolean isRequestedSessionIdFromUrl() {
         return getCurrent().isRequestedSessionIdFromUrl();
     }
@@ -402,7 +408,9 @@ public class ThreadLocalHttpServletRequestProxy implements HttpServletRequest {
      * @return the current request
      */
     protected HttpServletRequest getCurrent() {
+        DeprecationSupport.warn(ObjectType.BEAN, "shibboleth.HttpServletRequest", null, "shibboleth.HttpServletRequestSupplier");
         return Constraint.isNotNull(HttpServletRequestResponseContext.getRequest(), 
                 "Current HttpServletRequest has not been loaded via HttpServletRequestResponseContext");
     }
+
 }
