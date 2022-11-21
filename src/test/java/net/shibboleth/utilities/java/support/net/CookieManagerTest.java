@@ -17,18 +17,17 @@
 
 package net.shibboleth.utilities.java.support.net;
 
-import java.util.function.Supplier;
-
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.primitive.NonnullSupplier;
 
 /** {@link CookieManager} unit test. */
 public class CookieManagerTest {
@@ -48,8 +47,8 @@ public class CookieManagerTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
         
         CookieManager cm = new CookieManager();
-        cm.setHttpServletRequestSupplier(new Supplier<>() { public HttpServletRequest get() {return request;}});
-        cm.setHttpServletResponseSupplier(new Supplier<>() { public HttpServletResponse get() {return response;}});
+        cm.setHttpServletRequestSupplier(new NonnullSupplier<>() { public HttpServletRequest get() {return request;}});
+        cm.setHttpServletResponseSupplier(new NonnullSupplier<>() { public HttpServletResponse get() {return response;}});
         cm.initialize();
     }
 
@@ -58,8 +57,8 @@ public class CookieManagerTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
         
         CookieManager cm = new CookieManager();
-        cm.setHttpServletRequestSupplier(new Supplier<>() { public HttpServletRequest get() {return request;}});
-        cm.setHttpServletResponseSupplier(new Supplier<>() { public HttpServletResponse get() {return response;}});
+        cm.setHttpServletRequestSupplier(new NonnullSupplier<>() { public HttpServletRequest get() {return request;}});
+        cm.setHttpServletResponseSupplier(new NonnullSupplier<>() { public HttpServletResponse get() {return response;}});
         cm.setCookiePath("/idp");
         cm.initialize();
 
@@ -102,8 +101,8 @@ public class CookieManagerTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
         
         CookieManager cm = new CookieManager();
-        cm.setHttpServletRequestSupplier(new Supplier<>() { public HttpServletRequest get() {return request;}});
-        cm.setHttpServletResponseSupplier(new Supplier<>() { public HttpServletResponse get() {return response;}});
+        cm.setHttpServletRequestSupplier(new NonnullSupplier<>() { public HttpServletRequest get() {return request;}});
+        cm.setHttpServletResponseSupplier(new NonnullSupplier<>() { public HttpServletResponse get() {return response;}});
         cm.initialize();
         
         cm.addCookie("foo", "bar");
@@ -124,8 +123,8 @@ public class CookieManagerTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
         
         CookieManager cm = new CookieManager();
-        cm.setHttpServletRequestSupplier(new Supplier<>() { public HttpServletRequest get() {return request;}});
-        cm.setHttpServletResponseSupplier(new Supplier<>() { public HttpServletResponse get() {return response;}});
+        cm.setHttpServletRequestSupplier(new NonnullSupplier<>() { public HttpServletRequest get() {return request;}});
+        cm.setHttpServletResponseSupplier(new NonnullSupplier<>() { public HttpServletResponse get() {return response;}});
         cm.initialize();
         
         cm.unsetCookie("foo");

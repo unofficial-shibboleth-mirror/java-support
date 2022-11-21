@@ -17,8 +17,6 @@
 
 package net.shibboleth.utilities.java.support.net;
 
-import java.util.function.Supplier;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.http.Cookie;
@@ -35,8 +33,9 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
+import net.shibboleth.utilities.java.support.primitive.NonnullSupplier;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * A helper class for managing one or more cookies on behalf of a component.
@@ -57,10 +56,10 @@ public final class CookieManager extends AbstractInitializableComponent {
     @Nullable private String cookieDomain;
     
     /** Supplier for the servlet request to read from. */
-    @NonnullAfterInit private Supplier<HttpServletRequest> httpRequestSupplier;
+    @NonnullAfterInit private NonnullSupplier<HttpServletRequest> httpRequestSupplier;
 
     /** Supplier for the servlet response to write to. */
-    @NonnullAfterInit private Supplier<HttpServletResponse> httpResponseSupplier;
+    @NonnullAfterInit private NonnullSupplier<HttpServletResponse> httpResponseSupplier;
     
     /** Is cookie secure? */
     private boolean secure;
@@ -109,7 +108,7 @@ public final class CookieManager extends AbstractInitializableComponent {
      *
      * @param requestSupplier servlet request supplier
      */
-    public void setHttpServletRequestSupplier(@Nonnull final Supplier<HttpServletRequest> requestSupplier) {
+    public void setHttpServletRequestSupplier(@Nonnull final NonnullSupplier<HttpServletRequest> requestSupplier) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         
@@ -129,7 +128,7 @@ public final class CookieManager extends AbstractInitializableComponent {
         if (request != null && !(request instanceof ThreadLocalHttpServletRequestProxy)) {
             log.warn("Unsafe HttpServletRequest injected");
         }
-        httpRequestSupplier = new Supplier<>() {
+        httpRequestSupplier = new NonnullSupplier<>() {
             public HttpServletRequest get() {
                 return request;
             };
@@ -153,7 +152,7 @@ public final class CookieManager extends AbstractInitializableComponent {
      *
      * @param responseSupplier servlet response
      */
-    public void setHttpServletResponseSupplier(@Nonnull final Supplier<HttpServletResponse> responseSupplier) {
+    public void setHttpServletResponseSupplier(@Nonnull final NonnullSupplier<HttpServletResponse> responseSupplier) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         
@@ -174,7 +173,7 @@ public final class CookieManager extends AbstractInitializableComponent {
         if (response != null && !(response instanceof ThreadLocalHttpServletResponseProxy)) {
             log.warn("Unsafe HttpServletRequest injected");
         }
-        httpResponseSupplier = new Supplier<>() {
+        httpResponseSupplier = new NonnullSupplier<>() {
             public HttpServletResponse get() {
                 return response;
             };

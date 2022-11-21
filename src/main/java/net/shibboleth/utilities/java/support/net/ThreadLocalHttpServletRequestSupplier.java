@@ -17,17 +17,17 @@
 
 package net.shibboleth.utilities.java.support.net;
 
-import java.util.function.Supplier;
-
+import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.NonnullSupplier;
 
 /**
- * An implementation of {@link Supplier} of {@link HttpServletRequest}s which looks up the current thread-local
+ * An implementation of {@link NonnullSupplier} of {@link HttpServletRequest}s which looks up the current thread-local
  * servlet request obtained from {@link HttpServletRequestResponseContext}.
  */
-public class ThreadLocalHttpServletRequestSupplier implements Supplier<HttpServletRequest> {
+public class ThreadLocalHttpServletRequestSupplier implements NonnullSupplier<HttpServletRequest> {
 
     /**
      * {@inheritDoc}
@@ -35,6 +35,7 @@ public class ThreadLocalHttpServletRequestSupplier implements Supplier<HttpServl
      *
      * @return the current request
      */
+    @Nonnull
     public HttpServletRequest get() {
         return Constraint.isNotNull(HttpServletRequestResponseContext.getRequest(),
                 "Current HttpServletRequest has not been loaded via HttpServletRequestResponseContext");
