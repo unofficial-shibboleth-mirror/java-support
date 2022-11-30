@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.utilities.java.support.net;
+package net.shibboleth.utilities.java.support.net.impl;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -27,6 +27,10 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.net.HttpServletRequestResponseContext;
+import net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletResponseSupplier;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 /**
  * An implementation of {@link HttpServletResponse} which serves as a proxy for the 
@@ -34,6 +38,10 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
  * 
  * <p>This should be avoided in place of {@link ThreadLocalHttpServletResponseSupplier} which
  * indirects the access to the interface.</p>
+ * 
+ * <p>This copy of the class contains the deprecation warning and will be used within Shibboleth
+ * software so deployers note it. The original classes do not warn and prevent any of our
+ * deployed code using the original classes from emitting the warnings.</p>
  * 
  * @deprecated
  */
@@ -231,6 +239,7 @@ public class ThreadLocalHttpServletResponseProxy implements HttpServletResponse 
      * @return the current response
      */
     protected HttpServletResponse getCurrent() {
+        DeprecationSupport.warn(ObjectType.BEAN, "shibboleth.HttpServletResponse", null, "shibboleth.HttpServletRespoonseSupplier");
         return Constraint.isNotNull(HttpServletRequestResponseContext.getResponse(),
                 "Current HttpServletResponse has not been loaded via HttpServletRequestResponseContext");
     }
