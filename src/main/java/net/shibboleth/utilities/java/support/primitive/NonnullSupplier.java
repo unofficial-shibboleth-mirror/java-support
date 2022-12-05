@@ -24,9 +24,33 @@ import javax.annotation.Nonnull;
 /**
  * Implementation of {@link Supplier} that carries the nonnull annotation
  * on the {@link #get()} method.
+ * 
+ * @param <T> type of supplier output
+ * 
+ * @since 8.4.0
  */
 public interface NonnullSupplier<T> extends Supplier<T> {
 
     /** {@inheritDoc} */
-    @Override @Nonnull T get();
+    @Nonnull T get();
+
+
+    /**
+     * Return a {@link NonnullSupplier} that returns the input argument.
+     * 
+     * @param <T> argument type
+     * @param input input argument to return
+     * 
+     * @return the input argument
+     */
+    @Nonnull static public <T> NonnullSupplier<T> of(@Nonnull final T input) {
+
+        return new NonnullSupplier<T>() {
+            @Override
+            @Nonnull public T get() {
+                return input;
+            }
+        };
+    }
+
 }
